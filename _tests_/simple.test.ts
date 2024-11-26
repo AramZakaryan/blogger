@@ -1,5 +1,5 @@
 import { superRequest } from './testHelpers';
-import { PATHS } from '../src/settings';
+import { PATH } from '../src/common/paths';
 // import {setDB} from '../src/db/db'
 // import {dataset1} from './datasets'
 
@@ -12,7 +12,7 @@ describe('/videos', () => {
     // setDB() // очистка базы данных если нужно
 
     const res = await superRequest
-      .get(PATHS.POSTS)
+      .get(PATH.POSTS)
       .expect(200); // проверяем наличие эндпоинта
 
     console.log(res.body); // можно посмотреть ответ эндпоинта
@@ -23,7 +23,7 @@ describe('/videos', () => {
     // setDB(dataset1) // заполнение базы данных начальными данными если нужно
 
     const res = await superRequest
-      .get(PATHS.POSTS)
+      .get(PATH.POSTS)
       .expect(200);
 
     console.log(res.body);
