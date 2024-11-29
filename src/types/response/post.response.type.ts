@@ -1,6 +1,6 @@
 import { Response } from 'express'
-import { PostType } from './post.type'
-import { OutputErrorsType } from './general'
+import { PostType } from '../post.type'
+import { OutputErrorsType } from '../general'
 
 export type GetPostsResponse = Response<PostType[]>
 

@@ -1,6 +1,6 @@
 import { Response } from 'express'
-import { BlogType } from './blog.type'
-import { OutputErrorsType } from './general'
+import { BlogType } from '../blog.type'
+import { OutputErrorsType } from '../general'
 
 export type GetBlogsResponse = Response<BlogType[] | OutputErrorsType>
 

@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { PostDto } from './post.dto'
+import { PostDto } from '../dto/post.dto'
 
 export type GetPostsRequest = Request
 

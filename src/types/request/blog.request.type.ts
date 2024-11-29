@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { BlogDto } from './blog.dto'
+import { BlogDto } from '../dto/blog.dto'
 
 export type GetBlogsRequest = Request
 
