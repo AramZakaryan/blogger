@@ -27,7 +27,8 @@
   },
   "scripts": {
     "tsc:w": "tsc -w",
-    "nodemon:inspect": "yarn nodemon --inspect dist/index.js",
+    "nodemon:w": "nodemon --inspect dist/index.js",
+    "nodemon:inspect": "nodemon --inspect dist/index.js",
     "jest": "jest -i",
     "jest:coverage": "jest -i --coverage"
   }

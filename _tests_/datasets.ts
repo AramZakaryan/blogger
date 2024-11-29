@@ -1,24 +1,40 @@
-// import {VideoDBType} from '../src/db/video-db-type'
-// import {Resolutions} from '../src/input-output-types/video-types'
-import {DBType} from '../src/db/db'
+import { Blog, Db, Post } from '../src/db/db.type'
 
-// готовые данные для переиспользования в тестах
+export const blogsSet1: Blog[] = Array.from({ length: 15 }, () => ({
+  id: String(Date.now() + Math.random()),
+  name: 'blogName' + Date.now() + Math.random(),
+  description: 'blogDescription' + Date.now() + Math.random(),
+  websiteUrl: 'websiteUrl' + Date.now() + Math.random(),
+}))
 
-export const video1: any /*VideoDBType*/ = {
-  id: Date.now() + Math.random(),
-  title: 't' + Date.now() + Math.random(),
-  // author: 'a' + Date.now() + Math.random(),
-  // canBeDownloaded: true,
-  // minAgeRestriction: null,
-  // createdAt: new Date().toISOString(),
-  // publicationDate: new Date().toISOString(),
-  // availableResolution: [Resolutions.P240],
+export const postsSet1: Post[] = [
+  ...Array.from({ length: 5 }, () => ({
+    id: String(Date.now() + Math.random()),
+    title: 'blogTitle' + Date.now() + Math.random(),
+    shortDescription: 'postSortDescription' + Date.now() + Math.random(),
+    content: 'postContent' + Date.now() + Math.random(),
+    blogId: blogsSet1[0].id,
+    blogName: blogsSet1[0].name,
+  })),
+  ...Array.from({ length: 5 }, () => ({
+    id: String(Date.now() + Math.random()),
+    title: 'blogTitle' + Date.now() + Math.random(),
+    shortDescription: 'postSortDescription' + Date.now() + Math.random(),
+    content: 'postContent' + Date.now() + Math.random(),
+    blogId: blogsSet1[1].id,
+    blogName: blogsSet1[1].name,
+  })),
+  ...Array.from({ length: 5 }, () => ({
+    id: String(Date.now() + Math.random()),
+    title: 'blogTitle' + Date.now() + Math.random(),
+    shortDescription: 'postSortDescription' + Date.now() + Math.random(),
+    content: 'postContent' + Date.now() + Math.random(),
+    blogId: blogsSet1[2].id,
+    blogName: blogsSet1[2].name,
+      })),
+]
+
+export const dataSet1: Db = {
+  blogs: blogsSet1,
+  posts: postsSet1,
 }
-
-// ...
-
-export const dataset1: DBType = {
-  videos: [video1],
-}
-
-// ...
