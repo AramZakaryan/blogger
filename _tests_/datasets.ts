@@ -1,13 +1,15 @@
-import { Blog, Db, Post } from '../src/db/db.type'
+import { Db } from '../src/db/db.type'
+import { BlogType } from '../src/types/blog.type'
+import { PostType } from '../src/types/post.type'
 
-export const blogsSet1: Blog[] = Array.from({ length: 15 }, () => ({
+export const blogsSet1: BlogType[] = Array.from({ length: 15 }, () => ({
   id: String(Date.now() + Math.random()),
   name: 'blogName' + Date.now() + Math.random(),
   description: 'blogDescription' + Date.now() + Math.random(),
   websiteUrl: 'websiteUrl' + Date.now() + Math.random(),
 }))
 
-export const postsSet1: Post[] = [
+export const postsSet1: PostType[] = [
   ...Array.from({ length: 5 }, () => ({
     id: String(Date.now() + Math.random()),
     title: 'blogTitle' + Date.now() + Math.random(),

@@ -50,4 +50,60 @@ describe('/posts', () => {
     expect(responseFindPost14.body.id).toBe(responseGetPosts.body[14].id)
     expect(Object.keys(responseFindPost14.body).length).toBe(6)
   })
+
+  it('create a post', async () => {
+    const body = {
+      title: 'title max length 30',
+      shortDescription: 'shortDescription max length 100',
+      content: 'content max length 1000',
+      blogId: dataSet1.blogs[0].id,
+    }
+
+    const responseCreatePost = await superRequest
+      .post(PATH.POSTS)
+      .send(body)
+      .expect('Content-Type', /json/)
+      .expect(201)
+
+    expect(responseCreatePost.body).toBeInstanceOf(Object)
+
+    expect(responseCreatePost.body.id).not.toBe('')
+    expect(responseCreatePost.body.title).toBe(body.title)
+    expect(responseCreatePost.body.shortDescription).toBe(body.shortDescription)
+    expect(responseCreatePost.body.content).toBe(body.content)
+    expect(responseCreatePost.body.blogId).toBe(body.blogId)
+    expect(responseCreatePost.body.blogName).toBe(dataSet1.blogs[0].name)
+  })
+
+  it('send error for error body', async () => {
+    const bodyError = {
+      title: 'error title actual length is more than 30 .........', // error message: name max length is 30
+      shortDescription: 'shortDescription max length 100',
+      // content: 'content max length 1000', // error message: content is required
+      blogId: 'error blogId', // error message: blog with this id does not exist
+    }
+
+    const responseCreateBlogError = await superRequest
+      .post(PATH.POSTS)
+      .send(bodyError)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseCreateBlogError.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'title max length is 30',
+          field: 'title',
+        },
+        {
+          message: 'content is required',
+          field: 'content',
+        },
+        {
+          message: 'blog with this id does not exist',
+          field: 'blogId',
+        },
+      ],
+    })
+  })
 })
