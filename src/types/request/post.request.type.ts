@@ -1,8 +1,10 @@
 import { Request } from 'express'
-import { PostDto } from '../dto/post.dto'
+import { CreatePostBody, FindPostParams, UpdatePostParams } from '../dto'
 
 export type GetPostsRequest = Request
 
-export type FindPostRequest = Request<{ id: string }>
+export type FindPostRequest = Request<FindPostParams>
 
-export type CreatePostRequest = Request<void, any, PostDto>
+export type CreatePostRequest = Request<void, any, CreatePostBody>
+
+export type UpdatePostRequest = Request<UpdatePostParams, any, CreatePostBody>

@@ -7,3 +7,5 @@ export type GetBlogsResponse = Response<BlogType[] | OutputErrorsType>
 export type FindBlogResponse = Response<BlogType | OutputErrorsType>
 
 export type CreateBlogResponse = Response<BlogType | OutputErrorsType>
+
+export type UpdateBlogResponse = Response<void | OutputErrorsType>

@@ -1,3 +1,9 @@
 import { BlogType } from '../blog.type'
 
-export type BlogDto = Omit<BlogType, 'id'>
+export type FindBlogParams = Pick<BlogType, 'id'>
+
+export type CreateBlogBody = Omit<BlogType, 'id'>
+
+export type UpdateBlogParams = FindBlogParams
+
+export type UpdateBlogBody = Partial<CreateBlogBody>

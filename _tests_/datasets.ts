@@ -1,6 +1,5 @@
-import { Db } from '../src/db/db.type'
-import { BlogType } from '../src/types/blog.type'
-import { PostType } from '../src/types/post.type'
+import { Db } from '../src/db'
+import { BlogType, PostType } from '../src/types'
 
 export const blogsSet1: BlogType[] = Array.from({ length: 15 }, () => ({
   id: String(Date.now() + Math.random()),
@@ -33,7 +32,7 @@ export const postsSet1: PostType[] = [
     content: 'postContent' + Date.now() + Math.random(),
     blogId: blogsSet1[2].id,
     blogName: blogsSet1[2].name,
-      })),
+  })),
 ]
 
 export const dataSet1: Db = {

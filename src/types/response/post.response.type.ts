@@ -7,3 +7,5 @@ export type GetPostsResponse = Response<PostType[]>
 export type FindPostResponse = Response<PostType>
 
 export type CreatePostResponse = Response<PostType | OutputErrorsType>
+
+export type UpdatePostResponse = Response<void | OutputErrorsType>

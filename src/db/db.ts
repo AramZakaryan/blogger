@@ -3,12 +3,20 @@ import { BlogType } from '../types/blog.type'
 import { PostType } from '../types/post.type'
 
 // forDelStart
-const blogsSet1: BlogType[] = Array.from({ length: 15 }, () => ({
-  id: String(Date.now() + Math.random()),
-  name: 'blogName' + Date.now() + Math.random(),
-  description: 'blogDescription' + Date.now() + Math.random(),
-  websiteUrl: 'websiteUrl' + Date.now() + Math.random(),
-}))
+const blogsSet1: BlogType[] = [
+  {
+    id: '111',
+    name: 'blogName111',
+    description: 'blogDescription111',
+    websiteUrl: 'websiteUrl111',
+  },
+  ...Array.from({ length: 14 }, () => ({
+    id: String(Date.now() + Math.random()),
+    name: 'blogName' + Date.now() + Math.random(),
+    description: 'blogDescription' + Date.now() + Math.random(),
+    websiteUrl: 'websiteUrl' + Date.now() + Math.random(),
+  })),
+]
 
 const postsSet1: PostType[] = [
   ...Array.from({ length: 5 }, () => ({

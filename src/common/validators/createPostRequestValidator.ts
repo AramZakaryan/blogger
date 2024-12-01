@@ -1,16 +1,42 @@
-import { PostDto, OutputErrorsType } from '../../types'
+import { CreatePostBody, OutputErrorsType } from '../../types'
 
-// title: string // maxLength: 30
-// shortDescription: string // maxLength: 100
-// content: string // maxLength: 1000
-// blogId: string
-// blogName: string
-
-export const postRequestValidator = (body: PostDto) => {
+export const createPostRequestValidator = (body: CreatePostBody) => {
   /** object for accumulating errors */
   const errors: OutputErrorsType = {
     errorsMessages: [],
   }
+
+  // Check if body is an object
+  if (Object.getPrototypeOf(body) !== Object.prototype || body === null) {
+    errors.errorsMessages.push({
+      message: 'body must be an object',
+      field: 'body',
+    })
+    return errors
+  }
+
+  const keys = Object.keys(body)
+
+  // Check if body has at least one key
+  if (keys.length === 0) {
+    errors.errorsMessages.push({
+      message: 'at least one field is required',
+      field: 'body',
+    })
+    return errors
+  }
+
+  const allowedKeys = ['title', 'shortDescription', 'content', 'blogId']
+
+  // Check for unexpected keys in the body
+  Object.keys(body).forEach((key) => {
+    if (!allowedKeys.includes(key)) {
+      errors.errorsMessages.push({
+        message: `unexpected key '${key}' found`,
+        field: key,
+      })
+    }
+  })
 
   if (!body.title) {
     errors.errorsMessages.push({

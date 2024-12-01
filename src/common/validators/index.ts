@@ -1,1 +1,3 @@
-export * from './blogRequestValidator'
+export * from './createBlogRequestValidator'
+export * from './updateBlogRequestValidator'
+export * from './createPostRequestValidator'

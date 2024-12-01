@@ -7,7 +7,7 @@ import {
   GetPostsRequest,
   GetPostsResponse,
 } from '../types'
-import { postRequestValidator } from '../common/validators/postRequestValidator'
+import { createPostRequestValidator } from '../common/validators/createPostRequestValidator'
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
@@ -24,13 +24,19 @@ export const postControllers = {
   createPost: async (req: CreatePostRequest, res: CreatePostResponse) => {
     const body = req.body
 
-    const errors = postRequestValidator(body)
+    const errors = createPostRequestValidator(body)
 
-    /** checking if the blog with blogId in body exists */
+    // check if there is an error of field body: if yes - don't continue with checking of existence of blogId
+    if (errors.errorsMessages.findIndex((error) => error.field === 'body') > -1) {
+      res.status(400).json(errors)
+      return
+    }
+
+    // check if the blog with blogId in body exists
     const blogId = await blogService.findBlog(req.body.blogId)
     if (!blogId) {
       errors.errorsMessages.push({
-        message: 'blog with this id does not exist',
+        message: `blog with provided id does not exist`,
         field: 'blogId',
       })
     }
@@ -40,9 +46,9 @@ export const postControllers = {
       return
     }
 
-    const post = await postService.createPost(body)
+    const createdPost = await postService.createPost(body)
 
-    res.status(201).json(post)
+    res.status(201).json(createdPost)
   },
   // updatePost: async (req: Request, res: Response) => {
   //   const id = req.params.id

@@ -1,9 +1,7 @@
 import { superRequest } from './testHelpers'
-import { PATH } from '../src/common/paths'
-import { setDB } from '../src/db/db'
+import { PATH } from '../src/common'
+import { setDB } from '../src/db'
 import { dataSet1 } from './datasets'
-// import {setDB} from '../src/db/db'
-// import {dataset1} from './datasets'
 
 describe('/blogs', () => {
   beforeEach(async () => {
@@ -68,11 +66,65 @@ describe('/blogs', () => {
     expect(responseCreateBlog.body.websiteUrl).toBe(body.websiteUrl)
   })
 
-  it('send error for error body', async () => {
+  it('send error for non-existing, empty, non-object body in create blog', async () => {
+    const bodyNonExisting = undefined
+
+    const responseCreateBlogToBodyNonExisting = await superRequest
+      .post(PATH.BLOGS)
+      .send(bodyNonExisting)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseCreateBlogToBodyNonExisting.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'at least one field is required',
+          field: 'body',
+        },
+      ],
+    })
+
+    const bodyEmpty = {}
+
+    const responseCreateBlogToBodyEmpty = await superRequest
+      .post(PATH.BLOGS)
+      .send(bodyEmpty)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseCreateBlogToBodyEmpty.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'at least one field is required',
+          field: 'body',
+        },
+      ],
+    })
+
+    const bodyArray = ['element']
+
+    const responseCreateBlogToyBodyArray = await superRequest
+      .post(PATH.BLOGS)
+      .send(bodyArray)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseCreateBlogToyBodyArray.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'body must be an object',
+          field: 'body',
+        },
+      ],
+    })
+  })
+
+  it('send error for error body in create blog', async () => {
     const bodyError = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
       // description: 'description max length 500', // error message: description is required
       websiteUrl: 'websiteUrl  max length 500',
+      unexpectedKey: 'unexpectedValue', // error message: Unexpected key
     }
 
     const responseCreateBlogError = await superRequest
@@ -83,6 +135,10 @@ describe('/blogs', () => {
 
     expect(responseCreateBlogError.body).toEqual({
       errorsMessages: [
+        {
+          field: 'unexpectedKey',
+          message: "unexpected key 'unexpectedKey' found",
+        },
         {
           message: 'name max length is 15',
           field: 'name',

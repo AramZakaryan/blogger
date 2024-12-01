@@ -1,10 +1,43 @@
-import { BlogDto, OutputErrorsType } from '../../types'
+import { CreateBlogBody, OutputErrorsType } from '../../types'
 
-export const blogRequestValidator = (body: BlogDto) => {
+export const createBlogRequestValidator = (body: CreateBlogBody) => {
   /** object for accumulating errors */
   const errors: OutputErrorsType = {
     errorsMessages: [],
   }
+
+  // Check if body is an object
+  if (Object.getPrototypeOf(body) !== Object.prototype || body === null) {
+    errors.errorsMessages.push({
+      message: 'body must be an object',
+      field: 'body',
+    })
+    return errors
+  }
+
+
+  const keys = Object.keys(body)
+
+  // Check if body has at least one key
+  if (keys.length === 0) {
+    errors.errorsMessages.push({
+      message: 'at least one field is required',
+      field: 'body',
+    })
+    return errors
+  }
+
+  const allowedKeys = ['name', 'websiteUrl', 'description']
+
+  // Check for unexpected keys in the body
+  Object.keys(body).forEach((key) => {
+    if (!allowedKeys.includes(key)) {
+      errors.errorsMessages.push({
+        message: `unexpected key '${key}' found`,
+        field: key,
+      })
+    }
+  })
 
   if (!body.name) {
     errors.errorsMessages.push({

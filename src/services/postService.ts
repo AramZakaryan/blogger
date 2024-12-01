@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { BlogType, PostDto, PostType } from '../types'
+import { BlogType, CreatePostBody, PostType } from '../types'
 import { blogService } from './blogService'
 
 export const postService = {
@@ -15,7 +15,7 @@ export const postService = {
     return post
   },
 
-  createPost: async (body: PostDto): Promise<PostType> => {
+  createPost: async (body: CreatePostBody): Promise<PostType> => {
     const blog = await blogService.findBlog(body.blogId)
 
     const post = {

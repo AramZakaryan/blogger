@@ -1,8 +1,10 @@
 import { Request } from 'express'
-import { BlogDto } from '../dto/blog.dto'
+import { CreateBlogBody, FindBlogParams, UpdateBlogBody, UpdateBlogParams } from '../dto'
 
 export type GetBlogsRequest = Request
 
-export type FindBlogRequest = Request<{ id: string }>
+export type FindBlogRequest = Request<FindBlogParams>
 
-export type CreateBlogRequest = Request<void, any, BlogDto>
+export type CreateBlogRequest = Request<void, any, CreateBlogBody>
+
+export type UpdateBlogRequest = Request<UpdateBlogParams, any, UpdateBlogBody>
