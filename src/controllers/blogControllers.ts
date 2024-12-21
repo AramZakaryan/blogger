@@ -48,8 +48,8 @@ export const blogControllers = {
     const errors = updateBlogRequestValidator(params, body)
 
     // check if a blog with the provided id (received as a parameter) exists
-    const blogId = await blogService.findBlog(id)
-    if (!blogId) {
+    const blog = await blogService.findBlog(id)
+    if (!blog) {
       errors.errorsMessages.push({
         message: `blog with provided id does not exist`,
         field: 'params',

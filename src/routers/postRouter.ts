@@ -9,6 +9,6 @@ postRouter.get('/:id', postControllers.findPost)
 
 postRouter.post('/', postControllers.createPost)
 
-// postRouter.put('/:id', postControllers.updatePost)
-//
+postRouter.put('/:id', postControllers.updatePost)
+
 // postRouter.delete('/:id', postControllers.deletePost)

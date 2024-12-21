@@ -1,5 +1,5 @@
 import { superRequest } from './testHelpers'
-import { PATH } from '../src/common'
+import { PATHS } from '../src/common'
 import { setDB } from '../src/db'
 import { dataSet1 } from './datasets'
 
@@ -9,7 +9,7 @@ describe('/blogs', () => {
   })
 
   it('should get array of blogs', async () => {
-    const response = await superRequest.get(PATH.BLOGS).expect(200)
+    const response = await superRequest.get(PATHS.BLOGS).expect(200)
 
     expect(response.body).toBeInstanceOf(Array)
     expect(response.body.length).toBe(15)
@@ -20,16 +20,16 @@ describe('/blogs', () => {
   })
 
   it('should get the blog', async () => {
-    const responseGetBlogs = await superRequest.get(PATH.BLOGS).expect(200)
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
 
     const responseFindBlog0 = await superRequest
-      .get(`${PATH.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .expect(200)
     const responseFindBlog7 = await superRequest
-      .get(`${PATH.BLOGS}/${responseGetBlogs.body[7].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[7].id}`)
       .expect(200)
     const responseFindBlog14 = await superRequest
-      .get(`${PATH.BLOGS}/${responseGetBlogs.body[14].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[14].id}`)
       .expect(200)
 
     expect(responseFindBlog0.body).toBeInstanceOf(Object)
@@ -53,7 +53,7 @@ describe('/blogs', () => {
     }
 
     const responseCreateBlog = await superRequest
-      .post(PATH.BLOGS)
+      .post(PATHS.BLOGS)
       .send(body)
       .expect('Content-Type', /json/)
       .expect(201)
@@ -70,7 +70,7 @@ describe('/blogs', () => {
     const bodyNonExisting = undefined
 
     const responseCreateBlogToBodyNonExisting = await superRequest
-      .post(PATH.BLOGS)
+      .post(PATHS.BLOGS)
       .send(bodyNonExisting)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -87,7 +87,7 @@ describe('/blogs', () => {
     const bodyEmpty = {}
 
     const responseCreateBlogToBodyEmpty = await superRequest
-      .post(PATH.BLOGS)
+      .post(PATHS.BLOGS)
       .send(bodyEmpty)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -104,7 +104,7 @@ describe('/blogs', () => {
     const bodyArray = ['element']
 
     const responseCreateBlogToyBodyArray = await superRequest
-      .post(PATH.BLOGS)
+      .post(PATHS.BLOGS)
       .send(bodyArray)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -123,12 +123,12 @@ describe('/blogs', () => {
     const bodyError = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
       // description: 'description max length 500', // error message: description is required
-      websiteUrl: 'websiteUrl  max length 500',
+      websiteUrl: 'websiteUrl max length 500',
       unexpectedKey: 'unexpectedValue', // error message: Unexpected key
     }
 
     const responseCreateBlogError = await superRequest
-      .post(PATH.BLOGS)
+      .post(PATHS.BLOGS)
       .send(bodyError)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -146,6 +146,96 @@ describe('/blogs', () => {
         {
           message: 'description is required',
           field: 'description',
+        },
+      ],
+    })
+  })
+
+  it('update blog', async () => {
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+
+    const bodyUpdate0Name = {
+      name: 'new name max 15',
+    }
+    const bodyUpdate0Description = {
+      description: 'description max length 500',
+    }
+    const bodyUpdate0WebsiteUrl = {
+      websiteUrl: 'websiteUrl  max length 500',
+    }
+
+    await superRequest
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .send(bodyUpdate0Name)
+      .expect(204)
+
+    await superRequest
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .send(bodyUpdate0Description)
+      .expect(204)
+
+    await superRequest
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .send(bodyUpdate0WebsiteUrl)
+      .expect(204)
+
+    const responseGetBlogsAfterUpdate0 = await superRequest.get(PATHS.BLOGS).expect(200)
+
+    expect(responseGetBlogsAfterUpdate0.body[0]).toBeInstanceOf(Object)
+
+    expect(responseGetBlogsAfterUpdate0.body[0].id).toBe(responseGetBlogs.body[0].id)
+    expect(responseGetBlogsAfterUpdate0.body[0].name).toBe(bodyUpdate0Name.name)
+    expect(responseGetBlogsAfterUpdate0.body[0].description).toBe(
+      bodyUpdate0Description.description,
+    )
+    expect(responseGetBlogsAfterUpdate0.body[0].websiteUrl).toBe(bodyUpdate0WebsiteUrl.websiteUrl)
+
+    const bodyUpdate7 = {
+      name: 'new2 name max15',
+      description: 'description2 max length 500',
+      websiteUrl: 'websiteUrl2 max length 500',
+    }
+
+    await superRequest
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[7].id}`)
+      .send(bodyUpdate7)
+      .expect(204)
+
+    const responseGetBlogsAfterUpdate7 = await superRequest.get(PATHS.BLOGS).expect(200)
+
+    expect(responseGetBlogsAfterUpdate7.body[7]).toBeInstanceOf(Object)
+
+    expect(responseGetBlogsAfterUpdate7.body[7].id).toBe(responseGetBlogs.body[7].id)
+    expect(responseGetBlogsAfterUpdate7.body[7].name).toBe(bodyUpdate7.name)
+    expect(responseGetBlogsAfterUpdate7.body[7].description).toBe(bodyUpdate7.description)
+    expect(responseGetBlogsAfterUpdate7.body[7].websiteUrl).toBe(bodyUpdate7.websiteUrl)
+  })
+
+  it('send error for non-existing, empty, non-object body in update blog', async () => {
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+
+    const bodyError = {
+      name: 'error name actual length is more than 15', // error message: name max length is 15
+      // description: 'description max length 500', // error message: description is required
+      websiteUrl: 'websiteUrl max length 500',
+      unexpectedKey: 'unexpectedValue', // error message: Unexpected key
+    }
+
+    const responseUpdateBlogError = await superRequest
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .send(bodyError)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseUpdateBlogError.body).toEqual({
+      errorsMessages: [
+        {
+          field: 'unexpectedKey',
+          message: "unexpected key 'unexpectedKey' found",
+        },
+        {
+          message: 'name max length is 15',
+          field: 'name',
         },
       ],
     })

@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { BlogType, CreatePostBody, PostType } from '../types'
+import { BlogType, CreatePostBody, PostType, UpdateBlogBody, UpdatePostBody } from '../types'
 import { blogService } from './blogService'
 
 export const postService = {
@@ -27,5 +27,15 @@ export const postService = {
     db.posts.push(post)
 
     return post
+  },
+
+  updatePost: async (id: string, body: UpdatePostBody): Promise<PostType> => {
+    const postIndex = db.posts.findIndex((post) => post.id === id)
+
+    if (postIndex !== -1) {
+      db.posts[postIndex] = { ...db.posts[postIndex], ...body }
+    }
+
+    return db.posts[postIndex]
   },
 }

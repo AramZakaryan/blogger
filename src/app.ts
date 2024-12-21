@@ -1,6 +1,6 @@
 import express, { Response } from 'express'
 import cors from 'cors'
-import { PATH } from './common'
+import { PATHS } from './common'
 import { blogRouter } from './routers'
 import { postRouter } from './routers'
 import { testingRouter } from './routers'
@@ -14,6 +14,6 @@ app.get('/', (_, res: Response) => {
   res.status(200).json({ version: '1.0.0' })
 })
 
-app.use(PATH.TESTING, testingRouter)
-app.use(PATH.BLOGS, blogRouter)
-app.use(PATH.POSTS, postRouter)
+app.use(PATHS.TESTING, testingRouter)
+app.use(PATHS.BLOGS, blogRouter)
+app.use(PATHS.POSTS, postRouter)

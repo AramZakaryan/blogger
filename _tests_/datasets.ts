@@ -11,7 +11,7 @@ export const blogsSet1: BlogType[] = Array.from({ length: 15 }, () => ({
 export const postsSet1: PostType[] = [
   ...Array.from({ length: 5 }, () => ({
     id: String(Date.now() + Math.random()),
-    title: 'blogTitle' + Date.now() + Math.random(),
+    title: 'postTitle' + Date.now() + Math.random().toFixed(6),
     shortDescription: 'postSortDescription' + Date.now() + Math.random(),
     content: 'postContent' + Date.now() + Math.random(),
     blogId: blogsSet1[0].id,
@@ -19,7 +19,7 @@ export const postsSet1: PostType[] = [
   })),
   ...Array.from({ length: 5 }, () => ({
     id: String(Date.now() + Math.random()),
-    title: 'blogTitle' + Date.now() + Math.random(),
+    title: 'postTitle' + Date.now() + Math.random().toFixed(6),
     shortDescription: 'postSortDescription' + Date.now() + Math.random(),
     content: 'postContent' + Date.now() + Math.random(),
     blogId: blogsSet1[1].id,
@@ -27,7 +27,7 @@ export const postsSet1: PostType[] = [
   })),
   ...Array.from({ length: 5 }, () => ({
     id: String(Date.now() + Math.random()),
-    title: 'blogTitle' + Date.now() + Math.random(),
+    title: 'postTitle' + Date.now() + Math.random().toFixed(6),
     shortDescription: 'postSortDescription' + Date.now() + Math.random(),
     content: 'postContent' + Date.now() + Math.random(),
     blogId: blogsSet1[2].id,

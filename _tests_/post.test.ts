@@ -1,5 +1,5 @@
 import { superRequest } from './testHelpers'
-import { PATH } from '../src/common'
+import { PATHS } from '../src/common'
 import { setDB } from '../src/db'
 import { dataSet1 } from './datasets'
 
@@ -9,8 +9,8 @@ describe('/posts', () => {
   })
 
   it('should get array of posts', async () => {
-    const responseGetBlogs = await superRequest.get(PATH.BLOGS).expect(200) // verifying of existence of the endpoint
-    const responseGetPosts = await superRequest.get(PATH.POSTS).expect(200) // verifying of existence of the endpoint
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200) // verifying existence of the endpoint
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200) // verifying existence of the endpoint
 
     expect(responseGetPosts.body).toBeInstanceOf(Array)
     expect(responseGetPosts.body.length).toBe(15)
@@ -26,17 +26,17 @@ describe('/posts', () => {
   })
 
   it('should get the post', async () => {
-    const responseGetPosts = await superRequest.get(PATH.POSTS).expect(200) // verifying of existence of the endpoint
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200) // verifying existence of the endpoint
 
     const responseFindPost0 = await superRequest
-      .get(`${PATH.POSTS}/${responseGetPosts.body[0].id}`)
-      .expect(200) // verifying of existence of the endpoint
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .expect(200)
     const responseFindPost7 = await superRequest
-      .get(`${PATH.POSTS}/${responseGetPosts.body[7].id}`)
-      .expect(200) // verifying of existence of the endpoint
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[7].id}`)
+      .expect(200)
     const responseFindPost14 = await superRequest
-      .get(`${PATH.POSTS}/${responseGetPosts.body[14].id}`)
-      .expect(200) // verifying of existence of the endpoint
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[14].id}`)
+      .expect(200)
 
     expect(responseFindPost0.body).toBeInstanceOf(Object)
     expect(responseFindPost0.body.id).toBe(responseGetPosts.body[0].id)
@@ -60,7 +60,7 @@ describe('/posts', () => {
     }
 
     const responseCreatePost = await superRequest
-      .post(PATH.POSTS)
+      .post(PATHS.POSTS)
       .send(body)
       .expect('Content-Type', /json/)
       .expect(201)
@@ -79,7 +79,7 @@ describe('/posts', () => {
     const bodyNonExisting = undefined
 
     const responseCreatePostToBodyNonExisting = await superRequest
-      .post(PATH.POSTS)
+      .post(PATHS.POSTS)
       .send(bodyNonExisting)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -96,7 +96,7 @@ describe('/posts', () => {
     const bodyEmpty = {}
 
     const responseCreatePostToBodyEmpty = await superRequest
-      .post(PATH.POSTS)
+      .post(PATHS.POSTS)
       .send(bodyEmpty)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -113,7 +113,7 @@ describe('/posts', () => {
     const bodyArray = ['element']
 
     const responseCreatePostToyBodyArray = await superRequest
-      .post(PATH.POSTS)
+      .post(PATHS.POSTS)
       .send(bodyArray)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -137,13 +137,13 @@ describe('/posts', () => {
       unexpectedKey: 'unexpectedValue', // error message: unexpected key
     }
 
-    const responseCreateBlogError = await superRequest
-      .post(PATH.POSTS)
+    const responseCreatePostError = await superRequest
+      .post(PATHS.POSTS)
       .send(bodyError)
       .expect('Content-Type', /json/)
       .expect(400)
 
-    expect(responseCreateBlogError.body).toEqual({
+    expect(responseCreatePostError.body).toEqual({
       errorsMessages: [
         {
           field: 'unexpectedKey',
@@ -156,6 +156,115 @@ describe('/posts', () => {
         {
           message: 'content is required',
           field: 'content',
+        },
+        {
+          message: 'blog with provided id does not exist',
+          field: 'blogId',
+        },
+      ],
+    })
+  })
+
+  it('update post', async () => {
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+
+    const bodyUpdate0Title = {
+      title: 'new title max length 30',
+    }
+    const bodyUpdate0ShortDescription = {
+      shortDescription: 'new shortDescription max length 100"',
+    }
+    const bodyUpdate0Content = {
+      content: 'content max length 1000',
+    }
+    const bodyUpdate0BlogId = {
+      blogId: responseGetBlogs.body[0].id,
+    }
+
+    await superRequest
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .send(bodyUpdate0Title)
+      .expect(204)
+
+    await superRequest
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .send(bodyUpdate0ShortDescription)
+      .expect(204)
+
+    await superRequest
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .send(bodyUpdate0Content)
+      .expect(204)
+
+    await superRequest
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .send(bodyUpdate0BlogId)
+      .expect(204)
+
+    const responseGetPostsAfterUpdate0 = await superRequest.get(PATHS.POSTS).expect(200)
+
+    expect(responseGetPostsAfterUpdate0.body[0]).toBeInstanceOf(Object)
+
+    expect(responseGetPostsAfterUpdate0.body[0].id).toBe(responseGetPosts.body[0].id)
+    expect(responseGetPostsAfterUpdate0.body[0].title).toBe(bodyUpdate0Title.title)
+    expect(responseGetPostsAfterUpdate0.body[0].shortDescription).toBe(
+      bodyUpdate0ShortDescription.shortDescription,
+    )
+    expect(responseGetPostsAfterUpdate0.body[0].content).toBe(bodyUpdate0Content.content)
+    expect(responseGetPostsAfterUpdate0.body[0].blogId).toBe(bodyUpdate0BlogId.blogId)
+    expect(responseGetPostsAfterUpdate0.body[0].blogName).toBe(responseGetPosts.body[0].blogName)
+
+    const bodyUpdate7 = {
+      title: 'new2 title max length 30',
+      shortDescription: 'new2 shortDescription max length 100"',
+      content: 'content2 max length 1000',
+      blogId: responseGetBlogs.body[7].id,
+    }
+    await superRequest
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[7].id}`)
+      .send(bodyUpdate7)
+      .expect(204)
+
+    const responseGetPostsAfterUpdate7 = await superRequest.get(PATHS.POSTS).expect(200)
+
+    expect(responseGetPostsAfterUpdate7.body[7]).toBeInstanceOf(Object)
+
+    expect(responseGetPostsAfterUpdate7.body[7].id).toBe(responseGetPostsAfterUpdate7.body[7].id)
+    expect(responseGetPostsAfterUpdate7.body[7].title).toBe(bodyUpdate7.title)
+    expect(responseGetPostsAfterUpdate7.body[7].shortDescription).toBe(bodyUpdate7.shortDescription)
+    expect(responseGetPostsAfterUpdate7.body[7].content).toBe(bodyUpdate7.content)
+    expect(responseGetPostsAfterUpdate7.body[7].blogId).toBe(bodyUpdate7.blogId)
+    expect(responseGetPostsAfterUpdate7.body[7].blogName).toBe(
+      responseGetPostsAfterUpdate7.body[7].blogName,
+    )
+  })
+  it('send error for non-existing, empty, non-object body in update post', async () => {
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+
+    const bodyError = {
+      title: 'error title actual length is more than 30', // error message: title max length is 30
+      // shortDescription: 'shortDescription max length 100', // error message: shortDescription is required
+      content: 'content max length 1000',
+      blogId: 'non existing blogId', // error message: blog with provided id does not exist
+      unexpectedKey: 'unexpectedValue', // error message: Unexpected key
+    }
+
+    const responseUpdatePostError = await superRequest
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .send(bodyError)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseUpdatePostError.body).toEqual({
+      errorsMessages: [
+        {
+          field: 'unexpectedKey',
+          message: "unexpected key 'unexpectedKey' found",
+        },
+        {
+          message: 'title max length is 30',
+          field: 'title',
         },
         {
           message: 'blog with provided id does not exist',
