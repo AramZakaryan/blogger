@@ -69,6 +69,67 @@ describe('/posts', () => {
     })
   })
 
+  it('send error for non-existing credentials (header) in create, update, delete post', async () => {
+    const bodyCreate = {
+      name: 'name max len 15',
+      description: 'description max length 500',
+      websiteUrl: 'https://someurl.com',
+    }
+
+    const responseCreatePost = await superRequest
+      .post(PATHS.POSTS)
+      .set('Authorization', '') // setting headers
+      .send(bodyCreate)
+      .expect('Content-Type', /json/)
+      .expect(401)
+
+    expect(responseCreatePost.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+
+    const bodyUpdate0 = {
+      name: 'new2 name max15',
+      description: 'description2 max length 500',
+      websiteUrl: 'https://someurl2.com',
+    }
+
+    const responseUpdatePost = await superRequest
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .set('Authorization', '') // setting headers
+      .send(bodyUpdate0)
+      .expect(401)
+
+    expect(responseUpdatePost.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+
+    const responseDeletePost = await superRequest
+      .delete(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .set('Authorization', '') // setting headers
+      .expect(401)
+
+    expect(responseDeletePost.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+  })
+
   it('create a post', async () => {
     const body = {
       title: 'title max length 30',
