@@ -43,6 +43,11 @@ export const createBlogBodyValidator = (body: CreateBlogBody) => {
       message: 'name is required',
       field: 'name',
     })
+  } else if (!body.name.trim().length) {
+    errors.errorsMessages.push({
+      message: 'name is empty',
+      field: 'name',
+    })
   } else if (body.name.length > 15) {
     errors.errorsMessages.push({
       message: 'name max length is 15',
@@ -53,6 +58,11 @@ export const createBlogBodyValidator = (body: CreateBlogBody) => {
   if (!body.description) {
     errors.errorsMessages.push({
       message: 'description is required',
+      field: 'description',
+    })
+  } else if (!body.description.trim().length) {
+    errors.errorsMessages.push({
+      message: 'description is empty',
       field: 'description',
     })
   } else if (body.description.length > 500) {

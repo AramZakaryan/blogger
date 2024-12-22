@@ -162,20 +162,20 @@ describe('/blogs', () => {
   })
 
   it('send error for error body in create blog', async () => {
-    const bodyError = {
+    const bodyErrorV1 = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
       // description: 'description max length 500', // error message: description is required
-      websiteUrl: 'incorrect websiteUrl',
+      websiteUrl: 'incorrect websiteUrl', // error message: websiteUrl incorrect format
       unexpectedKey: 'unexpectedValue', // no error message
     }
 
-    const responseCreateBlogError = await superRequest
+    const responseCreateBlogErrorV1 = await superRequest
       .post(PATHS.BLOGS)
-      .send(bodyError)
+      .send(bodyErrorV1)
       .expect('Content-Type', /json/)
       .expect(400)
 
-    expect(responseCreateBlogError.body).toEqual({
+    expect(responseCreateBlogErrorV1.body).toEqual({
       errorsMessages: [
         // {
         //   field: 'unexpectedKey',
@@ -192,6 +192,45 @@ describe('/blogs', () => {
         {
           field: 'websiteUrl',
           message: 'websiteUrl incorrect format',
+        },
+      ],
+    })
+
+    const bodyErrorV2 = {
+      name: '       ', // error message: name is empty
+      description:
+        'description very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ', // error message: description max length is 500
+      websiteUrl:
+        'https://someurlveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryLong.com', // error message: websiteUrl max length is 100
+    }
+
+    const responseCreateBlogErrorV2 = await superRequest
+      .post(PATHS.BLOGS)
+      .send(bodyErrorV2)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseCreateBlogErrorV2.body).toEqual({
+      errorsMessages: [
+        // {
+        //   field: 'unexpectedKey',
+        //   message: "unexpected key 'unexpectedKey' found",
+        // },
+        {
+          message: 'name is empty',
+          field: 'name',
+        },
+        {
+          field: 'description',
+          message: 'description max length is 500',
+        },
+        {
+          field: 'websiteUrl',
+          message: 'websiteUrl max length is 100',
         },
       ],
     })
@@ -224,20 +263,20 @@ describe('/blogs', () => {
   it('send error for non-existing, empty, non-object body in update blog', async () => {
     const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
 
-    const bodyError = {
+    const bodyErrorV1 = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
       // description: 'description max length 500', // error message: description is required
       websiteUrl: 'incorrect websiteUrl', // error message: websiteUrl incorrect format
       unexpectedKey: 'unexpectedValue', // no error message
     }
 
-    const responseUpdateBlogError = await superRequest
+    const responseUpdateBlogErrorV1 = await superRequest
       .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
-      .send(bodyError)
+      .send(bodyErrorV1)
       .expect('Content-Type', /json/)
       .expect(400)
 
-    expect(responseUpdateBlogError.body).toEqual({
+    expect(responseUpdateBlogErrorV1.body).toEqual({
       errorsMessages: [
         // {
         //   field: 'unexpectedKey',
@@ -257,7 +296,48 @@ describe('/blogs', () => {
         },
       ],
     })
+
+    const bodyErrorV2 = {
+      name: '       ', // error message: name is empty
+      description:
+        'description very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ' +
+        'very very very very very very very very very very very very very very very very very very very very ', // error message: description max length is 500
+      websiteUrl:
+        'https://someurlveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryLong.com', // error message: websiteUrl max length is 100
+    }
+
+    const responseUpdateBlogErrorV2 = await superRequest
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .send(bodyErrorV2)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseUpdateBlogErrorV2.body).toEqual({
+      errorsMessages: [
+        // {
+        //   field: 'unexpectedKey',
+        //   message: "unexpected key 'unexpectedKey' found",
+        // },
+        {
+          message: 'name is empty',
+          field: 'name',
+        },
+        {
+          field: 'description',
+          message: 'description max length is 500',
+        },
+        {
+          field: 'websiteUrl',
+          message: 'websiteUrl max length is 100',
+        },
+      ],
+    })
+
   })
+
   it('send error for non-existing params in update blog', async () => {
     const paramsIdNonExisting = 'paramsNonExisting'
 
