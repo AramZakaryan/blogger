@@ -133,6 +133,7 @@ describe('/blogs', () => {
 
     const responseCreateBlog = await superRequest
       .post(PATHS.BLOGS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(body)
       .expect('Content-Type', /json/)
       .expect(201)
@@ -150,6 +151,7 @@ describe('/blogs', () => {
 
     const responseCreateBlogToBodyNonExisting = await superRequest
       .post(PATHS.BLOGS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyNonExisting)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -179,6 +181,7 @@ describe('/blogs', () => {
 
     const responseCreateBlogToBodyEmpty = await superRequest
       .post(PATHS.BLOGS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyEmpty)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -208,6 +211,7 @@ describe('/blogs', () => {
 
     const responseCreateBlogToyBodyArray = await superRequest
       .post(PATHS.BLOGS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyArray)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -232,6 +236,7 @@ describe('/blogs', () => {
 
     const responseCreateBlogErrorV1 = await superRequest
       .post(PATHS.BLOGS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -265,6 +270,7 @@ describe('/blogs', () => {
 
     const responseCreateBlogErrorV2 = await superRequest
       .post(PATHS.BLOGS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -302,6 +308,7 @@ describe('/blogs', () => {
 
     await superRequest
       .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdate0)
       .expect(204)
 
@@ -327,6 +334,7 @@ describe('/blogs', () => {
 
     const responseUpdateBlogErrorV1 = await superRequest
       .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -360,6 +368,7 @@ describe('/blogs', () => {
 
     const responseUpdateBlogErrorV2 = await superRequest
       .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -393,6 +402,7 @@ describe('/blogs', () => {
 
     const responseUpdateBlogError = await superRequest
       .put(`${PATHS.BLOGS}/${paramsIdNonExisting}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdateError)
       .expect('Content-Type', /json/)
       .expect(404)
@@ -416,7 +426,9 @@ describe('/blogs', () => {
 
     expect(responseFindBlog.body.id).toEqual(responseGetBlogs.body[0].id)
 
-    await superRequest.delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`).expect(204)
+    await superRequest.delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect(204)
 
     const responseFindBlogAfterDelete = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)

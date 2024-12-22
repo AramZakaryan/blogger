@@ -140,6 +140,7 @@ describe('/posts', () => {
 
     const responseCreatePost = await superRequest
       .post(PATHS.POSTS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(body)
       .expect('Content-Type', /json/)
       .expect(201)
@@ -159,6 +160,7 @@ describe('/posts', () => {
 
     const responseCreatePostToBodyNonExisting = await superRequest
       .post(PATHS.POSTS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyNonExisting)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -192,6 +194,7 @@ describe('/posts', () => {
 
     const responseCreatePostToBodyEmpty = await superRequest
       .post(PATHS.POSTS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyEmpty)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -225,6 +228,7 @@ describe('/posts', () => {
 
     const responseCreatePostToyBodyArray = await superRequest
       .post(PATHS.POSTS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyArray)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -250,6 +254,7 @@ describe('/posts', () => {
 
     const responseCreatePostErrorV1 = await superRequest
       .post(PATHS.POSTS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -283,6 +288,7 @@ describe('/posts', () => {
 
     const responseCreatePostErrorV2 = await superRequest
       .post(PATHS.POSTS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -321,6 +327,7 @@ describe('/posts', () => {
     }
     await superRequest
       .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdate0)
       .expect(204)
 
@@ -351,6 +358,7 @@ describe('/posts', () => {
 
     const responseUpdatePostErrorV1 = await superRequest
       .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -385,6 +393,7 @@ describe('/posts', () => {
 
     const responseUpdatePostErrorV2 = await superRequest
       .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
       .expect(400)
@@ -414,6 +423,7 @@ describe('/posts', () => {
 
     const responseUpdatePostError = await superRequest
       .put(`${PATHS.POSTS}/${paramsIdNonExisting}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdateError)
       .expect('Content-Type', /json/)
       .expect(404)
@@ -437,7 +447,10 @@ describe('/posts', () => {
 
     expect(responseFindPost.body.id).toEqual(responseGetPosts.body[0].id)
 
-    await superRequest.delete(`${PATHS.POSTS}/${responseFindPost.body.id}`).expect(204)
+    await superRequest
+      .delete(`${PATHS.POSTS}/${responseFindPost.body.id}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect(204)
 
     const responseFindPostsAfterDelete = await superRequest
       .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
