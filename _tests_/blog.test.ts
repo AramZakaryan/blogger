@@ -45,11 +45,29 @@ describe('/blogs', () => {
     expect(Object.keys(responseFindBlog14.body).length).toBe(4)
   })
 
+  it('send error for non-existing blog', async () => {
+    const paramsIdNonExisting = 'paramsNonExisting'
+
+    const responseFindBlogError = await superRequest
+      .get(`${PATHS.BLOGS}/${paramsIdNonExisting}`)
+      .expect(404)
+
+    expect(responseFindBlogError.body).toBeInstanceOf(Object)
+    expect(responseFindBlogError.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'blog with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+  })
+
   it('create a blog', async () => {
     const body = {
       name: 'name max len 15',
       description: 'description max length 500',
-      websiteUrl: 'websiteUrl  max length 500',
+      websiteUrl: 'https://someurl.com',
     }
 
     const responseCreateBlog = await superRequest
@@ -77,9 +95,21 @@ describe('/blogs', () => {
 
     expect(responseCreateBlogToBodyNonExisting.body).toEqual({
       errorsMessages: [
+        // {
+        //   message: 'at least one field is required',
+        //   field: 'body',
+        // },
         {
-          message: 'at least one field is required',
-          field: 'body',
+          message: 'name is required',
+          field: 'name',
+        },
+        {
+          message: 'description is required',
+          field: 'description',
+        },
+        {
+          message: 'websiteUrl is required',
+          field: 'websiteUrl',
         },
       ],
     })
@@ -94,9 +124,21 @@ describe('/blogs', () => {
 
     expect(responseCreateBlogToBodyEmpty.body).toEqual({
       errorsMessages: [
+        // {
+        //   message: 'at least one field is required',
+        //   field: 'body',
+        // },
         {
-          message: 'at least one field is required',
-          field: 'body',
+          message: 'name is required',
+          field: 'name',
+        },
+        {
+          message: 'description is required',
+          field: 'description',
+        },
+        {
+          message: 'websiteUrl is required',
+          field: 'websiteUrl',
         },
       ],
     })
@@ -123,8 +165,8 @@ describe('/blogs', () => {
     const bodyError = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
       // description: 'description max length 500', // error message: description is required
-      websiteUrl: 'websiteUrl max length 500',
-      unexpectedKey: 'unexpectedValue', // error message: Unexpected key
+      websiteUrl: 'incorrect websiteUrl',
+      unexpectedKey: 'unexpectedValue', // no error message
     }
 
     const responseCreateBlogError = await superRequest
@@ -135,10 +177,10 @@ describe('/blogs', () => {
 
     expect(responseCreateBlogError.body).toEqual({
       errorsMessages: [
-        {
-          field: 'unexpectedKey',
-          message: "unexpected key 'unexpectedKey' found",
-        },
+        // {
+        //   field: 'unexpectedKey',
+        //   message: "unexpected key 'unexpectedKey' found",
+        // },
         {
           message: 'name max length is 15',
           field: 'name',
@@ -147,6 +189,10 @@ describe('/blogs', () => {
           message: 'description is required',
           field: 'description',
         },
+        {
+          field: 'websiteUrl',
+          message: 'websiteUrl incorrect format',
+        },
       ],
     })
   })
@@ -154,29 +200,15 @@ describe('/blogs', () => {
   it('update blog', async () => {
     const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
 
-    const bodyUpdate0Name = {
-      name: 'new name max 15',
-    }
-    const bodyUpdate0Description = {
-      description: 'description max length 500',
-    }
-    const bodyUpdate0WebsiteUrl = {
-      websiteUrl: 'websiteUrl  max length 500',
+    const bodyUpdate0 = {
+      name: 'new2 name max15',
+      description: 'description2 max length 500',
+      websiteUrl: 'https://someurl2.com',
     }
 
     await superRequest
       .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
-      .send(bodyUpdate0Name)
-      .expect(204)
-
-    await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
-      .send(bodyUpdate0Description)
-      .expect(204)
-
-    await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
-      .send(bodyUpdate0WebsiteUrl)
+      .send(bodyUpdate0)
       .expect(204)
 
     const responseGetBlogsAfterUpdate0 = await superRequest.get(PATHS.BLOGS).expect(200)
@@ -184,31 +216,9 @@ describe('/blogs', () => {
     expect(responseGetBlogsAfterUpdate0.body[0]).toBeInstanceOf(Object)
 
     expect(responseGetBlogsAfterUpdate0.body[0].id).toBe(responseGetBlogs.body[0].id)
-    expect(responseGetBlogsAfterUpdate0.body[0].name).toBe(bodyUpdate0Name.name)
-    expect(responseGetBlogsAfterUpdate0.body[0].description).toBe(
-      bodyUpdate0Description.description,
-    )
-    expect(responseGetBlogsAfterUpdate0.body[0].websiteUrl).toBe(bodyUpdate0WebsiteUrl.websiteUrl)
-
-    const bodyUpdate7 = {
-      name: 'new2 name max15',
-      description: 'description2 max length 500',
-      websiteUrl: 'websiteUrl2 max length 500',
-    }
-
-    await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[7].id}`)
-      .send(bodyUpdate7)
-      .expect(204)
-
-    const responseGetBlogsAfterUpdate7 = await superRequest.get(PATHS.BLOGS).expect(200)
-
-    expect(responseGetBlogsAfterUpdate7.body[7]).toBeInstanceOf(Object)
-
-    expect(responseGetBlogsAfterUpdate7.body[7].id).toBe(responseGetBlogs.body[7].id)
-    expect(responseGetBlogsAfterUpdate7.body[7].name).toBe(bodyUpdate7.name)
-    expect(responseGetBlogsAfterUpdate7.body[7].description).toBe(bodyUpdate7.description)
-    expect(responseGetBlogsAfterUpdate7.body[7].websiteUrl).toBe(bodyUpdate7.websiteUrl)
+    expect(responseGetBlogsAfterUpdate0.body[0].name).toBe(bodyUpdate0.name)
+    expect(responseGetBlogsAfterUpdate0.body[0].description).toBe(bodyUpdate0.description)
+    expect(responseGetBlogsAfterUpdate0.body[0].websiteUrl).toBe(bodyUpdate0.websiteUrl)
   })
 
   it('send error for non-existing, empty, non-object body in update blog', async () => {
@@ -217,8 +227,8 @@ describe('/blogs', () => {
     const bodyError = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
       // description: 'description max length 500', // error message: description is required
-      websiteUrl: 'websiteUrl max length 500',
-      unexpectedKey: 'unexpectedValue', // error message: Unexpected key
+      websiteUrl: 'incorrect websiteUrl', // error message: websiteUrl incorrect format
+      unexpectedKey: 'unexpectedValue', // no error message
     }
 
     const responseUpdateBlogError = await superRequest
@@ -229,13 +239,21 @@ describe('/blogs', () => {
 
     expect(responseUpdateBlogError.body).toEqual({
       errorsMessages: [
-        {
-          field: 'unexpectedKey',
-          message: "unexpected key 'unexpectedKey' found",
-        },
+        // {
+        //   field: 'unexpectedKey',
+        //   message: "unexpected key 'unexpectedKey' found",
+        // },
         {
           message: 'name max length is 15',
           field: 'name',
+        },
+        {
+          field: 'description',
+          message: 'description is required',
+        },
+        {
+          field: 'websiteUrl',
+          message: 'websiteUrl incorrect format',
         },
       ],
     })

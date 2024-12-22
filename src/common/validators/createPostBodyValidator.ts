@@ -1,6 +1,6 @@
 import { CreatePostBody, OutputErrorsType } from '../../types'
 
-export const createPostRequestValidator = (body: CreatePostBody) => {
+export const createPostBodyValidator = (body: CreatePostBody) => {
   /** object for accumulating errors */
   const errors: OutputErrorsType = {
     errorsMessages: [],
@@ -15,28 +15,28 @@ export const createPostRequestValidator = (body: CreatePostBody) => {
     return errors
   }
 
-  const keys = Object.keys(body)
+  // const keys = Object.keys(body)
+  //
+  // // Check if body has at least one key
+  // if (keys.length === 0) {
+  //   errors.errorsMessages.push({
+  //     message: 'at least one field is required',
+  //     field: 'body',
+  //   })
+  //   return errors
+  // }
 
-  // Check if body has at least one key
-  if (keys.length === 0) {
-    errors.errorsMessages.push({
-      message: 'at least one field is required',
-      field: 'body',
-    })
-    return errors
-  }
-
-  const allowedKeys = ['title', 'shortDescription', 'content', 'blogId']
-
-  // Check for unexpected keys in the body
-  Object.keys(body).forEach((key) => {
-    if (!allowedKeys.includes(key)) {
-      errors.errorsMessages.push({
-        message: `unexpected key '${key}' found`,
-        field: key,
-      })
-    }
-  })
+  // const allowedKeys = ['title', 'shortDescription', 'content', 'blogId']
+  //
+  // // Check for unexpected keys in the body
+  // Object.keys(body).forEach((key) => {
+  //   if (!allowedKeys.includes(key)) {
+  //     errors.errorsMessages.push({
+  //       message: `unexpected key '${key}' found`,
+  //       field: key,
+  //     })
+  //   }
+  // })
 
   if (!body.title) {
     errors.errorsMessages.push({
@@ -58,7 +58,7 @@ export const createPostRequestValidator = (body: CreatePostBody) => {
   } else if (body.shortDescription.length > 100) {
     errors.errorsMessages.push({
       message: 'shortDescription max length is 100',
-      field: 'description',
+      field: 'shortDescription',
     })
   }
 

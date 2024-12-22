@@ -1,4 +1,4 @@
-export * from './createBlogRequestValidator'
+export * from './createBlogBodyValidator'
 export * from './updateBlogBodyValidator'
-export * from './createPostRequestValidator'
+export * from './createPostBodyValidator'
 export * from './updatePostRequestValidator'

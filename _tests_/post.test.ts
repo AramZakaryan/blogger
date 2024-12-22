@@ -51,6 +51,24 @@ describe('/posts', () => {
     expect(Object.keys(responseFindPost14.body).length).toBe(6)
   })
 
+  it('send error for non-existing post', async () => {
+    const paramsIdNonExisting = 'paramsNonExisting'
+
+    const responseFindPostError = await superRequest
+      .get(`${PATHS.POSTS}/${paramsIdNonExisting}`)
+      .expect(404)
+
+    expect(responseFindPostError.body).toBeInstanceOf(Object)
+    expect(responseFindPostError.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'post with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+  })
+
   it('create a post', async () => {
     const body = {
       title: 'title max length 30',
@@ -145,10 +163,10 @@ describe('/posts', () => {
 
     expect(responseCreatePostError.body).toEqual({
       errorsMessages: [
-        {
-          field: 'unexpectedKey',
-          message: "unexpected key 'unexpectedKey' found",
-        },
+        // {
+        //   field: 'unexpectedKey',
+        //   message: "unexpected key 'unexpectedKey' found",
+        // },
         {
           message: 'title max length is 30',
           field: 'title',
