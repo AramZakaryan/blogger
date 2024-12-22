@@ -1,14 +1,15 @@
 import router from 'express'
 import { postControllers } from '../controllers'
+import { headersValidator } from '../common/validators/headersValidator'
 
 export const postRouter = router()
 
-postRouter.get('/', postControllers.getPosts)
+postRouter.get('/', headersValidator, postControllers.getPosts)
 
-postRouter.get('/:id', postControllers.findPost)
+postRouter.get('/:id', headersValidator, postControllers.findPost)
 
-postRouter.post('/', postControllers.createPost)
+postRouter.post('/', headersValidator, postControllers.createPost)
 
-postRouter.put('/:id', postControllers.updatePost)
+postRouter.put('/:id', headersValidator, postControllers.updatePost)
 
-postRouter.delete('/:id', postControllers.deletePost)
+postRouter.delete('/:id', headersValidator, postControllers.deletePost)
