@@ -345,4 +345,29 @@ describe('/blogs', () => {
       ],
     })
   })
+
+  it('delete blog', async () => {
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+
+    const responseFindBlog = await superRequest
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .expect(200)
+
+    expect(responseFindBlog.body.id).toEqual(responseGetBlogs.body[0].id)
+
+    await superRequest.delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`).expect(204)
+
+    const responseFindBlogAfterDelete = await superRequest
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .expect(404)
+
+    expect(responseFindBlogAfterDelete.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'blog with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+  })
 })

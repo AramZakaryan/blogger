@@ -345,4 +345,28 @@ describe('/posts', () => {
       ],
     })
   })
+  it('delete post', async () => {
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+
+    const responseFindPost = await superRequest
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .expect(200)
+
+    expect(responseFindPost.body.id).toEqual(responseGetPosts.body[0].id)
+
+    await superRequest.delete(`${PATHS.POSTS}/${responseFindPost.body.id}`).expect(204)
+
+    const responseFindPostsAfterDelete = await superRequest
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
+      .expect(404)
+
+    expect(responseFindPostsAfterDelete.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'post with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+  })
 })

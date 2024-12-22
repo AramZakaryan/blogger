@@ -95,24 +95,13 @@ export const postControllers = {
   },
 
   deletePost: async (req: DeletePostRequest, res: DeletePostResponse) => {
-    const id = req.params.id
+    const params = req.params
+    const id = params.id
 
-    /** object for accumulating errors */
-    const errors: OutputErrorsType = {
-      errorsMessages: [],
-    }
+    const errorsParams = await findPostParamsValidator(params)
 
-    // check if a post with the provided id (received as a parameter) exists
-    const post = await postService.findPost(id)
-    if (!post) {
-      errors.errorsMessages.push({
-        message: `post with provided id does not exist`,
-        field: 'params',
-      })
-    }
-
-    if (errors.errorsMessages.length) {
-      res.status(400).json(errors)
+    if (errorsParams.errorsMessages.length) {
+      res.status(404).json(errorsParams)
       return
     }
 
