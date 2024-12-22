@@ -6,12 +6,12 @@ import {
   FindPostResponse,
   GetPostsRequest,
   GetPostsResponse,
+  OutputErrorsType,
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
-import { createPostRequestValidator } from '../common/validators/createPostRequestValidator'
-import { updateBlogRequestValidator } from '../common'
-import { updatePostRequestValidator } from '../common/validators/updatePostRequestValidator'
+import { createPostRequestValidator } from '../common'
+import { updatePostRequestValidator } from '../common'
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
@@ -19,9 +19,29 @@ export const postControllers = {
     res.json(posts)
   },
 
-  findPost: async (req: FindPostRequest, res: FindPostResponse) => {
+  findPost: async (req: FindPostRequest, res: FindPostResponse): Promise<void> => {
     const id = req.params.id
+
+    /** object for accumulating errors */
+    const errors: OutputErrorsType = {
+      errorsMessages: [],
+    }
+
     const post = await postService.findPost(id)
+
+    // check if a post with the provided id (received as a parameter) exists
+    if (!post) {
+      errors.errorsMessages.push({
+        message: `post with provided id does not exist`,
+        field: 'params',
+      })
+    }
+
+    if (errors.errorsMessages.length) {
+      res.status(404).json(errors)
+      return
+    }
+
     res.json(post)
   },
 
@@ -89,7 +109,18 @@ export const postControllers = {
 
     const updatedPost = await postService.updatePost(id, body)
 
-    res.sendStatus(204)
+    if (updatedPost) {
+      res.sendStatus(204)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
   // deletePost: async (req: Request, res: Response) => {

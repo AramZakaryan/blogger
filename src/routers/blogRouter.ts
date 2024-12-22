@@ -10,5 +10,6 @@ blogRouter.get('/:id', blogControllers.findBlog)
 blogRouter.post('/', blogControllers.createBlog)
 
 blogRouter.put('/:id', blogControllers.updateBlog)
-//
-// blogRouter.delete('/:id', blogControllers.deleteBlog)
+
+blogRouter.delete('/:id', blogControllers.deleteBlog)
+

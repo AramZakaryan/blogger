@@ -2,10 +2,13 @@ import { blogService } from '../services'
 import {
   CreateBlogRequest,
   CreateBlogResponse,
+  DeleteBlogRequest,
+  DeleteBlogResponse,
   FindBlogRequest,
   FindBlogResponse,
   GetBlogsRequest,
   GetBlogsResponse,
+  OutputErrorsType,
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
@@ -21,7 +24,25 @@ export const blogControllers = {
   findBlog: async (req: FindBlogRequest, res: FindBlogResponse): Promise<void> => {
     const id = req.params.id
 
+    /** object for accumulating errors */
+    const errors: OutputErrorsType = {
+      errorsMessages: [],
+    }
+
     const blog = await blogService.findBlog(id)
+
+    // check if a blog with the provided id (received as a parameter) exists
+    if (!blog) {
+      errors.errorsMessages.push({
+        message: `blog with provided id does not exist`,
+        field: 'params',
+      })
+    }
+
+    if (errors.errorsMessages.length) {
+      res.status(404).json(errors)
+      return
+    }
 
     res.json(blog)
   },
@@ -63,11 +84,56 @@ export const blogControllers = {
 
     const updatedBlog = await blogService.updateBlog(id, body)
 
-    res.sendStatus(204)
+    if (updatedBlog) {
+      res.sendStatus(204)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
-  // deleteBlog: async (req: Request, res: Response) => {
-  //   const id = req.params.id
-  //   res.json(`this is blogControllers.deleteBlog, id is ${id}`)
-  // },
+  deleteBlog: async (req: DeleteBlogRequest, res: DeleteBlogResponse): Promise<void> => {
+    const params = req.params
+    const id = params.id
+
+    /** object for accumulating errors */
+    const errors: OutputErrorsType = {
+      errorsMessages: [],
+    }
+
+    // check if a blog with the provided id (received as a parameter) exists
+    const blog = await blogService.findBlog(id)
+    if (!blog) {
+      errors.errorsMessages.push({
+        message: `blog with provided id does not exist`,
+        field: 'params',
+      })
+    }
+
+    if (errors.errorsMessages.length) {
+      res.status(400).json(errors)
+      return
+    }
+
+    const deletedBlog = await blogService.deleteBlog(id)
+
+    if (deletedBlog) {
+      res.sendStatus(204)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
+  },
 }

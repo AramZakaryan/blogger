@@ -34,4 +34,15 @@ export const blogService = {
 
     return db.blogs[blogIndex]
   },
+  deleteBlog: async (id: string): Promise<BlogType | undefined> => {
+    const blogIndex = db.blogs.findIndex((blog) => blog.id === id)
+
+    let blog
+
+    if (blogIndex !== -1) {
+      ;[blog] = db.blogs.splice(blogIndex, 1)
+    }
+
+    return blog
+  },
 }
