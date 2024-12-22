@@ -2,6 +2,8 @@ import { blogService, postService } from '../services'
 import {
   CreatePostRequest,
   CreatePostResponse,
+  DeletePostRequest,
+  DeletePostResponse,
   FindPostRequest,
   FindPostResponse,
   GetPostsRequest,
@@ -123,8 +125,41 @@ export const postControllers = {
     }
   },
 
-  // deletePost: async (req: Request, res: Response) => {
-  //   const id = req.params.id
-  //   res.json(`this is postControllers.deletePost, id is ${id}`)
-  // },
+  deletePost: async (req: DeletePostRequest, res: DeletePostResponse) => {
+    const id = req.params.id
+
+    /** object for accumulating errors */
+    const errors: OutputErrorsType = {
+      errorsMessages: [],
+    }
+
+    // check if a post with the provided id (received as a parameter) exists
+    const post = await postService.findPost(id)
+    if (!post) {
+      errors.errorsMessages.push({
+        message: `post with provided id does not exist`,
+        field: 'params',
+      })
+    }
+
+    if (errors.errorsMessages.length) {
+      res.status(400).json(errors)
+      return
+    }
+
+    const deletedPost = await postService.deletePost(id)
+
+    if (deletedPost) {
+      res.sendStatus(204)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
+  },
 }

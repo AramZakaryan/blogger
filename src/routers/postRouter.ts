@@ -11,4 +11,4 @@ postRouter.post('/', postControllers.createPost)
 
 postRouter.put('/:id', postControllers.updatePost)
 
-// postRouter.delete('/:id', postControllers.deletePost)
+postRouter.delete('/:id', postControllers.deletePost)

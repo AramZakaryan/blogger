@@ -9,3 +9,5 @@ export type FindPostResponse = Response<PostType | OutputErrorsType>
 export type CreatePostResponse = Response<PostType | OutputErrorsType>
 
 export type UpdatePostResponse = Response<void | OutputErrorsType>
+
+export type DeletePostResponse = Response<void | OutputErrorsType>

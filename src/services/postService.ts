@@ -38,4 +38,16 @@ export const postService = {
 
     return db.posts[postIndex]
   },
+
+  deletePost: async (id: string): Promise<PostType | undefined> => {
+    const postIndex = db.posts.findIndex((post) => post.id === id)
+
+    let post
+
+    if (postIndex !== -1) {
+      ;[post] = db.posts.splice(postIndex, 1)
+    }
+
+    return post
+  },
 }
