@@ -345,6 +345,28 @@ describe('/posts', () => {
       ],
     })
   })
+
+  it('send error for non-existing params in update post', async () => {
+    const paramsIdNonExisting = 'paramsNonExisting'
+
+    const bodyUpdateError = {}
+
+    const responseUpdatePostError = await superRequest
+      .put(`${PATHS.POSTS}/${paramsIdNonExisting}`)
+      .send(bodyUpdateError)
+      .expect('Content-Type', /json/)
+      .expect(404)
+
+    expect(responseUpdatePostError.body).toEqual({
+      errorsMessages: [
+        {
+          field: 'params',
+          message: 'post with provided id does not exist',
+        },
+      ],
+    })
+  })
+
   it('delete post', async () => {
     const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
 

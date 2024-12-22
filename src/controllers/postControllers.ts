@@ -65,6 +65,13 @@ export const postControllers = {
     const id = params.id
     const body = req.body
 
+    const errorsParams = await findPostParamsValidator(params)
+
+    if (errorsParams.errorsMessages.length) {
+      res.status(404).json(errorsParams)
+      return
+    }
+
     const errorsBody = updatePostBodyValidator(body)
 
     const errorsBlogId = await findBlogIdValidator(body.blogId)
