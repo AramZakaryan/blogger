@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 export const headersValidator = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.headers) {
+  if (!req.headers['Authorization']) {
   // if (req.headers['Authorization'] !== 'Basic YWRtaW46cXdlcnR5') {
     res.status(401).json({
       errorsMessages: [
