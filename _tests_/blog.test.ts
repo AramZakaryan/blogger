@@ -198,14 +198,8 @@ describe('/blogs', () => {
 
     const bodyErrorV2 = {
       name: '       ', // error message: name is empty
-      description:
-        'description very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ', // error message: description max length is 500
-      websiteUrl:
-        'https://someurlveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryLong.com', // error message: websiteUrl max length is 100
+      description: 'description'.repeat(500), // error message: description max length is 500
+      websiteUrl: 'https://' + 'someUrl'.repeat(100) + '.com', // error message: websiteUrl max length is 100
     }
 
     const responseCreateBlogErrorV2 = await superRequest
@@ -299,14 +293,8 @@ describe('/blogs', () => {
 
     const bodyErrorV2 = {
       name: '       ', // error message: name is empty
-      description:
-        'description very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ' +
-        'very very very very very very very very very very very very very very very very very very very very ', // error message: description max length is 500
-      websiteUrl:
-        'https://someurlveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryLong.com', // error message: websiteUrl max length is 100
+      description: 'description'.repeat(500), // error message: description max length is 500
+      websiteUrl: 'https://' + 'someUrl'.repeat(100) + '.com', // error message: websiteUrl max length is 100
     }
 
     const responseUpdateBlogErrorV2 = await superRequest
@@ -335,7 +323,6 @@ describe('/blogs', () => {
         },
       ],
     })
-
   })
 
   it('send error for non-existing params in update blog', async () => {

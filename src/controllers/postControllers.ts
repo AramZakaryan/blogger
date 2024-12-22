@@ -13,7 +13,7 @@ import {
   UpdatePostResponse,
 } from '../types'
 import { createPostBodyValidator } from '../common'
-import { updatePostRequestValidator } from '../common'
+import { updatePostBodyValidator } from '../common'
 import { findBlogParamsValidator } from '../common/validators/findBlogParamsValidator'
 import { findPostParamsValidator } from '../common/validators/findPostParamsValidator'
 import { findBlogIdValidator } from '../common/validators/findBlogIdValidator'
@@ -65,26 +65,12 @@ export const postControllers = {
     const id = params.id
     const body = req.body
 
-    const errors = updatePostRequestValidator(params, body)
+    const errorsBody = updatePostBodyValidator(body)
 
-    // check if a post with the provided id (received as a parameter) exists
-    const postId = await postService.findPost(id)
-    if (!postId) {
-      errors.errorsMessages.push({
-        message: `post with provided id does not exist`,
-        field: 'params',
-      })
-    }
+    const errorsBlogId = await findBlogIdValidator(body.blogId)
 
-    // check if a blog with the provided id (received as a parameter) exists
-    if (body.blogId) {
-      const blog = await blogService.findBlog(body.blogId)
-      if (!blog) {
-        errors.errorsMessages.push({
-          message: `blog with provided id does not exist`,
-          field: 'blogId',
-        })
-      }
+    const errors = {
+      errorsMessages: [...errorsBody.errorsMessages, ...errorsBlogId.errorsMessages],
     }
 
     if (errors.errorsMessages.length) {

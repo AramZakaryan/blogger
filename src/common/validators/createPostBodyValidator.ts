@@ -43,6 +43,11 @@ export const createPostBodyValidator = (body: CreatePostBody) => {
       message: 'title is required',
       field: 'title',
     })
+  } else if (!body.title.trim().length) {
+    errors.errorsMessages.push({
+      message: 'title is empty',
+      field: 'title',
+    })
   } else if (body.title.length > 30) {
     errors.errorsMessages.push({
       message: 'title max length is 30',
@@ -55,6 +60,11 @@ export const createPostBodyValidator = (body: CreatePostBody) => {
       message: 'shortDescription is required',
       field: 'shortDescription',
     })
+  } else if (!body.shortDescription.trim().length) {
+    errors.errorsMessages.push({
+      message: 'shortDescription is empty',
+      field: 'shortDescription',
+    })
   } else if (body.shortDescription.length > 100) {
     errors.errorsMessages.push({
       message: 'shortDescription max length is 100',
@@ -65,6 +75,11 @@ export const createPostBodyValidator = (body: CreatePostBody) => {
   if (!body.content) {
     errors.errorsMessages.push({
       message: 'content is required',
+      field: 'content',
+    })
+  } else if (!body.content.trim().length) {
+    errors.errorsMessages.push({
+      message: 'content is empty',
       field: 'content',
     })
   } else if (body.content.length > 1000) {

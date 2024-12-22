@@ -6,6 +6,6 @@ export type CreatePostBody = Omit<PostType, 'id' | 'blogName'>
 
 export type UpdatePostParams = FindPostParams
 
-export type UpdatePostBody = Partial<CreatePostBody>
+export type UpdatePostBody = CreatePostBody
 
 export type DeletePostParams = FindPostParams

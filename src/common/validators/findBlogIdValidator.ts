@@ -8,18 +8,22 @@ import { blogService } from '../../services'
  * postControllers.deletePost
  */
 export const findBlogIdValidator = async (id: FindBlogParams['id']) => {
+
+
   /** object for accumulating errors */
   const errors: OutputErrorsType = {
     errorsMessages: [],
   }
 
-  // Check if blog id as uri parameter exists
-  if (id === null || id === undefined) {
-    errors.errorsMessages.push({
-      message: 'blog id as URI parameter is required',
-      field: 'blogId',
-    })
-  }
+  if (!id) return errors // return object with empty array of errorsMessages
+
+  // // Check if blog id as uri parameter exists
+  // if (id === null || id === undefined) {
+  //   errors.errorsMessages.push({
+  //     message: 'blog id as URI parameter is required',
+  //     field: 'blogId',
+  //   })
+  // }
 
   const blog = await blogService.findBlog(id)
 

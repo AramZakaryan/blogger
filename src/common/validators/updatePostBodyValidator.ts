@@ -1,22 +1,9 @@
 import { CreatePostBody, OutputErrorsType, UpdatePostBody, UpdatePostParams } from '../../types'
 
-export const updatePostRequestValidator = (params: UpdatePostParams, body: UpdatePostBody) => {
+export const updatePostBodyValidator = (body: UpdatePostBody) => {
   /** object for accumulating errors */
   const errors: OutputErrorsType = {
     errorsMessages: [],
-  }
-
-  // Check if post id as uri parameter exists
-  if (
-    Object.getPrototypeOf(params) !== Object.prototype ||
-    params === null ||
-    params.id === null ||
-    params.id === undefined
-  ) {
-    errors.errorsMessages.push({
-      message: 'post id as URI parameter is required',
-      field: 'params',
-    })
   }
 
   // Check if body is an object
@@ -57,6 +44,11 @@ export const updatePostRequestValidator = (params: UpdatePostParams, body: Updat
       message: 'title is required',
       field: 'title',
     })
+  } else if (!body.title.trim().length) {
+    errors.errorsMessages.push({
+      message: 'title is empty',
+      field: 'title',
+    })
   } else if (body.title.length > 30) {
     errors.errorsMessages.push({
       message: 'title max length is 30',
@@ -87,6 +79,11 @@ export const updatePostRequestValidator = (params: UpdatePostParams, body: Updat
       message: 'shortDescription is required',
       field: 'shortDescription',
     })
+  } else if (!body.shortDescription.trim().length) {
+    errors.errorsMessages.push({
+      message: 'shortDescription is empty',
+      field: 'shortDescription',
+    })
   } else if (body.shortDescription.length > 100) {
     errors.errorsMessages.push({
       message: 'shortDescription max length is 100',
@@ -115,6 +112,11 @@ export const updatePostRequestValidator = (params: UpdatePostParams, body: Updat
   if (!body.content) {
     errors.errorsMessages.push({
       message: 'content is required',
+      field: 'content',
+    })
+  } else if (!body.content.trim().length) {
+    errors.errorsMessages.push({
+      message: 'content is empty',
       field: 'content',
     })
   } else if (body.content.length > 1000) {
