@@ -12,7 +12,8 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { createBlogRequestValidator, updateBlogRequestValidator } from '../common'
+import { createBlogRequestValidator, updateBlogBodyValidator } from '../common'
+import { findBlogParamsValidator } from '../common/validators/findBlogParamsValidator'
 
 export const blogControllers = {
   getBlogs: async (req: GetBlogsRequest, res: GetBlogsResponse): Promise<void> => {
@@ -22,27 +23,17 @@ export const blogControllers = {
   },
 
   findBlog: async (req: FindBlogRequest, res: FindBlogResponse): Promise<void> => {
-    const id = req.params.id
+    const params = req.params
+    const id = params.id
 
-    /** object for accumulating errors */
-    const errors: OutputErrorsType = {
-      errorsMessages: [],
-    }
+    const errorsParams = await findBlogParamsValidator(params)
 
-    const blog = await blogService.findBlog(id)
-
-    // check if a blog with the provided id (received as a parameter) exists
-    if (!blog) {
-      errors.errorsMessages.push({
-        message: `blog with provided id does not exist`,
-        field: 'params',
-      })
-    }
-
-    if (errors.errorsMessages.length) {
-      res.status(404).json(errors)
+    if (errorsParams.errorsMessages.length) {
+      res.status(404).json(errorsParams)
       return
     }
+
+    const blog = await blogService.findBlog(params.id)
 
     res.json(blog)
   },
@@ -66,19 +57,17 @@ export const blogControllers = {
     const id = params.id
     const body = req.body
 
-    const errors = updateBlogRequestValidator(params, body)
+    const errorsParams = await findBlogParamsValidator(params)
 
-    // check if a blog with the provided id (received as a parameter) exists
-    const blog = await blogService.findBlog(id)
-    if (!blog) {
-      errors.errorsMessages.push({
-        message: `blog with provided id does not exist`,
-        field: 'params',
-      })
+    if (errorsParams.errorsMessages.length) {
+      res.status(404).json(errorsParams)
+      return
     }
 
-    if (errors.errorsMessages.length) {
-      res.status(400).json(errors)
+    const errorsBody = updateBlogBodyValidator(body)
+
+    if (errorsBody.errorsMessages.length) {
+      res.status(400).json(errorsBody)
       return
     }
 
@@ -102,22 +91,10 @@ export const blogControllers = {
     const params = req.params
     const id = params.id
 
-    /** object for accumulating errors */
-    const errors: OutputErrorsType = {
-      errorsMessages: [],
-    }
+    const errorsParams = await findBlogParamsValidator(params)
 
-    // check if a blog with the provided id (received as a parameter) exists
-    const blog = await blogService.findBlog(id)
-    if (!blog) {
-      errors.errorsMessages.push({
-        message: `blog with provided id does not exist`,
-        field: 'params',
-      })
-    }
-
-    if (errors.errorsMessages.length) {
-      res.status(400).json(errors)
+    if (errorsParams.errorsMessages.length) {
+      res.status(404).json(errorsParams)
       return
     }
 

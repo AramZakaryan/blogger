@@ -1,26 +1,13 @@
 import { OutputErrorsType, UpdateBlogBody, UpdateBlogParams } from '../../types'
 
-export const updateBlogRequestValidator = (params: UpdateBlogParams, body: UpdateBlogBody) => {
+export const updateBlogBodyValidator = (body: UpdateBlogBody) => {
   /** object for accumulating errors */
   const errors: OutputErrorsType = {
     errorsMessages: [],
   }
 
-  // Check if blog id as uri parameter exists
-  if (
-    Object.getPrototypeOf(params) !== Object.prototype ||
-    params === null ||
-    params.id === null ||
-    params.id === undefined
-  ) {
-    errors.errorsMessages.push({
-      message: 'blog id as URI parameter is required',
-      field: 'params',
-    })
-  }
-
   // Check if body is an object
-  if (Object.getPrototypeOf(body) !== Object.prototype || body === null ) {
+  if (Object.getPrototypeOf(body) !== Object.prototype || body === null) {
     errors.errorsMessages.push({
       message: 'body must be an object',
       field: 'body',

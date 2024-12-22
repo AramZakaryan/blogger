@@ -240,4 +240,24 @@ describe('/blogs', () => {
       ],
     })
   })
+  it('send error for non-existing params in update blog', async () => {
+    const paramsIdNonExisting = 'paramsNonExisting'
+
+    const bodyUpdateError = {}
+
+    const responseUpdateBlogError = await superRequest
+      .put(`${PATHS.BLOGS}/${paramsIdNonExisting}`)
+      .send(bodyUpdateError)
+      .expect('Content-Type', /json/)
+      .expect(404)
+
+    expect(responseUpdateBlogError.body).toEqual({
+      errorsMessages: [
+        {
+          field: 'params',
+          message: 'blog with provided id does not exist',
+        },
+      ],
+    })
+  })
 })
