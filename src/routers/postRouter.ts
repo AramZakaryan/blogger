@@ -4,9 +4,9 @@ import { headersValidator } from '../common/validators/headersValidator'
 
 export const postRouter = router()
 
-postRouter.get('/', headersValidator, postControllers.getPosts)
+postRouter.get('/', postControllers.getPosts)
 
-postRouter.get('/:id', headersValidator, postControllers.findPost)
+postRouter.get('/:id', postControllers.findPost)
 
 postRouter.post('/', headersValidator, postControllers.createPost)
 
