@@ -63,6 +63,67 @@ describe('/blogs', () => {
     })
   })
 
+  it('send error for non-existing credentials (header) in create, update, delete blog', async () => {
+    const bodyCreate = {
+      name: 'name max len 15',
+      description: 'description max length 500',
+      websiteUrl: 'https://someurl.com',
+    }
+
+    const responseCreateBlog = await superRequest
+      .post(PATHS.BLOGS)
+      .set('x-custom-header', '') // setting headers
+      .send(bodyCreate)
+      .expect('Content-Type', /json/)
+      .expect(401)
+
+    expect(responseCreateBlog.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+
+    const bodyUpdate0 = {
+      name: 'new2 name max15',
+      description: 'description2 max length 500',
+      websiteUrl: 'https://someurl2.com',
+    }
+
+    const responseUpdateBlog = await superRequest
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .set('x-custom-header', '') // setting headers
+      .send(bodyUpdate0)
+      .expect(401)
+
+    expect(responseUpdateBlog.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+
+    const responseDeleteBlog = await superRequest
+      .delete(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .set('x-custom-header', '') // setting headers
+      .expect(401)
+
+    expect(responseDeleteBlog.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+  })
+
   it('create a blog', async () => {
     const body = {
       name: 'name max len 15',

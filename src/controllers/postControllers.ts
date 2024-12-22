@@ -68,7 +68,7 @@ export const postControllers = {
     const errorsParams = await findPostParamsValidator(params)
 
     if (errorsParams.errorsMessages.length) {
-      res.status(404).json(errorsParams)
+      res.status(403).json(errorsParams)
       return
     }
 
