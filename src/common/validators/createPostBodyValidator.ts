@@ -1,100 +1,33 @@
-import { CreatePostBody, OutputErrorsType } from '../../types'
+import { body } from 'express-validator'
 
-export const createPostBodyValidator = (body: CreatePostBody) => {
-  /** object for accumulating errors */
-  const errors: OutputErrorsType = {
-    errorsMessages: [],
-  }
-
-  // Check if body is an object
-  if (Object.getPrototypeOf(body) !== Object.prototype || body === null) {
-    errors.errorsMessages.push({
-      message: 'body must be an object',
-      field: 'body',
-    })
-    return errors
-  }
-
-  // const keys = Object.keys(body)
-  //
-  // // Check if body has at least one key
-  // if (keys.length === 0) {
-  //   errors.errorsMessages.push({
-  //     message: 'at least one field is required',
-  //     field: 'body',
-  //   })
-  //   return errors
-  // }
-
-  // const allowedKeys = ['title', 'shortDescription', 'content', 'blogId']
-  //
-  // // Check for unexpected keys in the body
-  // Object.keys(body).forEach((key) => {
-  //   if (!allowedKeys.includes(key)) {
-  //     errors.errorsMessages.push({
-  //       message: `unexpected key '${key}' found`,
-  //       field: key,
-  //     })
-  //   }
-  // })
-
-  if (!body.title) {
-    errors.errorsMessages.push({
-      message: 'title is required',
-      field: 'title',
-    })
-  } else if (!body.title.trim().length) {
-    errors.errorsMessages.push({
-      message: 'title is empty',
-      field: 'title',
-    })
-  } else if (body.title.length > 30) {
-    errors.errorsMessages.push({
-      message: 'title max length is 30',
-      field: 'title',
-    })
-  }
-
-  if (!body.shortDescription) {
-    errors.errorsMessages.push({
-      message: 'shortDescription is required',
-      field: 'shortDescription',
-    })
-  } else if (!body.shortDescription.trim().length) {
-    errors.errorsMessages.push({
-      message: 'shortDescription is empty',
-      field: 'shortDescription',
-    })
-  } else if (body.shortDescription.length > 100) {
-    errors.errorsMessages.push({
-      message: 'shortDescription max length is 100',
-      field: 'shortDescription',
-    })
-  }
-
-  if (!body.content) {
-    errors.errorsMessages.push({
-      message: 'content is required',
-      field: 'content',
-    })
-  } else if (!body.content.trim().length) {
-    errors.errorsMessages.push({
-      message: 'content is empty',
-      field: 'content',
-    })
-  } else if (body.content.length > 1000) {
-    errors.errorsMessages.push({
-      message: 'content max length is 1000',
-      field: 'content',
-    })
-  }
-
-  if (!body.blogId) {
-    errors.errorsMessages.push({
-      message: 'blogId is required',
-      field: 'blogId',
-    })
-  }
-
-  return errors
-}
+export const createPostBodyValidator = [
+  body('title')
+    .isString()
+    .withMessage({ message: 'title must be a string', field: 'title' })
+    .trim()
+    .notEmpty()
+    .withMessage({ message: 'title is required', field: 'title'})
+    .isLength({ max: 30 })
+    .withMessage({ message: 'title max length is 30', field: 'title'}),
+  body('shortDescription')
+    .isString()
+    .withMessage({ message: 'shortDescription must be a string', field: 'shortDescription' })
+    .trim()
+    .notEmpty()
+    .withMessage({ message: 'shortDescription is required', field: 'shortDescription' })
+    .isLength({ max: 100 })
+    .withMessage({ message: 'shortDescription max length is 100', field: 'shortDescription' }),
+  body('content')
+    .isString()
+    .withMessage({ message: 'content must be a string', field: 'content'})
+    .trim()
+    .notEmpty()
+    .withMessage({ message: 'content is required', field: 'content'})
+    .isLength({ max: 1000 })
+    .withMessage({ message: 'content max length is 1000', field: 'content'}),
+  body('blogId')
+    .isString()
+    .withMessage({ message: 'blogId must be a string', field: 'blogId'})
+    .notEmpty()
+    .withMessage({ message: 'blogId is required', field: 'blogId'}),
+]

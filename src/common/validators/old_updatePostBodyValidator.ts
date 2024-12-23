@@ -1,6 +1,6 @@
 import { CreatePostBody, OutputErrorsType, UpdatePostBody, UpdatePostParams } from '../../types'
 
-export const updatePostBodyValidator = (body: UpdatePostBody) => {
+export const old_updatePostBodyValidator = (body: UpdatePostBody) => {
   /** object for accumulating errors */
   const errors: OutputErrorsType = {
     errorsMessages: [],

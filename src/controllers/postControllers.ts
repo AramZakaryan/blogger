@@ -12,8 +12,8 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
-import { createPostBodyValidator } from '../common'
-import { updatePostBodyValidator } from '../common'
+import { old_createPostBodyValidator } from '../common'
+import { old_updatePostBodyValidator } from '../common'
 import { findBlogParamsValidator } from '../common/validators/findBlogParamsValidator'
 import { findPostParamsValidator } from '../common/validators/findPostParamsValidator'
 import { findBlogIdValidator } from '../common/validators/findBlogIdValidator'
@@ -42,7 +42,7 @@ export const postControllers = {
   createPost: async (req: CreatePostRequest, res: CreatePostResponse) => {
     const body = req.body
 
-    const errorsBody = createPostBodyValidator(body)
+    const errorsBody = old_createPostBodyValidator(body)
 
     const errorsBlogId = await findBlogIdValidator(body.blogId)
 
@@ -72,7 +72,7 @@ export const postControllers = {
       return
     }
 
-    const errorsBody = updatePostBodyValidator(body)
+    const errorsBody = old_updatePostBodyValidator(body)
 
     const errorsBlogId = await findBlogIdValidator(body.blogId)
 

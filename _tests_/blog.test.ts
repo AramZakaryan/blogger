@@ -146,36 +146,7 @@ describe('/blogs', () => {
     expect(responseCreateBlog.body.websiteUrl).toBe(body.websiteUrl)
   })
 
-  it('send error for non-existing, empty, non-object body in create blog', async () => {
-    const bodyNonExisting = undefined
-
-    const responseCreateBlogToBodyNonExisting = await superRequest
-      .post(PATHS.BLOGS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyNonExisting)
-      .expect('Content-Type', /json/)
-      .expect(400)
-
-    expect(responseCreateBlogToBodyNonExisting.body).toEqual({
-      errorsMessages: [
-        // {
-        //   message: 'at least one field is required',
-        //   field: 'body',
-        // },
-        {
-          message: 'name is required',
-          field: 'name',
-        },
-        {
-          message: 'description is required',
-          field: 'description',
-        },
-        {
-          message: 'websiteUrl is required',
-          field: 'websiteUrl',
-        },
-      ],
-    })
+  it('send error for empty, non-object body in create blog', async () => {
 
     const bodyEmpty = {}
 
@@ -188,10 +159,6 @@ describe('/blogs', () => {
 
     expect(responseCreateBlogToBodyEmpty.body).toEqual({
       errorsMessages: [
-        // {
-        //   message: 'at least one field is required',
-        //   field: 'body',
-        // },
         {
           message: 'name is required',
           field: 'name',
@@ -219,8 +186,16 @@ describe('/blogs', () => {
     expect(responseCreateBlogToyBodyArray.body).toEqual({
       errorsMessages: [
         {
-          message: 'body must be an object',
-          field: 'body',
+          message: 'name is required',
+          field: 'name',
+        },
+        {
+          message: 'description is required',
+          field: 'description',
+        },
+        {
+          message: 'websiteUrl is required',
+          field: 'websiteUrl',
         },
       ],
     })
@@ -243,10 +218,6 @@ describe('/blogs', () => {
 
     expect(responseCreateBlogErrorV1.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
           message: 'name max length is 15',
           field: 'name',
@@ -277,12 +248,8 @@ describe('/blogs', () => {
 
     expect(responseCreateBlogErrorV2.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
-          message: 'name is empty',
+          message: 'name is required',
           field: 'name',
         },
         {
@@ -341,10 +308,6 @@ describe('/blogs', () => {
 
     expect(responseUpdateBlogErrorV1.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
           message: 'name max length is 15',
           field: 'name',
@@ -375,10 +338,6 @@ describe('/blogs', () => {
 
     expect(responseUpdateBlogErrorV2.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
           message: 'name is empty',
           field: 'name',

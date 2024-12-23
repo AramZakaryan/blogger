@@ -12,7 +12,7 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { createBlogBodyValidator, updateBlogBodyValidator } from '../common'
+import { old_createBlogBodyValidator, old_updateBlogBodyValidator } from '../common'
 import { findBlogParamsValidator } from '../common/validators/findBlogParamsValidator'
 
 export const blogControllers = {
@@ -39,7 +39,7 @@ export const blogControllers = {
   },
 
   createBlog: async (req: CreateBlogRequest, res: CreateBlogResponse): Promise<void> => {
-    const errors = createBlogBodyValidator(req.body)
+    const errors = old_createBlogBodyValidator(req.body)
     if (errors.errorsMessages.length) {
       res.status(400).json(errors)
       return
@@ -64,7 +64,7 @@ export const blogControllers = {
       return
     }
 
-    const errorsBody = updateBlogBodyValidator(body)
+    const errorsBody = old_updateBlogBodyValidator(body)
 
     if (errorsBody.errorsMessages.length) {
       res.status(400).json(errorsBody)
