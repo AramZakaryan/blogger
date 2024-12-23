@@ -147,6 +147,31 @@ describe('/blogs', () => {
   })
 
   it('send error for empty, non-object body in create blog', async () => {
+    const bodyNonExisting = undefined
+
+    const responseCreateBlogToBodyNonExisting = await superRequest
+      .post(PATHS.BLOGS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(bodyNonExisting)
+      .expect('Content-Type', /json/)
+      .expect(400)
+
+    expect(responseCreateBlogToBodyNonExisting.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'name is required',
+          field: 'name',
+        },
+        {
+          message: 'description is required',
+          field: 'description',
+        },
+        {
+          message: 'websiteUrl is required',
+          field: 'websiteUrl',
+        },
+      ],
+    })
 
     const bodyEmpty = {}
 
@@ -385,7 +410,8 @@ describe('/blogs', () => {
 
     expect(responseFindBlog.body.id).toEqual(responseGetBlogs.body[0].id)
 
-    await superRequest.delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`)
+    await superRequest
+      .delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .expect(204)
 

@@ -23,7 +23,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
       ],
     })
   } else {
-    // Not a JSON parse error, let other error handlers (or default) handle it
+    // Not a JSON parse error, let other error utils (or default) handle it
     next(err)
   }
 })

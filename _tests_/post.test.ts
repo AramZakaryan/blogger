@@ -167,10 +167,6 @@ describe('/posts', () => {
 
     expect(responseCreatePostToBodyNonExisting.body).toEqual({
       errorsMessages: [
-        // {
-        //   message: 'at least one field is required',
-        //   field: 'body',
-        // },
         {
           message: 'title is required',
           field: 'title',
@@ -201,10 +197,6 @@ describe('/posts', () => {
 
     expect(responseCreatePostToBodyEmpty.body).toEqual({
       errorsMessages: [
-        // {
-        //   message: 'at least one field is required',
-        //   field: 'body',
-        // },
         {
           message: 'title is required',
           field: 'title',
@@ -236,8 +228,20 @@ describe('/posts', () => {
     expect(responseCreatePostToyBodyArray.body).toEqual({
       errorsMessages: [
         {
-          message: 'body must be an object',
-          field: 'body',
+          message: 'title is required',
+          field: 'title',
+        },
+        {
+          message: 'shortDescription is required',
+          field: 'shortDescription',
+        },
+        {
+          message: 'content is required',
+          field: 'content',
+        },
+        {
+          message: 'blogId is required',
+          field: 'blogId',
         },
       ],
     })
@@ -261,10 +265,6 @@ describe('/posts', () => {
 
     expect(responseCreatePostErrorV1.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
           message: 'title max length is 30',
           field: 'title',
@@ -295,12 +295,8 @@ describe('/posts', () => {
 
     expect(responseCreatePostErrorV2.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
-          message: 'title is empty',
+          message: 'title is required',
           field: 'title',
         },
         {
@@ -365,10 +361,6 @@ describe('/posts', () => {
 
     expect(responseUpdatePostErrorV1.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
           message: 'title max length is 30',
           field: 'title',
@@ -400,12 +392,8 @@ describe('/posts', () => {
 
     expect(responseUpdatePostErrorV2.body).toEqual({
       errorsMessages: [
-        // {
-        //   field: 'unexpectedKey',
-        //   message: "unexpected key 'unexpectedKey' found",
-        // },
         {
-          message: 'title is empty',
+          message: 'title is required',
           field: 'title',
         },
         {
@@ -433,6 +421,22 @@ describe('/posts', () => {
         {
           field: 'params',
           message: 'post with provided id does not exist',
+        },
+        {
+          message: 'title is required',
+          field: 'title',
+        },
+        {
+          message: 'shortDescription is required',
+          field: 'shortDescription',
+        },
+        {
+          message: 'content is required',
+          field: 'content',
+        },
+        {
+          message: 'blogId is required',
+          field: 'blogId',
         },
       ],
     })

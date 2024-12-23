@@ -1,18 +1,26 @@
 import { Request, Response, NextFunction } from 'express'
 import { validationResult, ValidationError } from 'express-validator'
 import { OutputErrorsType } from '../../types'
+import { toObjectIfJson } from '../utils/toObjectIfJson'
 
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
+  // console.log(errors)
   if (!errors.isEmpty()) {
     // Transform errors into OutputErrorsType
     const outputErrors: OutputErrorsType = {
-      errorsMessages: errors.array().map((err: ValidationError) => ({
-        message: err.msg.message,
-        field: err.msg.field,
-      })),
+      errorsMessages: errors.array().map((err: ValidationError) => {
+        const msg = toObjectIfJson(err.msg)
+        return {
+          message: msg.message,
+          field: msg.field,
+        }
+      }),
     }
-    res.status(400).json(outputErrors)
+
+    const status = outputErrors.errorsMessages.some(({ field }) => field === 'params') ? 404 : 400
+
+    res.status(status).json(outputErrors)
   } else {
     next()
   }

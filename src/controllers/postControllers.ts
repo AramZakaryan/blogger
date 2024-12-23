@@ -16,7 +16,6 @@ import { old_createPostBodyValidator } from '../common'
 import { old_updatePostBodyValidator } from '../common'
 import { findBlogParamsValidator } from '../common/validators/findBlogParamsValidator'
 import { findPostParamsValidator } from '../common/validators/findPostParamsValidator'
-import { findBlogIdValidator } from '../common/validators/findBlogIdValidator'
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
@@ -42,19 +41,6 @@ export const postControllers = {
   createPost: async (req: CreatePostRequest, res: CreatePostResponse) => {
     const body = req.body
 
-    const errorsBody = old_createPostBodyValidator(body)
-
-    const errorsBlogId = await findBlogIdValidator(body.blogId)
-
-    const errors = {
-      errorsMessages: [...errorsBody.errorsMessages, ...errorsBlogId.errorsMessages],
-    }
-
-    if (errors.errorsMessages.length) {
-      res.status(400).json(errors)
-      return
-    }
-
     const createdPost = await postService.createPost(body)
 
     res.status(201).json(createdPost)
@@ -64,26 +50,6 @@ export const postControllers = {
     const params = req.params
     const id = params.id
     const body = req.body
-
-    const errorsParams = await findPostParamsValidator(params)
-
-    if (errorsParams.errorsMessages.length) {
-      res.status(404).json(errorsParams)
-      return
-    }
-
-    const errorsBody = old_updatePostBodyValidator(body)
-
-    const errorsBlogId = await findBlogIdValidator(body.blogId)
-
-    const errors = {
-      errorsMessages: [...errorsBody.errorsMessages, ...errorsBlogId.errorsMessages],
-    }
-
-    if (errors.errorsMessages.length) {
-      res.status(400).json(errors)
-      return
-    }
 
     const updatedPost = await postService.updatePost(id, body)
 
@@ -104,13 +70,6 @@ export const postControllers = {
   deletePost: async (req: DeletePostRequest, res: DeletePostResponse) => {
     const params = req.params
     const id = params.id
-
-    const errorsParams = await findPostParamsValidator(params)
-
-    if (errorsParams.errorsMessages.length) {
-      res.status(404).json(errorsParams)
-      return
-    }
 
     const deletedPost = await postService.deletePost(id)
 
