@@ -364,7 +364,7 @@ describe('/blogs', () => {
     expect(responseUpdateBlogErrorV2.body).toEqual({
       errorsMessages: [
         {
-          message: 'name is empty',
+          message: 'name is required',
           field: 'name',
         },
         {
@@ -396,6 +396,18 @@ describe('/blogs', () => {
         {
           field: 'params',
           message: 'blog with provided id does not exist',
+        },
+        {
+          message: 'name is required',
+          field: 'name',
+        },
+        {
+          field: 'description',
+          message: 'description is required',
+        },
+        {
+          field: 'websiteUrl',
+          message: 'websiteUrl is required',
         },
       ],
     })

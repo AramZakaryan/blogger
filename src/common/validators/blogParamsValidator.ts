@@ -1,20 +1,20 @@
 import { param } from 'express-validator'
-import { postService } from '../../services'
+import { blogService } from '../../services'
 
-export const postParamsValidator = [
+export const blogParamsValidator = [
   param('id')
     .notEmpty()
     .withMessage({
-      message: 'post id as URI parameter is required',
+      message: 'blog id as URI parameter is required',
       field: 'params',
     })
     .bail()
     .custom(async (_, { req }) => {
-      const post = await postService.findPost(req.params?.id)
-      if (!post) {
+      const blog = await blogService.findBlog(req.params?.id)
+      if (!blog) {
         throw new Error(
           JSON.stringify({
-            message: `post with provided id does not exist`,
+            message: `blog with provided id does not exist`,
             field: 'params',
           }),
         )

@@ -1,22 +1,36 @@
 import router from 'express'
 import { blogControllers } from '../controllers'
 import { handleValidationErrors, authorizationValidator } from '../common'
-import { createBlogBodyValidator } from '../common'
+import { blogBodyValidator } from '../common'
+import { blogParamsValidator } from '../common'
 
 export const blogRouter = router()
 
 blogRouter.get('/', blogControllers.getBlogs)
 
-blogRouter.get('/:id', blogControllers.findBlog)
+blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControllers.findBlog)
 
 blogRouter.post(
   '/',
   authorizationValidator,
-  createBlogBodyValidator,
+  blogBodyValidator,
   handleValidationErrors,
   blogControllers.createBlog,
 )
 
-blogRouter.put('/:id', authorizationValidator, blogControllers.updateBlog)
+blogRouter.put(
+  '/:id',
+  authorizationValidator,
+  blogParamsValidator,
+  blogBodyValidator,
+  handleValidationErrors,
+  blogControllers.updateBlog,
+)
 
-blogRouter.delete('/:id', authorizationValidator, blogControllers.deleteBlog)
+blogRouter.delete(
+  '/:id',
+  authorizationValidator,
+  blogParamsValidator,
+  handleValidationErrors,
+  blogControllers.deleteBlog,
+)

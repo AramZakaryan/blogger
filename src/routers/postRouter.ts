@@ -1,8 +1,7 @@
 import router from 'express'
 import { postControllers } from '../controllers'
-import { handleValidationErrors, authorizationValidator, blogIdValidator } from '../common'
-import { postBodyValidator } from '../common'
-import { postParamsValidator } from '../common/validators/postParamsValidator'
+import { authorizationValidator, handleValidationErrors, postBodyValidator } from '../common'
+import { postParamsValidator } from '../common'
 
 export const postRouter = router()
 

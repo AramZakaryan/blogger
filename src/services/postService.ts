@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { BlogType, CreatePostBody, PostType, UpdateBlogBody, UpdatePostBody } from '../types'
+import { CreatePostBody, PostType, UpdatePostBody } from '../types'
 import { blogService } from './blogService'
 
 export const postService = {

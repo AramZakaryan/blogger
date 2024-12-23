@@ -1,6 +1,6 @@
 import { body } from 'express-validator'
 
-export const createBlogBodyValidator = [
+export const blogBodyValidator = [
   body('name')
     .trim()
     .notEmpty()

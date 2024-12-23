@@ -11,33 +11,43 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import {
-  findBlogParamsValidator,
-  old_createBlogBodyValidator,
-  old_updateBlogBodyValidator,
-} from '../common'
 
 export const blogControllers = {
   getBlogs: async (req: GetBlogsRequest, res: GetBlogsResponse): Promise<void> => {
     const blogs = await blogService.getBlogs()
 
-    res.json(blogs)
+    if (blogs) {
+      res.json(blogs)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
   findBlog: async (req: FindBlogRequest, res: FindBlogResponse): Promise<void> => {
     const params = req.params
     const id = params.id
 
-    const errorsParams = await findBlogParamsValidator(params)
-
-    if (errorsParams.errorsMessages.length) {
-      res.status(404).json(errorsParams)
-      return
-    }
-
     const blog = await blogService.findBlog(id)
 
-    res.json(blog)
+    if (blog) {
+      res.json(blog)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
   createBlog: async (req: CreateBlogRequest, res: CreateBlogResponse): Promise<void> => {
@@ -45,27 +55,24 @@ export const blogControllers = {
 
     const createdBlog = await blogService.createBlog(body)
 
-    res.status(201).json(createdBlog)
+    if (createdBlog) {
+      res.status(201).json(createdBlog)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
   updateBlog: async (req: UpdateBlogRequest, res: UpdateBlogResponse): Promise<void> => {
     const params = req.params
     const id = params.id
     const body = req.body
-
-    const errorsParams = await findBlogParamsValidator(params)
-
-    if (errorsParams.errorsMessages.length) {
-      res.status(404).json(errorsParams)
-      return
-    }
-
-    const errorsBody = old_updateBlogBodyValidator(body)
-
-    if (errorsBody.errorsMessages.length) {
-      res.status(400).json(errorsBody)
-      return
-    }
 
     const updatedBlog = await blogService.updateBlog(id, body)
 
@@ -86,13 +93,6 @@ export const blogControllers = {
   deleteBlog: async (req: DeleteBlogRequest, res: DeleteBlogResponse): Promise<void> => {
     const params = req.params
     const id = params.id
-
-    const errorsParams = await findBlogParamsValidator(params)
-
-    if (errorsParams.errorsMessages.length) {
-      res.status(404).json(errorsParams)
-      return
-    }
 
     const deletedBlog = await blogService.deleteBlog(id)
 
