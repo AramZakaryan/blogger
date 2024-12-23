@@ -10,8 +10,8 @@ const encodeBasicAuth = (username?: string, password?: string) => {
     .toString('base64') // Base64 encode
 }
 
-const username = process.env.USERNAME || 'admin'
-const password = process.env.PASSWORD || 'qwerty'
+const username = process.env.USERNAME // || 'admin'
+const password = process.env.PASSWORD //|| 'qwerty'
 const encodeBasicCredentials = encodeBasicAuth(username, password)
 
 export const authorizationValidator = (req: Request, res: Response, next: NextFunction) => {
