@@ -8,7 +8,7 @@ export const postRouter = router()
 
 postRouter.get('/', postControllers.getPosts)
 
-postRouter.get('/:id', postControllers.findPost)
+postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControllers.findPost)
 
 postRouter.post(
   '/',

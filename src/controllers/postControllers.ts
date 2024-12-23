@@ -1,4 +1,4 @@
-import { blogService, postService } from '../services'
+import { postService } from '../services'
 import {
   CreatePostRequest,
   CreatePostResponse,
@@ -8,34 +8,46 @@ import {
   FindPostResponse,
   GetPostsRequest,
   GetPostsResponse,
-  OutputErrorsType,
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
-import { old_createPostBodyValidator } from '../common'
-import { old_updatePostBodyValidator } from '../common'
-import { findBlogParamsValidator } from '../common/validators/findBlogParamsValidator'
-import { findPostParamsValidator } from '../common/validators/findPostParamsValidator'
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
     const posts = await postService.getPosts()
-    res.json(posts)
+
+    if (posts) {
+      res.json(posts)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
   findPost: async (req: FindPostRequest, res: FindPostResponse): Promise<void> => {
     const params = req.params
     const id = params.id
-    const errorsParams = await findPostParamsValidator(params)
-
-    if (errorsParams.errorsMessages.length) {
-      res.status(404).json(errorsParams)
-      return
-    }
 
     const post = await postService.findPost(id)
 
-    res.json(post)
+    if (post) {
+      res.json(post)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
   createPost: async (req: CreatePostRequest, res: CreatePostResponse) => {

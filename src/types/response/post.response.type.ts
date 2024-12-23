@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { PostType } from '../post.type'
 import { OutputErrorsType } from '../general'
 
-export type GetPostsResponse = Response<PostType[]>
+export type GetPostsResponse = Response<PostType[] | OutputErrorsType>
 
 export type FindPostResponse = Response<PostType | OutputErrorsType>
 
