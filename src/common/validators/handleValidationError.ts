@@ -9,7 +9,7 @@ export const handleValidationErrors = (req: Request, res: Response, next: NextFu
   if (!errors.isEmpty()) {
     // Transform errors into OutputErrorsType
     const outputErrors: OutputErrorsType = {
-      errorsMessages: errors.array().map((err: ValidationError) => {
+      errorsMessages: errors.array({ onlyFirstError: true }).map((err: ValidationError) => {
         const msg = toObjectIfJson(err.msg)
         return {
           message: msg.message,
