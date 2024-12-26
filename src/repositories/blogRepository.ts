@@ -1,28 +1,35 @@
 import { db } from '../db'
-import { BlogType, CreateBlogBody, UpdateBlogBody } from '../types'
+import { BlogDbType, BlogType, CreateBlogBody, UpdateBlogBody } from '../types'
+import { blogCollection } from '../db/mongo'
+import { blogControllers } from '../controllers'
+
+class InsertOneResult<T> {}
 
 export const blogRepository = {
   getBlogs: async (): Promise<BlogType[]> => {
-    const blogs = db.blogs.slice(-15)
+    const blogs = await blogCollection.find({}).toArray()
+    // const blogs = db.blogs.slice(-15)
 
     return blogs
   },
 
-  findBlog: async (id: string): Promise<BlogType | undefined> => {
-    const blog = db.blogs.find((blog) => blog.id === id)
+  findBlog: async (id: string): Promise<BlogType | null> => {
+    const blog = await blogCollection.findOne({ id })
+    // const blog = db.blogs.find((blog) => blog.id === id)
 
     return blog
   },
 
-  createBlog: async (body: CreateBlogBody): Promise<BlogType> => {
+  createBlog: async (body: CreateBlogBody): Promise<any> => {
     const blog = {
       id: String(Date.now() + Math.random()),
       ...body,
     }
 
-    db.blogs.push(blog)
+    const createdBlog = await blogCollection.insertOne(blog)
+    // db.blogs.push(blog)
 
-    return blog
+    return createdBlog
   },
 
   updateBlog: async (id: string, body: UpdateBlogBody): Promise<BlogType> => {
