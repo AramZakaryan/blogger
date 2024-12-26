@@ -1,5 +1,5 @@
 import { body } from 'express-validator'
-import { blogService } from '../../services'
+import { blogRepository } from '../../repositories'
 import { handleNotEmpty } from './handleNotEmpty'
 import { handleIsStringIsLength } from './handleIsStringIsLength'
 import { handleIsString } from './handleIsString'
@@ -13,7 +13,7 @@ export const postBodyValidator = [
   handleIsStringIsLength('content', 1000),
   handleNotEmpty('blogId', false),
   handleIsString('blogId').custom(async (value, { req }) => {
-    const blog = await blogService.findBlog(req.body.blogId)
+    const blog = await blogRepository.findBlog(req.body.blogId)
     if (!blog) {
       throw new Error(
         JSON.stringify({

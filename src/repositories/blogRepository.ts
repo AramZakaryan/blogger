@@ -1,7 +1,7 @@
 import { db } from '../db'
 import { BlogType, CreateBlogBody, UpdateBlogBody } from '../types'
 
-export const blogService = {
+export const blogRepository = {
   getBlogs: async (): Promise<BlogType[]> => {
     const blogs = db.blogs.slice(-15)
 

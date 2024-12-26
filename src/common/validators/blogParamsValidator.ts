@@ -1,5 +1,5 @@
 import { param } from 'express-validator'
-import { blogService } from '../../services'
+import { blogRepository } from '../../repositories'
 
 export const blogParamsValidator = [
   param('id')
@@ -10,7 +10,7 @@ export const blogParamsValidator = [
     })
     .bail()
     .custom(async (_, { req }) => {
-      const blog = await blogService.findBlog(req.params?.id)
+      const blog = await blogRepository.findBlog(req.params?.id)
       if (!blog) {
         throw new Error(
           JSON.stringify({

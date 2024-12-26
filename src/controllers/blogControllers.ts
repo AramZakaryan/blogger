@@ -1,4 +1,4 @@
-import { blogService } from '../services'
+import { blogRepository } from '../repositories'
 import {
   CreateBlogRequest,
   CreateBlogResponse,
@@ -14,7 +14,7 @@ import {
 
 export const blogControllers = {
   getBlogs: async (req: GetBlogsRequest, res: GetBlogsResponse): Promise<void> => {
-    const blogs = await blogService.getBlogs()
+    const blogs = await blogRepository.getBlogs()
 
     if (blogs) {
       res.json(blogs)
@@ -34,7 +34,7 @@ export const blogControllers = {
     const params = req.params
     const id = params.id
 
-    const blog = await blogService.findBlog(id)
+    const blog = await blogRepository.findBlog(id)
 
     if (blog) {
       res.json(blog)
@@ -53,7 +53,7 @@ export const blogControllers = {
   createBlog: async (req: CreateBlogRequest, res: CreateBlogResponse): Promise<void> => {
     const body = req.body
 
-    const createdBlog = await blogService.createBlog(body)
+    const createdBlog = await blogRepository.createBlog(body)
 
     if (createdBlog) {
       res.status(201).json(createdBlog)
@@ -74,7 +74,7 @@ export const blogControllers = {
     const id = params.id
     const body = req.body
 
-    const updatedBlog = await blogService.updateBlog(id, body)
+    const updatedBlog = await blogRepository.updateBlog(id, body)
 
     if (updatedBlog) {
       res.sendStatus(204)
@@ -94,7 +94,7 @@ export const blogControllers = {
     const params = req.params
     const id = params.id
 
-    const deletedBlog = await blogService.deleteBlog(id)
+    const deletedBlog = await blogRepository.deleteBlog(id)
 
     if (deletedBlog) {
       res.sendStatus(204)

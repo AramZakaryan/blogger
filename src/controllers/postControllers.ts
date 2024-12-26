@@ -1,4 +1,4 @@
-import { postService } from '../services'
+import { postRepository } from '../repositories'
 import {
   CreatePostRequest,
   CreatePostResponse,
@@ -14,7 +14,7 @@ import {
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
-    const posts = await postService.getPosts()
+    const posts = await postRepository.getPosts()
 
     if (posts) {
       res.json(posts)
@@ -34,7 +34,7 @@ export const postControllers = {
     const params = req.params
     const id = params.id
 
-    const post = await postService.findPost(id)
+    const post = await postRepository.findPost(id)
 
     if (post) {
       res.json(post)
@@ -53,7 +53,7 @@ export const postControllers = {
   createPost: async (req: CreatePostRequest, res: CreatePostResponse) => {
     const body = req.body
 
-    const createdPost = await postService.createPost(body)
+    const createdPost = await postRepository.createPost(body)
 
     res.status(201).json(createdPost)
   },
@@ -63,7 +63,7 @@ export const postControllers = {
     const id = params.id
     const body = req.body
 
-    const updatedPost = await postService.updatePost(id, body)
+    const updatedPost = await postRepository.updatePost(id, body)
 
     if (updatedPost) {
       res.sendStatus(204)
@@ -83,7 +83,7 @@ export const postControllers = {
     const params = req.params
     const id = params.id
 
-    const deletedPost = await postService.deletePost(id)
+    const deletedPost = await postRepository.deletePost(id)
 
     if (deletedPost) {
       res.sendStatus(204)

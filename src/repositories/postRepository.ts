@@ -1,8 +1,8 @@
 import { db } from '../db'
 import { CreatePostBody, PostType, UpdatePostBody } from '../types'
-import { blogService } from './blogService'
+import { blogRepository } from './blogRepository'
 
-export const postService = {
+export const postRepository = {
   getPosts: async () => {
     const posts = db.posts.slice(-15)
     // const posts = dataSet1.posts.slice(-15)
@@ -16,7 +16,7 @@ export const postService = {
   },
 
   createPost: async (body: CreatePostBody): Promise<PostType> => {
-    const blog = await blogService.findBlog(body.blogId)
+    const blog = await blogRepository.findBlog(body.blogId)
 
     const post = {
       id: String(Date.now() + Math.random()),

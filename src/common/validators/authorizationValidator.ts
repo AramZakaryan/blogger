@@ -25,7 +25,7 @@ export const authorizationValidator = (req: Request, res: Response, next: NextFu
         },
       ],
     })
-    return
+  } else {
+    next()
   }
-  next()
 }
