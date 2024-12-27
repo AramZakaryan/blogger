@@ -1,14 +1,7 @@
 import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
-import { MongoMemoryServer } from 'mongodb-memory-server'
-import { Collection, MongoClient } from 'mongodb'
-import { BlogDbType, PostDbType } from '../src/types'
-import { blogCollection } from '../src/db/mongo'
 import { dataSet1 } from './datasets'
 import { setDB } from '../src/db'
-
-let mongoServer: MongoMemoryServer
-let client: MongoClient
 
 describe('/blogs', () => {
   beforeEach(async () => {
@@ -33,25 +26,25 @@ describe('/blogs', () => {
     const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
 
     const responseFindBlog0 = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .expect(200)
     const responseFindBlog7 = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[7]._id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[7].id}`)
       .expect(200)
     const responseFindBlog14 = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[14]._id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[14].id}`)
       .expect(200)
 
     expect(responseFindBlog0.body).toBeInstanceOf(Object)
-    expect(responseFindBlog0.body._id).toBe(responseGetBlogs.body[0]._id)
+    expect(responseFindBlog0.body.id).toBe(responseGetBlogs.body[0].id)
     expect(Object.keys(responseFindBlog0.body).length).toBe(6)
 
     expect(responseFindBlog7.body).toBeInstanceOf(Object)
-    expect(responseFindBlog7.body._id).toBe(responseGetBlogs.body[7]._id)
+    expect(responseFindBlog7.body.id).toBe(responseGetBlogs.body[7].id)
     expect(Object.keys(responseFindBlog7.body).length).toBe(6)
 
     expect(responseFindBlog14.body).toBeInstanceOf(Object)
-    expect(responseFindBlog14.body._id).toBe(responseGetBlogs.body[14]._id)
+    expect(responseFindBlog14.body.id).toBe(responseGetBlogs.body[14].id)
     expect(Object.keys(responseFindBlog14.body).length).toBe(6)
   })
 
@@ -105,7 +98,7 @@ describe('/blogs', () => {
     }
 
     const responseUpdateBlog = await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', '') // setting headers
       .send(bodyUpdate0)
       .expect(401)
@@ -120,7 +113,7 @@ describe('/blogs', () => {
     })
 
     const responseDeleteBlog = await superRequest
-      .delete(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .delete(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', '') // setting headers
       .expect(401)
 
@@ -139,7 +132,6 @@ describe('/blogs', () => {
       name: 'name max len 15',
       description: 'description max length 500',
       websiteUrl: 'https://someurl.com',
-      isMembership: true,
     }
 
     const responseCreateBlog = await superRequest
@@ -151,11 +143,10 @@ describe('/blogs', () => {
 
     expect(responseCreateBlog.body).toBeInstanceOf(Object)
 
-    expect(responseCreateBlog.body._id).not.toBe('')
+    expect(responseCreateBlog.body.id).not.toBe('')
     expect(responseCreateBlog.body.name).toBe(body.name)
     expect(responseCreateBlog.body.description).toBe(body.description)
     expect(responseCreateBlog.body.websiteUrl).toBe(body.websiteUrl)
-    expect(JSON.parse(responseCreateBlog.body.isMembership)).toBe(body.isMembership)
   })
 
   it('send error for empty, non-object body in create blog', async () => {
@@ -181,10 +172,6 @@ describe('/blogs', () => {
         {
           message: 'websiteUrl is required',
           field: 'websiteUrl',
-        },
-        {
-          message: 'isMembership is required',
-          field: 'isMembership',
         },
       ],
     })
@@ -212,10 +199,6 @@ describe('/blogs', () => {
           message: 'websiteUrl is required',
           field: 'websiteUrl',
         },
-        {
-          message: 'isMembership is required',
-          field: 'isMembership',
-        },
       ],
     })
 
@@ -241,10 +224,6 @@ describe('/blogs', () => {
         {
           message: 'websiteUrl is required',
           field: 'websiteUrl',
-        },
-        {
-          message: 'isMembership is required',
-          field: 'isMembership',
         },
       ],
     })
@@ -279,10 +258,6 @@ describe('/blogs', () => {
           field: 'websiteUrl',
           message: 'websiteUrl incorrect format',
         },
-        {
-          message: 'isMembership is required',
-          field: 'isMembership',
-        },
       ],
     })
 
@@ -313,10 +288,6 @@ describe('/blogs', () => {
           field: 'websiteUrl',
           message: 'websiteUrl max length is 100',
         },
-        {
-          message: 'isMembership is required',
-          field: 'isMembership',
-        }
       ],
     })
   })
@@ -328,11 +299,10 @@ describe('/blogs', () => {
       name: 'new2 name max15',
       description: 'description2 max length 500',
       websiteUrl: 'https://someurl2.com',
-      isMembership: true,
     }
 
     await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdate0)
       .expect(204)
@@ -341,11 +311,10 @@ describe('/blogs', () => {
 
     expect(responseGetBlogsAfterUpdate0.body[0]).toBeInstanceOf(Object)
 
-    expect(responseGetBlogsAfterUpdate0.body[0]._id).toBe(responseGetBlogs.body[0]._id)
+    expect(responseGetBlogsAfterUpdate0.body[0].id).toBe(responseGetBlogs.body[0].id)
     expect(responseGetBlogsAfterUpdate0.body[0].name).toBe(bodyUpdate0.name)
     expect(responseGetBlogsAfterUpdate0.body[0].description).toBe(bodyUpdate0.description)
     expect(responseGetBlogsAfterUpdate0.body[0].websiteUrl).toBe(bodyUpdate0.websiteUrl)
-    expect(JSON.parse(responseGetBlogsAfterUpdate0.body[0].isMembership)).toBe(bodyUpdate0.isMembership)
   })
 
   it('send error for non-existing, empty, non-object body in update blog', async () => {
@@ -356,11 +325,10 @@ describe('/blogs', () => {
       // description: 'description max length 500', // error message: description is required
       websiteUrl: 'incorrect websiteUrl', // error message: websiteUrl incorrect format
       unexpectedKey: 'unexpectedValue', // no error message
-      isMembership: 8,
     }
 
     const responseUpdateBlogErrorV1 = await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
@@ -380,10 +348,6 @@ describe('/blogs', () => {
           field: 'websiteUrl',
           message: 'websiteUrl incorrect format',
         },
-        {
-          field: 'isMembership',
-          message: 'isMembership incorrect format',
-        },
       ],
     })
 
@@ -394,7 +358,7 @@ describe('/blogs', () => {
     }
 
     const responseUpdateBlogErrorV2 = await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
@@ -413,10 +377,6 @@ describe('/blogs', () => {
         {
           field: 'websiteUrl',
           message: 'websiteUrl max length is 100',
-        },
-        {
-          field: 'isMembership',
-          message: 'isMembership is required',
         },
       ],
     })
@@ -452,10 +412,6 @@ describe('/blogs', () => {
           field: 'websiteUrl',
           message: 'websiteUrl is required',
         },
-        {
-          field: 'isMembership',
-          message: 'isMembership is required',
-        },
       ],
     })
   })
@@ -464,18 +420,18 @@ describe('/blogs', () => {
     const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
 
     const responseFindBlog = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .expect(200)
 
-    expect(responseFindBlog.body._id).toEqual(responseGetBlogs.body[0]._id)
+    expect(responseFindBlog.body.id).toEqual(responseGetBlogs.body[0].id)
 
     await superRequest
-      .delete(`${PATHS.BLOGS}/${responseFindBlog.body._id}`)
+      .delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .expect(204)
 
     const responseFindBlogAfterDelete = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .expect(404)
 
     expect(responseFindBlogAfterDelete.body).toEqual({

@@ -19,38 +19,38 @@ describe('/posts', () => {
     expect(responseGetPosts.body.length).toBe(15)
 
     expect(Object.keys(responseGetPosts.body[0]).length).toBe(7)
-    expect(responseGetPosts.body[0].blogId).toBe(responseGetBlogs.body[0]._id)
+    expect(responseGetPosts.body[0].blogId).toBe(responseGetBlogs.body[0].id)
 
     expect(Object.keys(responseGetPosts.body[7]).length).toBe(7)
-    expect(responseGetPosts.body[7].blogId).toBe(responseGetBlogs.body[1]._id)
+    expect(responseGetPosts.body[7].blogId).toBe(responseGetBlogs.body[1].id)
 
     expect(Object.keys(responseGetPosts.body[14]).length).toBe(7)
-    expect(responseGetPosts.body[14].blogId).toBe(responseGetBlogs.body[2]._id)
+    expect(responseGetPosts.body[14].blogId).toBe(responseGetBlogs.body[2].id)
   })
 
   it('should get the post', async () => {
     const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200) // verifying existence of the endpoint
 
     const responseFindPost0 = await superRequest
-      .get(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .expect(200)
     const responseFindPost7 = await superRequest
-      .get(`${PATHS.POSTS}/${responseGetPosts.body[7]._id}`)
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[7].id}`)
       .expect(200)
     const responseFindPost14 = await superRequest
-      .get(`${PATHS.POSTS}/${responseGetPosts.body[14]._id}`)
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[14].id}`)
       .expect(200)
 
     expect(responseFindPost0.body).toBeInstanceOf(Object)
-    expect(responseFindPost0.body._id).toBe(responseGetPosts.body[0]._id)
+    expect(responseFindPost0.body.id).toBe(responseGetPosts.body[0].id)
     expect(Object.keys(responseFindPost0.body).length).toBe(7)
 
     expect(responseFindPost7.body).toBeInstanceOf(Object)
-    expect(responseFindPost7.body._id).toBe(responseGetPosts.body[7]._id)
+    expect(responseFindPost7.body.id).toBe(responseGetPosts.body[7].id)
     expect(Object.keys(responseFindPost7.body).length).toBe(7)
 
     expect(responseFindPost14.body).toBeInstanceOf(Object)
-    expect(responseFindPost14.body._id).toBe(responseGetPosts.body[14]._id)
+    expect(responseFindPost14.body.id).toBe(responseGetPosts.body[14].id)
     expect(Object.keys(responseFindPost14.body).length).toBe(7)
   })
 
@@ -104,7 +104,7 @@ describe('/posts', () => {
     }
 
     const responseUpdatePost = await superRequest
-      .put(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', '') // setting headers
       .send(bodyUpdate0)
       .expect(401)
@@ -119,7 +119,7 @@ describe('/posts', () => {
     })
 
     const responseDeletePost = await superRequest
-      .delete(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .delete(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', '') // setting headers
       .expect(401)
 
@@ -138,7 +138,7 @@ describe('/posts', () => {
       title: 'title max length 30',
       shortDescription: 'shortDescription max length 100',
       content: 'content max length 1000',
-      blogId: dataSet1.blogs[0]._id,
+      blogId: dataSet1.blogs[0]._id.toString(),
     }
 
     const responseCreatePost = await superRequest
@@ -150,7 +150,7 @@ describe('/posts', () => {
 
     expect(responseCreatePost.body).toBeInstanceOf(Object)
 
-    expect(responseCreatePost.body._id).not.toBe('')
+    expect(responseCreatePost.body.id).not.toBe('')
     expect(responseCreatePost.body.title).toBe(body.title)
     expect(responseCreatePost.body.shortDescription).toBe(body.shortDescription)
     expect(responseCreatePost.body.content).toBe(body.content)
@@ -255,7 +255,7 @@ describe('/posts', () => {
       title: 'title'.repeat(30), // error message: name max length is 30
       shortDescription: 'shortDescription max length 100',
       // content: 'content max length 1000', // error message: content is required
-      blogId: 'error blogId', // error message: blog with this _id does not exist
+      blogId: 'error blogId', // error message: blog with this id does not exist
       unexpectedKey: 'unexpectedValue', // no error message
     }
 
@@ -322,10 +322,10 @@ describe('/posts', () => {
       title: 'new2 title max length 30',
       shortDescription: 'new2 shortDescription max length 100"',
       content: 'content2 max length 1000',
-      blogId: responseGetBlogs.body[0]._id,
+      blogId: responseGetBlogs.body[0].id,
     }
     await superRequest
-      .put(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdate0)
       .expect(204)
@@ -334,7 +334,7 @@ describe('/posts', () => {
 
     expect(responseGetPostsAfterUpdate0.body[0]).toBeInstanceOf(Object)
 
-    expect(responseGetPostsAfterUpdate0.body[0]._id).toBe(responseGetPostsAfterUpdate0.body[0]._id)
+    expect(responseGetPostsAfterUpdate0.body[0].id).toBe(responseGetPostsAfterUpdate0.body[0].id)
     expect(responseGetPostsAfterUpdate0.body[0].title).toBe(bodyUpdate0.title)
     expect(responseGetPostsAfterUpdate0.body[0].shortDescription).toBe(bodyUpdate0.shortDescription)
     expect(responseGetPostsAfterUpdate0.body[0].content).toBe(bodyUpdate0.content)
@@ -351,12 +351,12 @@ describe('/posts', () => {
       title: 'title'.repeat(30), // error message: title max length is 30
       // shortDescription: 'shortDescription max length 100', // error message: shortDescription is required
       content: 'content max length 1000',
-      blogId: 'non existing blogId', // error message: blog with prov_ided _id does not exist
+      blogId: 'non existing blogId', // error message: blog with provided id does not exist
       unexpectedKey: 'unexpectedValue', // no error message
     }
 
     const responseUpdatePostErrorV1 = await superRequest
-      .put(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
@@ -387,7 +387,7 @@ describe('/posts', () => {
     }
 
     const responseUpdatePostErrorV2 = await superRequest
-      .put(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
@@ -449,18 +449,18 @@ describe('/posts', () => {
     const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
 
     const responseFindPost = await superRequest
-      .get(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .expect(200)
 
-    expect(responseFindPost.body._id).toEqual(responseGetPosts.body[0]._id)
+    expect(responseFindPost.body.id).toEqual(responseGetPosts.body[0].id)
 
     await superRequest
-      .delete(`${PATHS.POSTS}/${responseFindPost.body._id}`)
+      .delete(`${PATHS.POSTS}/${responseFindPost.body.id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .expect(204)
 
     const responseFindPostsAfterDelete = await superRequest
-      .get(`${PATHS.POSTS}/${responseGetPosts.body[0]._id}`)
+      .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .expect(404)
 
     expect(responseFindPostsAfterDelete.body).toEqual({
