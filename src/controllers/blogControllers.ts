@@ -11,7 +11,7 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { blogMap } from '../common/utils/blogMap'
+import { blogMap } from '../common'
 
 export const blogControllers = {
   getBlogs: async (req: GetBlogsRequest, res: GetBlogsResponse): Promise<void> => {

@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { PostDbType, PostType } from '../post.type'
+import { PostType } from '../post.type'
 import { OutputErrorsType } from '../general'
 
 export type GetPostsResponse = Response<PostType[] | OutputErrorsType>

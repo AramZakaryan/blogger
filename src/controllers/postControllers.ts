@@ -11,7 +11,7 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
-import { postMap } from '../common/utils/postMap'
+import { postMap } from '../common'
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
