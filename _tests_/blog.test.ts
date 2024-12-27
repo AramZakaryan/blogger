@@ -24,9 +24,9 @@ describe('/blogs', () => {
     expect(response.body).toBeInstanceOf(Array)
     expect(response.body.length).toBe(15)
 
-    expect(Object.keys(response.body[0]).length).toBe(5)
-    expect(Object.keys(response.body[7]).length).toBe(5)
-    expect(Object.keys(response.body[14]).length).toBe(5)
+    expect(Object.keys(response.body[0]).length).toBe(6)
+    expect(Object.keys(response.body[7]).length).toBe(6)
+    expect(Object.keys(response.body[14]).length).toBe(6)
   })
 
   it('should get the blog', async () => {
@@ -44,15 +44,15 @@ describe('/blogs', () => {
 
     expect(responseFindBlog0.body).toBeInstanceOf(Object)
     expect(responseFindBlog0.body._id).toBe(responseGetBlogs.body[0]._id)
-    expect(Object.keys(responseFindBlog0.body).length).toBe(5)
+    expect(Object.keys(responseFindBlog0.body).length).toBe(6)
 
     expect(responseFindBlog7.body).toBeInstanceOf(Object)
     expect(responseFindBlog7.body._id).toBe(responseGetBlogs.body[7]._id)
-    expect(Object.keys(responseFindBlog7.body).length).toBe(5)
+    expect(Object.keys(responseFindBlog7.body).length).toBe(6)
 
     expect(responseFindBlog14.body).toBeInstanceOf(Object)
     expect(responseFindBlog14.body._id).toBe(responseGetBlogs.body[14]._id)
-    expect(Object.keys(responseFindBlog14.body).length).toBe(5)
+    expect(Object.keys(responseFindBlog14.body).length).toBe(6)
   })
 
   it('send error for non-existing blog', async () => {
@@ -139,6 +139,7 @@ describe('/blogs', () => {
       name: 'name max len 15',
       description: 'description max length 500',
       websiteUrl: 'https://someurl.com',
+      isMembership: true,
     }
 
     const responseCreateBlog = await superRequest
@@ -154,6 +155,7 @@ describe('/blogs', () => {
     expect(responseCreateBlog.body.name).toBe(body.name)
     expect(responseCreateBlog.body.description).toBe(body.description)
     expect(responseCreateBlog.body.websiteUrl).toBe(body.websiteUrl)
+    expect(JSON.parse(responseCreateBlog.body.isMembership)).toBe(body.isMembership)
   })
 
   it('send error for empty, non-object body in create blog', async () => {
@@ -179,6 +181,10 @@ describe('/blogs', () => {
         {
           message: 'websiteUrl is required',
           field: 'websiteUrl',
+        },
+        {
+          message: 'isMembership is required',
+          field: 'isMembership',
         },
       ],
     })
@@ -206,6 +212,10 @@ describe('/blogs', () => {
           message: 'websiteUrl is required',
           field: 'websiteUrl',
         },
+        {
+          message: 'isMembership is required',
+          field: 'isMembership',
+        },
       ],
     })
 
@@ -231,6 +241,10 @@ describe('/blogs', () => {
         {
           message: 'websiteUrl is required',
           field: 'websiteUrl',
+        },
+        {
+          message: 'isMembership is required',
+          field: 'isMembership',
         },
       ],
     })
@@ -265,6 +279,10 @@ describe('/blogs', () => {
           field: 'websiteUrl',
           message: 'websiteUrl incorrect format',
         },
+        {
+          message: 'isMembership is required',
+          field: 'isMembership',
+        },
       ],
     })
 
@@ -295,6 +313,10 @@ describe('/blogs', () => {
           field: 'websiteUrl',
           message: 'websiteUrl max length is 100',
         },
+        {
+          message: 'isMembership is required',
+          field: 'isMembership',
+        }
       ],
     })
   })
@@ -306,6 +328,7 @@ describe('/blogs', () => {
       name: 'new2 name max15',
       description: 'description2 max length 500',
       websiteUrl: 'https://someurl2.com',
+      isMembership: true,
     }
 
     await superRequest
@@ -322,6 +345,7 @@ describe('/blogs', () => {
     expect(responseGetBlogsAfterUpdate0.body[0].name).toBe(bodyUpdate0.name)
     expect(responseGetBlogsAfterUpdate0.body[0].description).toBe(bodyUpdate0.description)
     expect(responseGetBlogsAfterUpdate0.body[0].websiteUrl).toBe(bodyUpdate0.websiteUrl)
+    expect(JSON.parse(responseGetBlogsAfterUpdate0.body[0].isMembership)).toBe(bodyUpdate0.isMembership)
   })
 
   it('send error for non-existing, empty, non-object body in update blog', async () => {
@@ -332,6 +356,7 @@ describe('/blogs', () => {
       // description: 'description max length 500', // error message: description is required
       websiteUrl: 'incorrect websiteUrl', // error message: websiteUrl incorrect format
       unexpectedKey: 'unexpectedValue', // no error message
+      isMembership: 8,
     }
 
     const responseUpdateBlogErrorV1 = await superRequest
@@ -354,6 +379,10 @@ describe('/blogs', () => {
         {
           field: 'websiteUrl',
           message: 'websiteUrl incorrect format',
+        },
+        {
+          field: 'isMembership',
+          message: 'isMembership incorrect format',
         },
       ],
     })
@@ -384,6 +413,10 @@ describe('/blogs', () => {
         {
           field: 'websiteUrl',
           message: 'websiteUrl max length is 100',
+        },
+        {
+          field: 'isMembership',
+          message: 'isMembership is required',
         },
       ],
     })
@@ -418,6 +451,10 @@ describe('/blogs', () => {
         {
           field: 'websiteUrl',
           message: 'websiteUrl is required',
+        },
+        {
+          field: 'isMembership',
+          message: 'isMembership is required',
         },
       ],
     })

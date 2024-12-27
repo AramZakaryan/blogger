@@ -11,13 +11,14 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
+import { blogMap } from '../common/utils/blogMap'
 
 export const blogControllers = {
   getBlogs: async (req: GetBlogsRequest, res: GetBlogsResponse): Promise<void> => {
     const blogs = await blogRepository.getBlogs()
 
     if (blogs) {
-      res.json(blogs)
+      res.json(blogs.map(blogMap))
     } else {
       res.status(400).json({
         errorsMessages: [
@@ -37,7 +38,7 @@ export const blogControllers = {
     const blog = await blogRepository.findBlog(id)
 
     if (blog) {
-      res.json(blog)
+      res.json(blogMap(blog))
     } else {
       res.status(400).json({
         errorsMessages: [
@@ -56,7 +57,7 @@ export const blogControllers = {
     const createdBlog = await blogRepository.createBlog(body)
 
     if (createdBlog) {
-      res.status(201).json(createdBlog)
+      res.status(201).json(blogMap(createdBlog))
     } else {
       res.status(400).json({
         errorsMessages: [

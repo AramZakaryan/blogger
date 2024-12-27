@@ -11,13 +11,14 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
+import { postMap } from '../common/utils/postMap'
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
     const posts = await postRepository.getPosts()
 
     if (posts) {
-      res.json(posts)
+      res.json(posts.map(postMap))
     } else {
       res.status(400).json({
         errorsMessages: [
@@ -37,7 +38,7 @@ export const postControllers = {
     const post = await postRepository.findPost(id)
 
     if (post) {
-      res.json(post)
+      res.json(postMap(post))
     } else {
       res.status(400).json({
         errorsMessages: [
@@ -56,7 +57,7 @@ export const postControllers = {
     const createdPost = await postRepository.createPost(body)
 
     if (createdPost) {
-      res.status(201).json(createdPost)
+      res.status(201).json(postMap(createdPost))
     } else {
       res.status(400).json({
         errorsMessages: [

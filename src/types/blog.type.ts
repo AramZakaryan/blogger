@@ -6,4 +6,7 @@ export type BlogDbType = {
   description: string // maxLength: 500
   websiteUrl: string // maxLength: 100
   createdAt: Date
+  isMembership: boolean
 }
+
+export type BlogType = Omit<BlogDbType, '_id'> & { id: ObjectId }

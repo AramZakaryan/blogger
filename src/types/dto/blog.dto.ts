@@ -2,7 +2,7 @@ import { BlogDbType } from '../blog.type'
 
 export type FindBlogParams = { id: string }
 
-export type CreateBlogBody = Omit<BlogDbType, '_id'>
+export type CreateBlogBody = Omit<BlogDbType, '_id' | 'isMembership'>
 
 export type UpdateBlogParams = FindBlogParams
 

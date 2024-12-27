@@ -8,6 +8,7 @@ export const blogsSet1: BlogDbType[] = Array.from({ length: 15 }, () => ({
   description: 'blogDescription' + Date.now() + Math.random(),
   websiteUrl: 'websiteUrl' + Date.now() + Math.random(),
   createdAt: new Date(),
+  isMembership: false
 }))
 
 export const postsSet1: PostDbType[] = [

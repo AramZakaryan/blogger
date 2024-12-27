@@ -1,12 +1,12 @@
 import { Response } from 'express'
-import { BlogDbType } from '../blog.type'
+import { BlogDbType, BlogType } from '../blog.type'
 import { OutputErrorsType } from '../general'
 
-export type GetBlogsResponse = Response<BlogDbType[] | OutputErrorsType>
+export type GetBlogsResponse = Response<BlogType[] | OutputErrorsType>
 
-export type FindBlogResponse = Response<BlogDbType | OutputErrorsType>
+export type FindBlogResponse = Response<BlogType | OutputErrorsType>
 
-export type CreateBlogResponse = Response<BlogDbType | OutputErrorsType>
+export type CreateBlogResponse = Response<BlogType | OutputErrorsType>
 
 export type UpdateBlogResponse = Response<void | OutputErrorsType>
 

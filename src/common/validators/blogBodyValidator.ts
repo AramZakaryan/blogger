@@ -11,4 +11,8 @@ export const blogBodyValidator = [
   handleIsStringIsLength('websiteUrl', 100)
     .isURL()
     .withMessage({ message: 'websiteUrl incorrect format', field: 'websiteUrl' }),
+  // handleNotEmpty('isMembership'),
+  // body('isMembership')
+  //   .isBoolean()
+  //   .withMessage({ message: 'isMembership incorrect format', field: 'isMembership' }),
 ]

@@ -9,3 +9,5 @@ export type PostDbType = {
   blogName: string
   createdAt: Date
 }
+
+export type PostType = Omit<PostDbType, '_id'> & { id: ObjectId }

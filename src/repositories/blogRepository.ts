@@ -28,6 +28,7 @@ export const blogRepository = {
         _id: new ObjectId(),
         ...body,
         createdAt: new Date(),
+        isMembership: false,
       }
 
       const insertOneInfo = await blogCollection.insertOne(blog)

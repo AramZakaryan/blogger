@@ -1,12 +1,12 @@
 import { Response } from 'express'
-import { PostDbType } from '../post.type'
+import { PostDbType, PostType } from '../post.type'
 import { OutputErrorsType } from '../general'
 
-export type GetPostsResponse = Response<PostDbType[] | OutputErrorsType>
+export type GetPostsResponse = Response<PostType[] | OutputErrorsType>
 
-export type FindPostResponse = Response<PostDbType | OutputErrorsType>
+export type FindPostResponse = Response<PostType | OutputErrorsType>
 
-export type CreatePostResponse = Response<PostDbType | OutputErrorsType>
+export type CreatePostResponse = Response<PostType | OutputErrorsType>
 
 export type UpdatePostResponse = Response<void | OutputErrorsType>
 
