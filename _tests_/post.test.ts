@@ -7,6 +7,9 @@ describe('/posts', () => {
   beforeEach(async () => {
     await setDB(dataSet1)
   })
+  afterAll(async () => {
+    await setDB()
+  })
 
   it('should get array of posts', async () => {
     const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200) // verifying existence of the endpoint

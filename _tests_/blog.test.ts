@@ -1,10 +1,20 @@
 import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
-import { setDB } from '../src/db'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { Collection, MongoClient } from 'mongodb'
+import { BlogDbType, PostDbType } from '../src/types'
+import { blogCollection } from '../src/db/mongo'
 import { dataSet1 } from './datasets'
+import { setDB } from '../src/db'
+
+let mongoServer: MongoMemoryServer
+let client: MongoClient
 
 describe('/blogs', () => {
   beforeEach(async () => {
+    await setDB(dataSet1)
+  })
+  afterAll(async () => {
     await setDB(dataSet1)
   })
 

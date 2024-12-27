@@ -6,7 +6,8 @@ config()
 
 // connect to db
 const client: MongoClient = new MongoClient(process.env.MONGO_URL || '')
-export const db = client.db(process.env.DB_NAME)
+const db=client.db()
+// export const db = client.db(process.env.DB_NAME)
 
 //connect ro collections
 export const blogCollection: Collection<BlogDbType> = db.collection<BlogDbType>(

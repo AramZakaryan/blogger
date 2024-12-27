@@ -7,6 +7,9 @@ describe('/blogs', () => {
   beforeEach(async () => {
     await setDB(dataSet1)
   })
+  afterAll(async () => {
+    await setDB()
+  })
 
   it('should get the version', async () => {
     const responseRoot = await superRequest.get('/').expect(200)
