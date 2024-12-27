@@ -1,8 +1,8 @@
-import { PostType } from '../post.type'
+import { PostDbType } from '../post.type'
 
-export type FindPostParams = Pick<PostType, 'id'>
+export type FindPostParams = { id: string }
 
-export type CreatePostBody = Omit<PostType, 'id' | 'blogName'>
+export type CreatePostBody = Omit<PostDbType, '_id' | 'blogName' | 'blogId'> & { blogId: string }
 
 export type UpdatePostParams = FindPostParams
 

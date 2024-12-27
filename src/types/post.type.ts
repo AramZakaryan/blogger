@@ -1,8 +1,11 @@
-export type PostType = {
-  id: string
+import { ObjectId } from 'mongodb'
+
+export type PostDbType = {
+  _id: ObjectId
   title: string // maxLength: 30
   shortDescription: string // maxLength: 100
   content: string // maxLength: 1000
-  blogId: string
+  blogId: ObjectId
   blogName: string
+  createdAt: Date
 }

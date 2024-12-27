@@ -1,55 +1,74 @@
-import { db } from '../db'
-import { BlogDbType, BlogType, CreateBlogBody, UpdateBlogBody } from '../types'
+import { BlogDbType, CreateBlogBody, UpdateBlogBody } from '../types'
 import { blogCollection } from '../db/mongo'
-import { blogControllers } from '../controllers'
-
-class InsertOneResult<T> {}
+import { ObjectId } from 'mongodb'
 
 export const blogRepository = {
-  getBlogs: async (): Promise<BlogType[]> => {
-    const blogs = await blogCollection.find({}).toArray()
-    // const blogs = db.blogs.slice(-15)
-
-    return blogs
-  },
-
-  findBlog: async (id: string): Promise<BlogType | null> => {
-    const blog = await blogCollection.findOne({ id })
-    // const blog = db.blogs.find((blog) => blog.id === id)
-
-    return blog
-  },
-
-  createBlog: async (body: CreateBlogBody): Promise<any> => {
-    const blog = {
-      id: String(Date.now() + Math.random()),
-      ...body,
+  getBlogs: async (): Promise<BlogDbType[] | null> => {
+    try {
+      return await blogCollection.find({}).toArray()
+    } catch (err) {
+      // console.log(err)
+      return null
     }
-
-    const createdBlog = await blogCollection.insertOne(blog)
-    // db.blogs.push(blog)
-
-    return createdBlog
   },
 
-  updateBlog: async (id: string, body: UpdateBlogBody): Promise<BlogType> => {
-    const blogIndex = db.blogs.findIndex((blog) => blog.id === id)
-
-    if (blogIndex !== -1) {
-      db.blogs[blogIndex] = { ...db.blogs[blogIndex], ...body }
+  findBlog: async (id: string): Promise<BlogDbType | null> => {
+    try {
+      const _id = new ObjectId(id)
+      return await blogCollection.findOne({ _id })
+    } catch (err) {
+      // console.log(err)
+      return null
     }
-
-    return db.blogs[blogIndex]
   },
-  deleteBlog: async (id: string): Promise<BlogType | undefined> => {
-    const blogIndex = db.blogs.findIndex((blog) => blog.id === id)
 
-    let blog
+  createBlog: async (body: CreateBlogBody): Promise<BlogDbType | null> => {
+    try {
+      const blog = {
+        _id: new ObjectId(),
+        ...body,
+        createdAt: new Date(),
+      }
 
-    if (blogIndex !== -1) {
-      ;[blog] = db.blogs.splice(blogIndex, 1)
+      const insertOneInfo = await blogCollection.insertOne(blog)
+
+      if (!insertOneInfo.acknowledged) return null
+
+      return await blogCollection.findOne({ _id: insertOneInfo.insertedId })
+    } catch (err) {
+      // console.log(err)
+      return null
     }
+  },
 
-    return blog
+  updateBlog: async (id: string, body: UpdateBlogBody): Promise<BlogDbType | null> => {
+    try {
+      const _id = new ObjectId(id)
+
+      const updateOneInfo = await blogCollection.updateOne({ _id }, { $set: { ...body } })
+
+      if (!updateOneInfo.acknowledged) return null
+
+      return await blogCollection.findOne({ _id })
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+  deleteBlog: async (id: string): Promise<BlogDbType | null> => {
+    try {
+      const _id = new ObjectId(id)
+
+      const blog = await blogCollection.findOne({ _id })
+
+      const deleteOneInfo = await blogCollection.deleteOne({ _id })
+
+      if (!deleteOneInfo.acknowledged) return null
+
+      return blog
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
   },
 }

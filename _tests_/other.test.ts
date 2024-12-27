@@ -5,7 +5,7 @@ import { dataSet1 } from './datasets'
 
 describe('/blogs', () => {
   beforeEach(async () => {
-    setDB(dataSet1)
+    await setDB(dataSet1)
   })
 
   it('should get the version', async () => {

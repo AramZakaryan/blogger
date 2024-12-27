@@ -1,7 +1,6 @@
 import { Collection, MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { Db } from './db.type'
-import { BlogType, PostType } from '../types'
+import { BlogDbType, PostDbType } from '../types'
 
 config()
 
@@ -10,18 +9,18 @@ const client: MongoClient = new MongoClient(process.env.MONGO_URL || '')
 export const db = client.db(process.env.DB_NAME)
 
 //connect ro collections
-export const blogCollection: Collection<BlogType> = db.collection<BlogType>(
+export const blogCollection: Collection<BlogDbType> = db.collection<BlogDbType>(
   process.env.BLOG_COLLECTION_NAME || '',
 )
-export const postCollection: Collection<PostType> = db.collection<PostType>(
+export const postCollection: Collection<PostDbType> = db.collection<PostDbType>(
   process.env.POST_COLLECTION_NAME || '',
 )
 
 // check connection to db
-export const connectToDB = async (url: string) => {
+export const connectToDB = async () => {
   try {
     await client.connect()
-    console.log(`Connected to ${url}`)
+    console.log(`Connected to mongoDB`)
     return true
   } catch (e) {
     console.log(e)

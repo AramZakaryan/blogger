@@ -5,6 +5,8 @@ import { toObjectIfJson } from '../utils/toObjectIfJson'
 
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
+
+
   if (!errors.isEmpty()) {
     // Transform errors into OutputErrorsType
     const outputErrors: OutputErrorsType = {

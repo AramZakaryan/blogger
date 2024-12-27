@@ -55,7 +55,18 @@ export const postControllers = {
 
     const createdPost = await postRepository.createPost(body)
 
-    res.status(201).json(createdPost)
+    if (createdPost) {
+      res.status(201).json(createdPost)
+    } else {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
   },
 
   updatePost: async (req: UpdatePostRequest, res: UpdatePostResponse) => {

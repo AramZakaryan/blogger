@@ -1,8 +1,8 @@
-import { BlogType } from '../blog.type'
+import { BlogDbType } from '../blog.type'
 
-export type FindBlogParams = Pick<BlogType, 'id'>
+export type FindBlogParams = { id: string }
 
-export type CreateBlogBody = Omit<BlogType, 'id'>
+export type CreateBlogBody = Omit<BlogDbType, '_id'>
 
 export type UpdateBlogParams = FindBlogParams
 

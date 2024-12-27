@@ -1,7 +1,6 @@
-import { BlogType } from '../types/blog.type'
-import { PostType } from '../types/post.type'
+import { BlogDbType, PostDbType } from '../types'
 
 export type Db = {
-  blogs: BlogType[]
-  posts: PostType[]
+  blogs: BlogDbType[]
+  posts: PostDbType[]
 }

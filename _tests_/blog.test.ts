@@ -5,7 +5,7 @@ import { dataSet1 } from './datasets'
 
 describe('/blogs', () => {
   beforeEach(async () => {
-    setDB(dataSet1)
+    await setDB(dataSet1)
   })
 
   it('should get array of blogs', async () => {
@@ -14,35 +14,35 @@ describe('/blogs', () => {
     expect(response.body).toBeInstanceOf(Array)
     expect(response.body.length).toBe(15)
 
-    expect(Object.keys(response.body[0]).length).toBe(4)
-    expect(Object.keys(response.body[7]).length).toBe(4)
-    expect(Object.keys(response.body[14]).length).toBe(4)
+    expect(Object.keys(response.body[0]).length).toBe(5)
+    expect(Object.keys(response.body[7]).length).toBe(5)
+    expect(Object.keys(response.body[14]).length).toBe(5)
   })
 
   it('should get the blog', async () => {
     const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
 
     const responseFindBlog0 = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .expect(200)
     const responseFindBlog7 = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[7].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[7]._id}`)
       .expect(200)
     const responseFindBlog14 = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[14].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[14]._id}`)
       .expect(200)
 
     expect(responseFindBlog0.body).toBeInstanceOf(Object)
-    expect(responseFindBlog0.body.id).toBe(responseGetBlogs.body[0].id)
-    expect(Object.keys(responseFindBlog0.body).length).toBe(4)
+    expect(responseFindBlog0.body._id).toBe(responseGetBlogs.body[0]._id)
+    expect(Object.keys(responseFindBlog0.body).length).toBe(5)
 
     expect(responseFindBlog7.body).toBeInstanceOf(Object)
-    expect(responseFindBlog7.body.id).toBe(responseGetBlogs.body[7].id)
-    expect(Object.keys(responseFindBlog7.body).length).toBe(4)
+    expect(responseFindBlog7.body._id).toBe(responseGetBlogs.body[7]._id)
+    expect(Object.keys(responseFindBlog7.body).length).toBe(5)
 
     expect(responseFindBlog14.body).toBeInstanceOf(Object)
-    expect(responseFindBlog14.body.id).toBe(responseGetBlogs.body[14].id)
-    expect(Object.keys(responseFindBlog14.body).length).toBe(4)
+    expect(responseFindBlog14.body._id).toBe(responseGetBlogs.body[14]._id)
+    expect(Object.keys(responseFindBlog14.body).length).toBe(5)
   })
 
   it('send error for non-existing blog', async () => {
@@ -95,7 +95,7 @@ describe('/blogs', () => {
     }
 
     const responseUpdateBlog = await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .set('Authorization', '') // setting headers
       .send(bodyUpdate0)
       .expect(401)
@@ -110,7 +110,7 @@ describe('/blogs', () => {
     })
 
     const responseDeleteBlog = await superRequest
-      .delete(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .delete(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .set('Authorization', '') // setting headers
       .expect(401)
 
@@ -140,7 +140,7 @@ describe('/blogs', () => {
 
     expect(responseCreateBlog.body).toBeInstanceOf(Object)
 
-    expect(responseCreateBlog.body.id).not.toBe('')
+    expect(responseCreateBlog.body._id).not.toBe('')
     expect(responseCreateBlog.body.name).toBe(body.name)
     expect(responseCreateBlog.body.description).toBe(body.description)
     expect(responseCreateBlog.body.websiteUrl).toBe(body.websiteUrl)
@@ -299,7 +299,7 @@ describe('/blogs', () => {
     }
 
     await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdate0)
       .expect(204)
@@ -308,7 +308,7 @@ describe('/blogs', () => {
 
     expect(responseGetBlogsAfterUpdate0.body[0]).toBeInstanceOf(Object)
 
-    expect(responseGetBlogsAfterUpdate0.body[0].id).toBe(responseGetBlogs.body[0].id)
+    expect(responseGetBlogsAfterUpdate0.body[0]._id).toBe(responseGetBlogs.body[0]._id)
     expect(responseGetBlogsAfterUpdate0.body[0].name).toBe(bodyUpdate0.name)
     expect(responseGetBlogsAfterUpdate0.body[0].description).toBe(bodyUpdate0.description)
     expect(responseGetBlogsAfterUpdate0.body[0].websiteUrl).toBe(bodyUpdate0.websiteUrl)
@@ -325,7 +325,7 @@ describe('/blogs', () => {
     }
 
     const responseUpdateBlogErrorV1 = await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
@@ -355,7 +355,7 @@ describe('/blogs', () => {
     }
 
     const responseUpdateBlogErrorV2 = await superRequest
-      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
@@ -417,18 +417,18 @@ describe('/blogs', () => {
     const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
 
     const responseFindBlog = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .expect(200)
 
-    expect(responseFindBlog.body.id).toEqual(responseGetBlogs.body[0].id)
+    expect(responseFindBlog.body._id).toEqual(responseGetBlogs.body[0]._id)
 
     await superRequest
-      .delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`)
+      .delete(`${PATHS.BLOGS}/${responseFindBlog.body._id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .expect(204)
 
     const responseFindBlogAfterDelete = await superRequest
-      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
+      .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0]._id}`)
       .expect(404)
 
     expect(responseFindBlogAfterDelete.body).toEqual({
