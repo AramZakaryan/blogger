@@ -9,8 +9,8 @@ config()
 export let blogCollection: Collection<BlogType>
 export let postCollection: Collection<PostType>
 
-export const runDB = async (url: string) => {
-  const client: MongoClient = new MongoClient(url)
+export const runDB = async (urlDb: string) => {
+  const client: MongoClient = new MongoClient(urlDb)
   const db = client.db(process.env.DB_NAME)
 
   blogCollection = db.collection<BlogType>(process.env.BLOG_COLLECTION_NAME || '')
@@ -20,7 +20,7 @@ export const runDB = async (url: string) => {
   try {
     await client.connect()
     await db.command({ ping: 1 })
-    console.log(`Connected to db on url: ${url}`)
+    console.log(`Connected to db on url: ${urlDb}`)
     return client
   } catch (e) {
     console.log(e)
