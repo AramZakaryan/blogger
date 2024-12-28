@@ -3,13 +3,30 @@ import { PATHS } from '../src/common'
 import { setDB } from '../src/db'
 import { dataSet1 } from './datasets'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { runDB } from '../src/db/mongo'
+import { MongoClient } from 'mongodb'
 
-describe('/posts', () => {
-  beforeEach(async () => {
+let server: MongoMemoryServer
+let client: MongoClient
+
+describe
+  // .skip
+  ('/posts', () => {
+  beforeAll(async () => {
+    server = await MongoMemoryServer.create()
+    const uri = server.getUri()
+    let resp = await runDB(uri)
+    if (resp) {
+      client = resp
+    }
+
     await setDB(dataSet1)
   })
   afterAll(async () => {
     await setDB()
+    await server.stop()
+    await client.close()
   })
 
   it('should get array of posts', async () => {

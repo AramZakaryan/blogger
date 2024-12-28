@@ -1,15 +1,30 @@
 import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
-import { dataSet1 } from './datasets'
-import { setDB } from '../src/db'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
+import { setDB } from '../src/db'
+import { dataSet1 } from './datasets'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { runDB } from '../src/db/mongo'
+import { MongoClient } from 'mongodb'
+
+let server: MongoMemoryServer
+let client: MongoClient
 
 describe('/blogs', () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
+    server = await MongoMemoryServer.create()
+    const uri = server.getUri()
+    let resp = await runDB(uri)
+    if (resp) {
+      client = resp
+    }
+
     await setDB(dataSet1)
   })
   afterAll(async () => {
-    await setDB(dataSet1)
+    await setDB()
+    await server.stop()
+    await client.close()
   })
 
   it('should get array of blogs', async () => {
@@ -308,7 +323,9 @@ describe('/blogs', () => {
       .send(bodyUpdate0)
       .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
 
-    const responseGetBlogsAfterUpdate0 = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetBlogsAfterUpdate0 = await superRequest
+      .get(PATHS.BLOGS)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseGetBlogsAfterUpdate0.body[0]).toBeInstanceOf(Object)
 

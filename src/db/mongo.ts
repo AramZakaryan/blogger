@@ -6,25 +6,22 @@ import { BlogType, PostType } from '../types'
 
 config()
 
-// connect to db
-const client: MongoClient = new MongoClient(process.env.MONGO_URL || '')
-export const db = client.db(process.env.DB_NAME)
+export let blogCollection: Collection<BlogType>
+export let postCollection: Collection<PostType>
 
-//connect ro collections
-export const blogCollection: Collection<BlogType> = db.collection<BlogType>(
-  process.env.BLOG_COLLECTION_NAME || '',
-)
-export const postCollection: Collection<PostType> = db.collection<PostType>(
-  process.env.POST_COLLECTION_NAME || '',
-)
+export const runDB = async (url: string) => {
+  const client: MongoClient = new MongoClient(url)
+  const db = client.db(process.env.DB_NAME)
 
-// check connection to db
-export const connectToDB = async () => {
+  blogCollection = db.collection<BlogType>(process.env.BLOG_COLLECTION_NAME || '')
+
+  postCollection = db.collection<PostType>(process.env.POST_COLLECTION_NAME || '')
+
   try {
     await client.connect()
     await db.command({ ping: 1 })
-    console.log(`Connected to mongoDB`)
-    return true
+    console.log(`Connected to db on url: ${url}`)
+    return client
   } catch (e) {
     console.log(e)
     await client.close()
