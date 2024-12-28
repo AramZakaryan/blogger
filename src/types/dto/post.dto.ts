@@ -1,8 +1,9 @@
-import { PostDbType } from '../post.type'
+import { PostType } from '../postType'
+import { WithId } from 'mongodb'
 
 export type FindPostParams = { id: string }
 
-export type CreatePostBody = Omit<PostDbType, '_id' | 'blogName' | 'blogId'> & { blogId: string }
+export type CreatePostBody = Omit<WithId<PostType>, '_id' | 'blogName' | 'blogId'> & { blogId: string }
 
 export type UpdatePostParams = FindPostParams
 

@@ -1,8 +1,9 @@
-import { BlogDbType } from '../blog.type'
+import { BlogType } from '../blog.type'
+import { WithId } from 'mongodb'
 
 export type FindBlogParams = { id: string }
 
-export type CreateBlogBody = Omit<BlogDbType, '_id' | 'isMembership'>
+export type CreateBlogBody = Omit<WithId<BlogType>, '_id' | 'isMembership'>
 
 export type UpdateBlogParams = FindBlogParams
 

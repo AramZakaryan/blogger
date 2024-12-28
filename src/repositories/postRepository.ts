@@ -1,10 +1,10 @@
-import { CreatePostBody, PostDbType, UpdatePostBody } from '../types'
+import { CreatePostBody, PostType, UpdatePostBody } from '../types'
 import { blogRepository } from './blogRepository'
 import { postCollection } from '../db/mongo'
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 export const postRepository = {
-  getPosts: async (): Promise<PostDbType[] | null> => {
+  getPosts: async (): Promise<WithId<PostType>[] | null> => {
     try {
       return await postCollection.find({}).toArray()
     } catch (err) {
@@ -13,7 +13,7 @@ export const postRepository = {
     }
   },
 
-  findPost: async (id: string): Promise<PostDbType | null> => {
+  findPost: async (id: string): Promise<WithId<PostType> | null> => {
     try {
       const _id = new ObjectId(id)
 
@@ -24,14 +24,13 @@ export const postRepository = {
     }
   },
 
-  createPost: async (body: CreatePostBody): Promise<PostDbType | null> => {
+  createPost: async (body: CreatePostBody): Promise<WithId<PostType> | null> => {
     try {
       const blog = await blogRepository.findBlog(body.blogId)
 
       if (!blog) return null
 
       const post = {
-        _id: new ObjectId(),
         ...body,
         blogId: blog._id,
         blogName: blog.name,
@@ -49,7 +48,7 @@ export const postRepository = {
     }
   },
 
-  updatePost: async (id: string, body: UpdatePostBody): Promise<PostDbType | null> => {
+  updatePost: async (id: string, body: UpdatePostBody): Promise<WithId<PostType> | null> => {
     try {
       const _id = new ObjectId(id)
 
@@ -66,7 +65,7 @@ export const postRepository = {
     }
   },
 
-  deletePost: async (id: string): Promise<PostDbType | null> => {
+  deletePost: async (id: string): Promise<WithId<PostType> | null> => {
     try {
       const _id = new ObjectId(id)
 

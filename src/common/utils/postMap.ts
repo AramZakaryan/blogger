@@ -1,7 +1,7 @@
-import { BlogDbType, BlogType, PostDbType, PostType } from '../../types'
-import { ObjectId } from 'mongodb'
+import { PostType, PostViewModel } from '../../types'
+import { WithId } from 'mongodb'
 
-export const postMap = (post: PostDbType): PostType => ({
+export const postMap = (post: WithId<PostType>): PostViewModel => ({
   id: post._id,
   title: post.title,
   shortDescription: post.shortDescription,

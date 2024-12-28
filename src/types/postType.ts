@@ -1,7 +1,8 @@
 import { ObjectId } from 'mongodb'
 
-export type PostDbType = {
-  _id: ObjectId
+export type PostViewModel = PostType & { id: ObjectId }
+
+export type PostType = {
   title: string // maxLength: 30
   shortDescription: string // maxLength: 100
   content: string // maxLength: 1000
@@ -9,5 +10,3 @@ export type PostDbType = {
   blogName: string
   createdAt: Date
 }
-
-export type PostType = Omit<PostDbType, '_id'> & { id: ObjectId }

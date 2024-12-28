@@ -1,6 +1,7 @@
-import { BlogDbType, PostDbType } from '../types'
+import { BlogType, PostType } from '../types'
+import { WithId } from 'mongodb'
 
 export type Db = {
-  blogs: BlogDbType[]
-  posts: PostDbType[]
+  blogs: WithId<BlogType>[]
+  posts: WithId<PostType>[]
 }

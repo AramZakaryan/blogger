@@ -1,12 +1,12 @@
 import { Response } from 'express'
-import { PostType } from '../post.type'
+import { PostViewModel } from '../postType'
 import { OutputErrorsType } from '../general'
 
-export type GetPostsResponse = Response<PostType[] | OutputErrorsType>
+export type GetPostsResponse = Response<PostViewModel[] | OutputErrorsType>
 
-export type FindPostResponse = Response<PostType | OutputErrorsType>
+export type FindPostResponse = Response<PostViewModel | OutputErrorsType>
 
-export type CreatePostResponse = Response<PostType | OutputErrorsType>
+export type CreatePostResponse = Response<PostViewModel | OutputErrorsType>
 
 export type UpdatePostResponse = Response<void | OutputErrorsType>
 
