@@ -12,6 +12,7 @@ import {
   UpdateBlogResponse,
 } from '../types'
 import { blogMap } from '../common'
+import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
 
 export const blogControllers = {
   getBlogs: async (req: GetBlogsRequest, res: GetBlogsResponse): Promise<void> => {
@@ -20,7 +21,7 @@ export const blogControllers = {
     if (blogs) {
       res.json(blogs.map(blogMap))
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -40,7 +41,7 @@ export const blogControllers = {
     if (blog) {
       res.json(blogMap(blog))
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -57,9 +58,9 @@ export const blogControllers = {
     const createdBlog = await blogRepository.createBlog(body)
 
     if (createdBlog) {
-      res.status(201).json(blogMap(createdBlog))
+      res.status(HTTP_STATUS_CODES.CREATED_201).json(blogMap(createdBlog))
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -78,9 +79,9 @@ export const blogControllers = {
     const updatedBlog = await blogRepository.updateBlog(id, body)
 
     if (updatedBlog) {
-      res.sendStatus(204)
+      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -98,9 +99,9 @@ export const blogControllers = {
     const deletedBlog = await blogRepository.deleteBlog(id)
 
     if (deletedBlog) {
-      res.sendStatus(204)
+      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',

@@ -12,6 +12,7 @@ import {
   UpdatePostResponse,
 } from '../types'
 import { postMap } from '../common'
+import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
 
 export const postControllers = {
   getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
@@ -20,7 +21,7 @@ export const postControllers = {
     if (posts) {
       res.json(posts.map(postMap))
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -40,7 +41,7 @@ export const postControllers = {
     if (post) {
       res.json(postMap(post))
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -57,9 +58,9 @@ export const postControllers = {
     const createdPost = await postRepository.createPost(body)
 
     if (createdPost) {
-      res.status(201).json(postMap(createdPost))
+      res.status(HTTP_STATUS_CODES.CREATED_201).json(postMap(createdPost))
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -78,9 +79,9 @@ export const postControllers = {
     const updatedPost = await postRepository.updatePost(id, body)
 
     if (updatedPost) {
-      res.sendStatus(204)
+      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',
@@ -98,9 +99,9 @@ export const postControllers = {
     const deletedPost = await postRepository.deletePost(id)
 
     if (deletedPost) {
-      res.sendStatus(204)
+      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(400).json({
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
             message: 'something went wrong',

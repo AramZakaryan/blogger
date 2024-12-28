@@ -2,6 +2,7 @@ import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
 import { dataSet1 } from './datasets'
 import { setDB } from '../src/db'
+import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 
 describe('/blogs', () => {
   beforeEach(async () => {
@@ -12,7 +13,7 @@ describe('/blogs', () => {
   })
 
   it('should get array of blogs', async () => {
-    const response = await superRequest.get(PATHS.BLOGS).expect(200)
+    const response = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
     expect(response.body).toBeInstanceOf(Array)
     expect(response.body.length).toBe(15)
@@ -23,17 +24,17 @@ describe('/blogs', () => {
   })
 
   it('should get the blog', async () => {
-    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
     const responseFindBlog0 = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
     const responseFindBlog7 = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetBlogs.body[7].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
     const responseFindBlog14 = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetBlogs.body[14].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseFindBlog0.body).toBeInstanceOf(Object)
     expect(responseFindBlog0.body.id).toBe(responseGetBlogs.body[0].id)
@@ -53,7 +54,7 @@ describe('/blogs', () => {
 
     const responseFindBlogError = await superRequest
       .get(`${PATHS.BLOGS}/${paramsIdNonExisting}`)
-      .expect(404)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseFindBlogError.body).toBeInstanceOf(Object)
     expect(responseFindBlogError.body).toEqual({
@@ -78,7 +79,7 @@ describe('/blogs', () => {
       .set('Authorization', '') // setting headers
       .send(bodyCreate)
       .expect('Content-Type', /json/)
-      .expect(401)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
 
     expect(responseCreateBlog.body).toEqual({
       errorsMessages: [
@@ -89,7 +90,7 @@ describe('/blogs', () => {
       ],
     })
 
-    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyUpdate0 = {
       name: 'new2 name max15',
@@ -101,7 +102,7 @@ describe('/blogs', () => {
       .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', '') // setting headers
       .send(bodyUpdate0)
-      .expect(401)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
 
     expect(responseUpdateBlog.body).toEqual({
       errorsMessages: [
@@ -115,7 +116,7 @@ describe('/blogs', () => {
     const responseDeleteBlog = await superRequest
       .delete(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', '') // setting headers
-      .expect(401)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
 
     expect(responseDeleteBlog.body).toEqual({
       errorsMessages: [
@@ -139,7 +140,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(body)
       .expect('Content-Type', /json/)
-      .expect(201)
+      .expect(HTTP_STATUS_CODES.CREATED_201)
 
     expect(responseCreateBlog.body).toBeInstanceOf(Object)
 
@@ -157,7 +158,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyNonExisting)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreateBlogToBodyNonExisting.body).toEqual({
       errorsMessages: [
@@ -183,7 +184,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyEmpty)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreateBlogToBodyEmpty.body).toEqual({
       errorsMessages: [
@@ -209,7 +210,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyArray)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreateBlogToyBodyArray.body).toEqual({
       errorsMessages: [
@@ -242,7 +243,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreateBlogErrorV1.body).toEqual({
       errorsMessages: [
@@ -272,7 +273,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreateBlogErrorV2.body).toEqual({
       errorsMessages: [
@@ -293,7 +294,7 @@ describe('/blogs', () => {
   })
 
   it('update blog', async () => {
-    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyUpdate0 = {
       name: 'new2 name max15',
@@ -305,9 +306,9 @@ describe('/blogs', () => {
       .put(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdate0)
-      .expect(204)
+      .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
 
-    const responseGetBlogsAfterUpdate0 = await superRequest.get(PATHS.BLOGS).expect(200)
+    const responseGetBlogsAfterUpdate0 = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseGetBlogsAfterUpdate0.body[0]).toBeInstanceOf(Object)
 
@@ -318,7 +319,7 @@ describe('/blogs', () => {
   })
 
   it('send error for non-existing, empty, non-object body in update blog', async () => {
-    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyErrorV1 = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
@@ -332,7 +333,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseUpdateBlogErrorV1.body).toEqual({
       errorsMessages: [
@@ -362,7 +363,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseUpdateBlogErrorV2.body).toEqual({
       errorsMessages: [
@@ -392,7 +393,7 @@ describe('/blogs', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdateError)
       .expect('Content-Type', /json/)
-      .expect(404)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseUpdateBlogError.body).toEqual({
       errorsMessages: [
@@ -417,22 +418,22 @@ describe('/blogs', () => {
   })
 
   it('delete blog', async () => {
-    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
     const responseFindBlog = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseFindBlog.body.id).toEqual(responseGetBlogs.body[0].id)
 
     await superRequest
       .delete(`${PATHS.BLOGS}/${responseFindBlog.body.id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .expect(204)
+      .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
 
     const responseFindBlogAfterDelete = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetBlogs.body[0].id}`)
-      .expect(404)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseFindBlogAfterDelete.body).toEqual({
       errorsMessages: [

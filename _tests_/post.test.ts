@@ -2,6 +2,7 @@ import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
 import { setDB } from '../src/db'
 import { dataSet1 } from './datasets'
+import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 
 describe('/posts', () => {
   beforeEach(async () => {
@@ -12,8 +13,8 @@ describe('/posts', () => {
   })
 
   it('should get array of posts', async () => {
-    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200) // verifying existence of the endpoint
-    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200) // verifying existence of the endpoint
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200) // verifying existence of the endpoint
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200) // verifying existence of the endpoint
 
     expect(responseGetPosts.body).toBeInstanceOf(Array)
     expect(responseGetPosts.body.length).toBe(15)
@@ -29,17 +30,17 @@ describe('/posts', () => {
   })
 
   it('should get the post', async () => {
-    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200) // verifying existence of the endpoint
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200) // verifying existence of the endpoint
 
     const responseFindPost0 = await superRequest
       .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
     const responseFindPost7 = await superRequest
       .get(`${PATHS.POSTS}/${responseGetPosts.body[7].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
     const responseFindPost14 = await superRequest
       .get(`${PATHS.POSTS}/${responseGetPosts.body[14].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseFindPost0.body).toBeInstanceOf(Object)
     expect(responseFindPost0.body.id).toBe(responseGetPosts.body[0].id)
@@ -59,7 +60,7 @@ describe('/posts', () => {
 
     const responseFindPostError = await superRequest
       .get(`${PATHS.POSTS}/${paramsIdNonExisting}`)
-      .expect(404)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseFindPostError.body).toBeInstanceOf(Object)
     expect(responseFindPostError.body).toEqual({
@@ -84,7 +85,7 @@ describe('/posts', () => {
       .set('Authorization', '') // setting headers
       .send(bodyCreate)
       .expect('Content-Type', /json/)
-      .expect(401)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
 
     expect(responseCreatePost.body).toEqual({
       errorsMessages: [
@@ -95,7 +96,7 @@ describe('/posts', () => {
       ],
     })
 
-    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyUpdate0 = {
       name: 'new2 name max15',
@@ -107,7 +108,7 @@ describe('/posts', () => {
       .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', '') // setting headers
       .send(bodyUpdate0)
-      .expect(401)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
 
     expect(responseUpdatePost.body).toEqual({
       errorsMessages: [
@@ -121,7 +122,7 @@ describe('/posts', () => {
     const responseDeletePost = await superRequest
       .delete(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', '') // setting headers
-      .expect(401)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
 
     expect(responseDeletePost.body).toEqual({
       errorsMessages: [
@@ -146,7 +147,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(body)
       .expect('Content-Type', /json/)
-      .expect(201)
+      .expect(HTTP_STATUS_CODES.CREATED_201)
 
     expect(responseCreatePost.body).toBeInstanceOf(Object)
 
@@ -166,7 +167,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyNonExisting)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreatePostToBodyNonExisting.body).toEqual({
       errorsMessages: [
@@ -196,7 +197,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyEmpty)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreatePostToBodyEmpty.body).toEqual({
       errorsMessages: [
@@ -226,7 +227,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyArray)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreatePostToyBodyArray.body).toEqual({
       errorsMessages: [
@@ -264,7 +265,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreatePostErrorV1.body).toEqual({
       errorsMessages: [
@@ -294,7 +295,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseCreatePostErrorV2.body).toEqual({
       errorsMessages: [
@@ -315,8 +316,8 @@ describe('/posts', () => {
   })
 
   it('update post', async () => {
-    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(200)
-    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+    const responseGetBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyUpdate0 = {
       title: 'new2 title max length 30',
@@ -328,9 +329,11 @@ describe('/posts', () => {
       .put(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdate0)
-      .expect(204)
+      .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
 
-    const responseGetPostsAfterUpdate0 = await superRequest.get(PATHS.POSTS).expect(200)
+    const responseGetPostsAfterUpdate0 = await superRequest
+      .get(PATHS.POSTS)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseGetPostsAfterUpdate0.body[0]).toBeInstanceOf(Object)
 
@@ -345,7 +348,7 @@ describe('/posts', () => {
   })
 
   it('send error for non-existing, empty, non-object body in update post', async () => {
-    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyErrorV1 = {
       title: 'title'.repeat(30), // error message: title max length is 30
@@ -360,7 +363,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV1)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseUpdatePostErrorV1.body).toEqual({
       errorsMessages: [
@@ -391,7 +394,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyErrorV2)
       .expect('Content-Type', /json/)
-      .expect(400)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseUpdatePostErrorV2.body).toEqual({
       errorsMessages: [
@@ -417,7 +420,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyUpdateError)
       .expect('Content-Type', /json/)
-      .expect(404)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseUpdatePostError.body).toEqual({
       errorsMessages: [
@@ -446,22 +449,22 @@ describe('/posts', () => {
   })
 
   it('delete post', async () => {
-    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(200)
+    const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200)
 
     const responseFindPost = await superRequest
       .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
-      .expect(200)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseFindPost.body.id).toEqual(responseGetPosts.body[0].id)
 
     await superRequest
       .delete(`${PATHS.POSTS}/${responseFindPost.body.id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .expect(204)
+      .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
 
     const responseFindPostsAfterDelete = await superRequest
       .get(`${PATHS.POSTS}/${responseGetPosts.body[0].id}`)
-      .expect(404)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseFindPostsAfterDelete.body).toEqual({
       errorsMessages: [

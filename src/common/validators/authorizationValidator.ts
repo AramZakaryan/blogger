@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { config } from 'dotenv'
+import { HTTP_STATUS_CODES } from '../httpStatusCodes'
 
 config()
 
@@ -17,7 +18,7 @@ const encodeBasicCredentials = encodeBasicAuth(username, password)
 export const authorizationValidator = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization']
   if (!authHeader || !authHeader.startsWith(`Basic ${encodeBasicCredentials}`)) {
-    res.status(401).json({
+    res.status(HTTP_STATUS_CODES.UNAUTHORIZED_401).json({
       errorsMessages: [
         {
           message: 'headers required',
