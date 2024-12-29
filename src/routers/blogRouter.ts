@@ -4,6 +4,7 @@ import {
   handleValidationErrors,
   authorizationValidator,
   createPostBodyByBlogValidator,
+  postQueryValidator,
 } from '../common'
 import { blogBodyValidator } from '../common'
 import { blogParamsValidator } from '../common'
@@ -16,7 +17,7 @@ blogRouter.get('/', blogQueryValidator, handleValidationErrors, blogControllers.
 blogRouter.get(
   '/:id/posts',
   blogParamsValidator,
-  blogQueryValidator,
+  postQueryValidator,
   handleValidationErrors,
   blogControllers.getArrangedPostsByBlog,
 )

@@ -5,12 +5,13 @@ import {
   handleValidationErrors,
   createPostBodyValidator,
   updatePostBodyValidator,
+  postQueryValidator,
 } from '../common'
 import { postParamsValidator } from '../common'
 
 export const postRouter = router()
 
-postRouter.get('/', postControllers.getPosts)
+postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.getArrangedPosts)
 
 postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControllers.findPost)
 

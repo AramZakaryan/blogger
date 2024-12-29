@@ -1,12 +1,24 @@
-import { CreatePostBody, PostType, UpdatePostBody } from '../types'
+import { CreatePostBody, GetArrangedPostsQuery, PostType, UpdatePostBody } from '../types'
 import { blogRepository } from './blogRepository'
-import { postCollection } from '../db/db'
+import { postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
 
 export const postRepository = {
-  getPosts: async (): Promise<WithId<PostType>[] | null> => {
+  getArrangedPosts: async (query: GetArrangedPostsQuery): Promise<WithId<PostType>[] | null> => {
+    const pageNumber = query.pageNumber || 1
+    const pageSize = query.pageSize || 10
+    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
+
+    const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
+    const sortDirection = query.sortDirection === 'desc' ? -1 : 1
+
     try {
-      return await postCollection.find({}).toArray()
+      return await postCollection
+        .find()
+        .sort({ [sortBy]: sortDirection })
+        .skip(skip)
+        .limit(pageSize)
+        .toArray()
     } catch (err) {
       // console.log(err)
       return null

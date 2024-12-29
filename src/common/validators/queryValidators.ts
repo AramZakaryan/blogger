@@ -1,6 +1,6 @@
 import { query } from 'express-validator'
 
-export const blogQueryValidator = [
+const queryValidator = [
   query('pageNumber')
     .optional()
     .isNumeric({ no_symbols: true })
@@ -17,14 +17,7 @@ export const blogQueryValidator = [
       field: 'query',
     })
     .toInt(), // convert to integer to use it in app
-  query('sortBy')
-    .optional()
-    .isString()
-    .isIn(['id', 'title', 'shortDescription', 'content', 'blogId', 'blogName', 'createdAt'])
-    .withMessage({
-      message: 'sortBy must be key of post',
-      field: 'query',
-    }),
+
   query('sortDirection').optional().isString().isIn(['asc', 'desc']).withMessage({
     message: 'sortDirection must be key of asc or desc',
     field: 'query',
@@ -33,4 +26,28 @@ export const blogQueryValidator = [
     message: 'SearchNameTerm must string',
     field: 'query',
   }),
+]
+
+export const blogQueryValidator = [
+  ...queryValidator,
+  query('sortBy')
+    .optional()
+    .isString()
+    .isIn(['id', 'name', 'description', 'websiteUrl', 'isMembership', 'createdAt'])
+    .withMessage({
+      message: 'sortBy must be key of post',
+      field: 'query',
+    }),
+]
+
+export const postQueryValidator = [
+  ...queryValidator,
+  query('sortBy')
+    .optional()
+    .isString()
+    .isIn(['id', 'title', 'shortDescription', 'content', 'blogId', 'blogName', 'createdAt'])
+    .withMessage({
+      message: 'sortBy must be key of post',
+      field: 'query',
+    }),
 ]

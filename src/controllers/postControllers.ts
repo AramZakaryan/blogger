@@ -6,8 +6,8 @@ import {
   DeletePostResponse,
   FindPostRequest,
   FindPostResponse,
-  GetPostsRequest,
-  GetPostsResponse,
+  GetArrangedPostsRequest,
+  GetArrangedPostsResponse,
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
@@ -15,9 +15,13 @@ import { postMap } from '../common'
 import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
 
 export const postControllers = {
-  getPosts: async (req: GetPostsRequest, res: GetPostsResponse): Promise<void> => {
-    const posts = await postRepository.getPosts()
+  getArrangedPosts: async (
+    req: GetArrangedPostsRequest,
+    res: GetArrangedPostsResponse,
+  ): Promise<void> => {
+    const query = req.query
 
+    const posts = await postRepository.getArrangedPosts(query)
     if (posts) {
       res.json(posts.map(postMap))
     } else {

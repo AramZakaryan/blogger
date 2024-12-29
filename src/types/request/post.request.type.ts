@@ -5,11 +5,12 @@ import {
   CreatePostByBlogParams,
   DeletePostParams,
   FindPostParams,
+  GetArrangedPostsQuery,
   UpdatePostBody,
   UpdatePostParams,
 } from '../dto'
 
-export type GetPostsRequest = Request
+export type GetArrangedPostsRequest = Request<{}, any, {}, GetArrangedPostsQuery>
 
 export type FindPostRequest = Request<FindPostParams>
 

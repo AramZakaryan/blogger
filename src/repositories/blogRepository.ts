@@ -13,13 +13,14 @@ export const blogRepository = {
   getArrangedBlogs: async (query: GetArrangedBlogsQuery): Promise<WithId<BlogType>[] | null> => {
     const pageNumber = query.pageNumber || 1
     const pageSize = query.pageSize || 10
-    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
+    const skip = (pageNumber - 1) * pageSize // skip blogs for previous pages
 
     const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
     const sortDirection = query.sortDirection === 'desc' ? -1 : 1
 
     const searchNameTerm = query.searchNameTerm || ''
     const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
+
 
     try {
       return await blogCollection

@@ -9,5 +9,4 @@ export type ArrangementQuery = {
   pageSize?: number
   sortBy?: keyof PostViewModel
   sortDirection?: 'asc' | 'desc'
-  searchNameTerm?: string
 }
