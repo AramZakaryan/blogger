@@ -1,7 +1,12 @@
 import { blogRepository } from '../repositories'
+import { Response } from 'express'
 import {
   CreateBlogRequest,
   CreateBlogResponse,
+  CreatePostByBlogRequest,
+  CreatePostByBlogResponse,
+  CreatePostRequest,
+  CreatePostResponse,
   DeleteBlogRequest,
   DeleteBlogResponse,
   FindBlogRequest,
@@ -15,6 +20,7 @@ import {
 } from '../types'
 import { blogMap, postMap } from '../common'
 import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
+import { blogServices } from '../services/blogServices'
 
 export const blogControllers = {
   getAllBlogs: async (req: GetAllBlogsRequest, res: GetBlogsResponse): Promise<void> => {
@@ -34,14 +40,18 @@ export const blogControllers = {
     }
   },
 
+  // "Arranged" means "Paginated and Sorted"
   getArrangedPostsByBlog: async (
     req: GetArrangedPostsByBlogRequest,
     res: GetArrangedPostsByBlogResponse,
   ): Promise<void> => {
     const params = req.params
     const id = params.id
-    // "Arranged" means "Paginated and Sorted"
-    const posts = await blogRepository.getArrangedPostsByBlog(id)
+
+    const query = req.query
+    console.log(query)
+
+    const posts = await blogRepository.getArrangedPostsByBlog(id, query)
 
     if (posts) {
       res.json(posts.map(postMap))
@@ -84,6 +94,30 @@ export const blogControllers = {
 
     if (createdBlog) {
       res.status(HTTP_STATUS_CODES.CREATED_201).json(blogMap(createdBlog))
+    } else {
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
+  },
+
+  createPostByBlog: async (
+    req: CreatePostByBlogRequest,
+    res: CreatePostByBlogResponse,
+  ): Promise<void> => {
+    const params = req.params
+    const blogId = params.id
+    const body = req.body
+
+    const createdPost = await blogServices.createPostByBlog(blogId, body)
+
+    if (createdPost) {
+      res.status(HTTP_STATUS_CODES.CREATED_201).json(postMap(createdPost))
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [

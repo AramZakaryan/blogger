@@ -1,6 +1,18 @@
-import { BlogType, CreateBlogBody, PostType, UpdateBlogBody } from '../types'
-import { blogCollection, postCollection } from '../db/db'
+import {
+  BlogType,
+  CreateBlogBody,
+  CreatePostRequest,
+  CreatePostResponse,
+  GetArrangedPostsByBlogQuery,
+  PostType,
+  UpdateBlogBody,
+} from '../types'
+import { blogCollection, postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
+import { postRepository } from './postRepository'
+import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
+import { postMap } from '../common'
+import { blogServices } from '../services/blogServices'
 
 export const blogRepository = {
   getAllBlogs: async (): Promise<WithId<BlogType>[] | null> => {
@@ -12,10 +24,25 @@ export const blogRepository = {
     }
   },
 
-  getArrangedPostsByBlog: async (id: string): Promise<WithId<PostType>[] | null> => {
+  getArrangedPostsByBlog: async (
+    id: string,
+    query: GetArrangedPostsByBlogQuery,
+  ): Promise<WithId<PostType>[] | null> => {
+    const pageNumber = query.pageNumber || 1
+    const pageSize = query.pageSize || 10
+    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
+    const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
+    const sortDirection = query.sortDirection === 'desc' ? -1 : 1
+
     try {
       const blogId = new ObjectId(id)
-      return await postCollection.find({}).filter({ blogId }).toArray()
+      return await postCollection
+        .find({})
+        .sort({ [sortBy]: sortDirection })
+        .filter({ blogId })
+        .skip(skip)
+        .limit(pageSize)
+        .toArray()
     } catch (err) {
       // console.log(err)
       return null

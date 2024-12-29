@@ -8,7 +8,6 @@ export const blogParamsValidator = [
       message: 'blog id as URI parameter is required',
       field: 'params',
     })
-    .bail()
     .custom(async (_, { req }) => {
       const blog = await blogRepository.findBlog(req.params?.id)
       if (!blog) {

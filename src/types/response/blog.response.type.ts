@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { BlogViewModel } from '../blog.type'
 import { OutputErrorsType } from '../general'
-import { PostViewModel } from '../postType'
+import { PostViewModel } from '../post.type'
 
 export type GetBlogsResponse = Response<BlogViewModel[] | OutputErrorsType>
 

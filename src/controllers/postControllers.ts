@@ -15,7 +15,7 @@ import { postMap } from '../common'
 import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
 
 export const postControllers = {
-  getPosts: async (req: GetPostsRequest, res: GetPostsResponse) => {
+  getPosts: async (req: GetPostsRequest, res: GetPostsResponse): Promise<void> => {
     const posts = await postRepository.getPosts()
 
     if (posts) {
@@ -52,7 +52,7 @@ export const postControllers = {
     }
   },
 
-  createPost: async (req: CreatePostRequest, res: CreatePostResponse) => {
+  createPost: async (req: CreatePostRequest, res: CreatePostResponse): Promise<void> => {
     const body = req.body
 
     const createdPost = await postRepository.createPost(body)
@@ -71,7 +71,7 @@ export const postControllers = {
     }
   },
 
-  updatePost: async (req: UpdatePostRequest, res: UpdatePostResponse) => {
+  updatePost: async (req: UpdatePostRequest, res: UpdatePostResponse): Promise<void> => {
     const params = req.params
     const id = params.id
     const body = req.body
@@ -92,7 +92,7 @@ export const postControllers = {
     }
   },
 
-  deletePost: async (req: DeletePostRequest, res: DeletePostResponse) => {
+  deletePost: async (req: DeletePostRequest, res: DeletePostResponse): Promise<void> => {
     const params = req.params
     const id = params.id
 

@@ -6,7 +6,7 @@ import { HTTP_STATUS_CODES } from '../httpStatusCodes'
 
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
-
+  // console.log( errors)
 
   if (!errors.isEmpty()) {
     // Transform errors into OutputErrorsType

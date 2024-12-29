@@ -4,13 +4,17 @@ import { handleNotEmpty } from './handleNotEmpty'
 import { handleIsStringIsLength } from './handleIsStringIsLength'
 import { handleIsString } from './handleIsString'
 
-export const postBodyValidator = [
+export const createPostBodyByBlogValidator = [
   handleNotEmpty('title'),
   handleIsStringIsLength('title', 30),
   handleNotEmpty('shortDescription'),
   handleIsStringIsLength('shortDescription', 100),
   handleNotEmpty('content'),
   handleIsStringIsLength('content', 1000),
+]
+
+export const createPostBodyValidator = [
+  ...createPostBodyByBlogValidator,
   handleNotEmpty('blogId', false),
   handleIsString('blogId').custom(async (value, { req }) => {
     const blog = await blogRepository.findBlog(req.body.blogId)
@@ -25,3 +29,5 @@ export const postBodyValidator = [
     return true
   }),
 ]
+
+export const updatePostBodyValidator = createPostBodyValidator

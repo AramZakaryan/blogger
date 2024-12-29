@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-export type PostViewModel = PostType & { id: ObjectId }
+export type PostViewModel = PostType & { id: string }
 
 export type PostType = {
   title: string // maxLength: 30
