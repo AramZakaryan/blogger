@@ -5,19 +5,24 @@ import { dataSet1 } from './datasets'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { MongoClient } from 'mongodb'
-import { runDB } from '../src/db/mongo'
+import { runDB } from '../src/db'
+import { config } from 'dotenv'
+
+config()
 
 let server: MongoMemoryServer
 let client: MongoClient
 
-describe(// .skip
-'/blogs', () => {
+// const dbUrl = process.env.MONGO_URL || ''
+const dbName = process.env.DB_TEST_NAME || ''
+
+describe('/blogs', () => {
   beforeAll(async () => {
     server = await MongoMemoryServer.create()
-    const uri = server.getUri()
-    let resp = await runDB(uri)
-    if (resp) {
-      client = resp
+    const dbUrl = server.getUri()
+    let clientConnected = await runDB(dbUrl, dbName)
+    if (clientConnected) {
+      client = clientConnected
     }
 
     await setDB(dataSet1)

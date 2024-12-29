@@ -1,6 +1,6 @@
 import { CreatePostBody, PostType, UpdatePostBody } from '../types'
 import { blogRepository } from './blogRepository'
-import { postCollection } from '../db/mongo'
+import { postCollection } from '../db/db'
 import { ObjectId, WithId } from 'mongodb'
 
 export const postRepository = {

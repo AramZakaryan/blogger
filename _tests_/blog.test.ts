@@ -4,19 +4,26 @@ import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { setDB } from '../src/db'
 import { dataSet1 } from './datasets'
 import { MongoMemoryServer } from 'mongodb-memory-server'
-import { runDB } from '../src/db/mongo'
+import { runDB } from '../src/db'
 import { MongoClient } from 'mongodb'
+import { config } from 'dotenv'
+
+config()
 
 let server: MongoMemoryServer
 let client: MongoClient
 
+// const dbUrl = process.env.MONGO_URL || ''
+const dbName = process.env.DB_TEST_NAME || ''
+
 describe('/blogs', () => {
   beforeAll(async () => {
     server = await MongoMemoryServer.create()
-    const uri = server.getUri()
-    let resp = await runDB(uri)
-    if (resp) {
-      client = resp
+    const dbUrl = server.getUri()
+
+    let clientConnected = await runDB(dbUrl, dbName)
+    if (clientConnected) {
+      client = clientConnected
     }
 
     await setDB(dataSet1)

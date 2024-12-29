@@ -1,5 +1,5 @@
 import { BlogType, CreateBlogBody, UpdateBlogBody } from '../types'
-import { blogCollection } from '../db/mongo'
+import { blogCollection } from '../db/db'
 import { ObjectId, WithId } from 'mongodb'
 
 export const blogRepository = {

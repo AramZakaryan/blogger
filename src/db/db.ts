@@ -1,9 +1,33 @@
-import { Db } from './db.type'
-import { blogCollection, postCollection } from './mongo'
+// src/db/db.ts
 
-export const db: Db = {
-  blogs: [],
-  posts: [],
+import { Collection, MongoClient } from 'mongodb'
+import { config } from 'dotenv'
+import { BlogType, PostType } from '../types'
+import { Db } from './db.type'
+
+config()
+
+export let blogCollection: Collection<BlogType>
+export let postCollection: Collection<PostType>
+
+export const runDB = async (dbUrl: string, dbName: string) => {
+  const client: MongoClient = new MongoClient(dbUrl)
+  const db = client.db(dbName)
+
+  blogCollection = db.collection<BlogType>(process.env.BLOG_COLLECTION_NAME || '')
+
+  postCollection = db.collection<PostType>(process.env.POST_COLLECTION_NAME || '')
+
+  try {
+    await client.connect()
+    await db.command({ ping: 1 })
+    console.log(`Connected to db: ${dbName} on url: ${dbUrl}`)
+    return client
+  } catch (e) {
+    console.log(e)
+    await client.close()
+    return false
+  }
 }
 
 /** setDB function resets/updates the database for testing */
