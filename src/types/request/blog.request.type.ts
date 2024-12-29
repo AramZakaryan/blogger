@@ -3,12 +3,13 @@ import {
   CreateBlogBody,
   DeleteBlogParams,
   FindBlogParams,
+  GetArrangedBlogsQuery,
   GetArrangedPostsByBlogQuery,
   UpdateBlogBody,
   UpdateBlogParams,
 } from '../dto'
 
-export type GetAllBlogsRequest = Request
+export type GetArrangedBlogsRequest = Request<{}, any, {}, GetArrangedBlogsQuery>
 
 export type GetArrangedPostsByBlogRequest = Request<
   FindBlogParams,

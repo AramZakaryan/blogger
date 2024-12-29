@@ -1,15 +1,12 @@
 import { BlogType } from '../blog.type'
 import { WithId } from 'mongodb'
-import { PostType, PostViewModel } from '../post.type'
+import { ArrangementQuery } from '../general'
+
+export type GetArrangedBlogsQuery = ArrangementQuery
 
 export type FindBlogParams = { id: string }
 
-export type GetArrangedPostsByBlogQuery = {
-  pageNumber?: number
-  pageSize?: number
-  sortBy?: keyof PostViewModel
-  sortDirection?: 'asc' | 'desc'
-}
+export type GetArrangedPostsByBlogQuery = Omit<ArrangementQuery, 'SearchNameTerm'>
 
 export type CreateBlogBody = Omit<WithId<BlogType>, '_id' | 'isMembership'>
 

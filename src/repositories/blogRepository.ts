@@ -1,23 +1,33 @@
 import {
   BlogType,
   CreateBlogBody,
-  CreatePostRequest,
-  CreatePostResponse,
+  GetArrangedBlogsQuery,
   GetArrangedPostsByBlogQuery,
   PostType,
   UpdateBlogBody,
 } from '../types'
 import { blogCollection, postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
-import { postRepository } from './postRepository'
-import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
-import { postMap } from '../common'
-import { blogServices } from '../services/blogServices'
 
 export const blogRepository = {
-  getAllBlogs: async (): Promise<WithId<BlogType>[] | null> => {
+  getArrangedBlogs: async (query: GetArrangedBlogsQuery): Promise<WithId<BlogType>[] | null> => {
+    const pageNumber = query.pageNumber || 1
+    const pageSize = query.pageSize || 10
+    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
+
+    const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
+    const sortDirection = query.sortDirection === 'desc' ? -1 : 1
+
+    const searchNameTerm = query.searchNameTerm || ''
+    const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
+
     try {
-      return await blogCollection.find({}).toArray()
+      return await blogCollection
+        .find({ name: { $regex: searchNameTermRegExp } })
+        .sort({ [sortBy]: sortDirection })
+        .skip(skip)
+        .limit(pageSize)
+        .toArray()
     } catch (err) {
       // console.log(err)
       return null

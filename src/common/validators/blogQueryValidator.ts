@@ -29,4 +29,8 @@ export const blogQueryValidator = [
     message: 'sortDirection must be key of asc or desc',
     field: 'query',
   }),
+  query('SearchNameTerm').optional().isString().withMessage({
+    message: 'SearchNameTerm must string',
+    field: 'query',
+  }),
 ]

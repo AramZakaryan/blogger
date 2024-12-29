@@ -1,20 +1,17 @@
 import { blogRepository } from '../repositories'
-import { Response } from 'express'
 import {
   CreateBlogRequest,
   CreateBlogResponse,
   CreatePostByBlogRequest,
   CreatePostByBlogResponse,
-  CreatePostRequest,
-  CreatePostResponse,
   DeleteBlogRequest,
   DeleteBlogResponse,
   FindBlogRequest,
   FindBlogResponse,
-  GetAllBlogsRequest,
+  GetArrangedBlogsRequest,
   GetArrangedPostsByBlogRequest,
   GetArrangedPostsByBlogResponse,
-  GetBlogsResponse,
+  GetArrangedResponse,
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
@@ -23,8 +20,13 @@ import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
 import { blogServices } from '../services/blogServices'
 
 export const blogControllers = {
-  getAllBlogs: async (req: GetAllBlogsRequest, res: GetBlogsResponse): Promise<void> => {
-    const blogs = await blogRepository.getAllBlogs()
+  getArrangedBlogs: async (
+    req: GetArrangedBlogsRequest,
+    res: GetArrangedResponse,
+  ): Promise<void> => {
+    const query = req.query
+
+    const blogs = await blogRepository.getArrangedBlogs(query)
 
     if (blogs) {
       res.json(blogs.map(blogMap))
@@ -47,9 +49,7 @@ export const blogControllers = {
   ): Promise<void> => {
     const params = req.params
     const id = params.id
-
     const query = req.query
-    console.log(query)
 
     const posts = await blogRepository.getArrangedPostsByBlog(id, query)
 

@@ -3,7 +3,7 @@ import { BlogViewModel } from '../blog.type'
 import { OutputErrorsType } from '../general'
 import { PostViewModel } from '../post.type'
 
-export type GetBlogsResponse = Response<BlogViewModel[] | OutputErrorsType>
+export type GetArrangedResponse = Response<BlogViewModel[] | OutputErrorsType>
 
 export type GetArrangedPostsByBlogResponse = Response<PostViewModel[] | OutputErrorsType>
 

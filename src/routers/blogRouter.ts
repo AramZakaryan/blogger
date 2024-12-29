@@ -1,13 +1,17 @@
 import router from 'express'
 import { blogControllers } from '../controllers'
-import { handleValidationErrors, authorizationValidator, createPostBodyByBlogValidator } from '../common'
+import {
+  handleValidationErrors,
+  authorizationValidator,
+  createPostBodyByBlogValidator,
+} from '../common'
 import { blogBodyValidator } from '../common'
 import { blogParamsValidator } from '../common'
 import { blogQueryValidator } from '../common'
 
 export const blogRouter = router()
 
-blogRouter.get('/', blogControllers.getAllBlogs)
+blogRouter.get('/', blogQueryValidator, handleValidationErrors, blogControllers.getArrangedBlogs)
 
 blogRouter.get(
   '/:id/posts',
