@@ -1,11 +1,21 @@
-import { BlogType, CreateBlogBody, UpdateBlogBody } from '../types'
-import { blogCollection } from '../db/db'
+import { BlogType, CreateBlogBody, PostType, UpdateBlogBody } from '../types'
+import { blogCollection, postCollection } from '../db/db'
 import { ObjectId, WithId } from 'mongodb'
 
 export const blogRepository = {
-  getBlogs: async (): Promise<WithId<BlogType>[] | null> => {
+  getAllBlogs: async (): Promise<WithId<BlogType>[] | null> => {
     try {
       return await blogCollection.find({}).toArray()
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+
+  getArrangedPostsByBlog: async (id: string): Promise<WithId<PostType>[] | null> => {
+    try {
+      const blogId = new ObjectId(id)
+      return await postCollection.find({}).filter({ blogId }).toArray()
     } catch (err) {
       // console.log(err)
       return null

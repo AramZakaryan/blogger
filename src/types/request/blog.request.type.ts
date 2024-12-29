@@ -7,7 +7,9 @@ import {
   UpdateBlogParams,
 } from '../dto'
 
-export type GetBlogsRequest = Request
+export type GetAllBlogsRequest = Request
+
+export type GetArrangedPostsByBlogRequest = Request<FindBlogParams>
 
 export type FindBlogRequest = Request<FindBlogParams>
 

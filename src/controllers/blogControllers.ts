@@ -6,20 +6,45 @@ import {
   DeleteBlogResponse,
   FindBlogRequest,
   FindBlogResponse,
-  GetBlogsRequest,
+  GetAllBlogsRequest,
+  GetArrangedPostsByBlogRequest,
+  GetArrangedPostsByBlogResponse,
   GetBlogsResponse,
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { blogMap } from '../common'
+import { blogMap, postMap } from '../common'
 import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
 
 export const blogControllers = {
-  getBlogs: async (req: GetBlogsRequest, res: GetBlogsResponse): Promise<void> => {
-    const blogs = await blogRepository.getBlogs()
+  getAllBlogs: async (req: GetAllBlogsRequest, res: GetBlogsResponse): Promise<void> => {
+    const blogs = await blogRepository.getAllBlogs()
 
     if (blogs) {
       res.json(blogs.map(blogMap))
+    } else {
+      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
+        errorsMessages: [
+          {
+            message: 'something went wrong',
+            field: 'unknown',
+          },
+        ],
+      })
+    }
+  },
+
+  getArrangedPostsByBlog: async (
+    req: GetArrangedPostsByBlogRequest,
+    res: GetArrangedPostsByBlogResponse,
+  ): Promise<void> => {
+    const params = req.params
+    const id = params.id
+    // "Arranged" means "Paginated and Sorted"
+    const posts = await blogRepository.getArrangedPostsByBlog(id)
+
+    if (posts) {
+      res.json(posts.map(postMap))
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [

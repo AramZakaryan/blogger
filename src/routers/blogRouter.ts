@@ -6,8 +6,13 @@ import { blogParamsValidator } from '../common'
 
 export const blogRouter = router()
 
-blogRouter.get('/', blogControllers.getBlogs)
+blogRouter.get('/', blogControllers.getAllBlogs)
 
+blogRouter.get(
+  '/:id/posts',
+  // blogParamsValidator, handleValidationErrors,
+  blogControllers.getArrangedPostsByBlog,
+)
 blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControllers.findBlog)
 
 blogRouter.post(
