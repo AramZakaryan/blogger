@@ -20,7 +20,7 @@ export const blogRepository = {
     const skip = (pageNumber - 1) * pageSize // skip blogs for previous pages
 
     const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
-    const sortDirection = query.sortDirection === 'desc' ? -1 : 1
+    const sortDirection = query.sortDirection === 'asc' ? 1 : -1
 
     const searchNameTerm = query.searchNameTerm || ''
     const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
