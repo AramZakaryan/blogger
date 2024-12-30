@@ -3,7 +3,7 @@ import { CreatePostBody, CreatePostByBlogBody, PostType } from '../types'
 import { WithId } from 'mongodb'
 
 export const blogServices = {
-  createPostByBlog: async (
+  createPostOfBlog: async (
     blogId: string,
     body: CreatePostByBlogBody,
   ): Promise<WithId<PostType> | null> => {

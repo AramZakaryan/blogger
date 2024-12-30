@@ -38,7 +38,7 @@ blogRouter.post(
   blogParamsValidator,
   createPostBodyByBlogValidator,
   handleValidationErrors,
-  blogControllers.createPostByBlog,
+  blogControllers.createPostOfBlog,
 )
 
 blogRouter.put(

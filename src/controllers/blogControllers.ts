@@ -42,18 +42,14 @@ export const blogControllers = {
     }
   },
 
-  getArrangedPostsOfBlog: async (
-    req: GetArrangedPostsByBlogRequest,
-    res: GetArrangedPostsByBlogResponse,
-  ): Promise<void> => {
+  findBlog: async (req: FindBlogRequest, res: FindBlogResponse): Promise<void> => {
     const params = req.params
     const id = params.id
-    const query = req.query
 
-    const posts = await blogRepository.getArrangedPostsOfBlog(id, query)
+    const blog = await blogRepository.findBlog(id)
 
-    if (posts) {
-      res.json(posts)
+    if (blog) {
+      res.json(blogMap(blog))
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
@@ -66,14 +62,18 @@ export const blogControllers = {
     }
   },
 
-  findBlog: async (req: FindBlogRequest, res: FindBlogResponse): Promise<void> => {
+  getArrangedPostsOfBlog: async (
+    req: GetArrangedPostsByBlogRequest,
+    res: GetArrangedPostsByBlogResponse,
+  ): Promise<void> => {
     const params = req.params
     const id = params.id
+    const query = req.query
 
-    const blog = await blogRepository.findBlog(id)
+    const posts = await blogRepository.getArrangedPostsOfBlog(id, query)
 
-    if (blog) {
-      res.json(blogMap(blog))
+    if (posts) {
+      res.json(posts)
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
@@ -105,7 +105,7 @@ export const blogControllers = {
     }
   },
 
-  createPostByBlog: async (
+  createPostOfBlog: async (
     req: CreatePostByBlogRequest,
     res: CreatePostByBlogResponse,
   ): Promise<void> => {
@@ -113,7 +113,7 @@ export const blogControllers = {
     const blogId = params.id
     const body = req.body
 
-    const createdPost = await blogServices.createPostByBlog(blogId, body)
+    const createdPost = await blogServices.createPostOfBlog(blogId, body)
 
     if (createdPost) {
       res.status(HTTP_STATUS_CODES.CREATED_201).json(postMap(createdPost))

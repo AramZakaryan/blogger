@@ -60,20 +60,19 @@ export const blogRepository = {
     const pageSize = query.pageSize || 10
     const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
     const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
-    const sortDirection = query.sortDirection === 'desc' ? -1 : 1
+    const sortDirection = query.sortDirection === 'asc' ? 1 : -1
 
     try {
       const blogId = new ObjectId(id)
 
       const posts = await postCollection
-        .find()
+        .find({ blogId })
         .sort({ [sortBy]: sortDirection })
-        .filter({ blogId })
         .skip(skip)
         .limit(pageSize)
         .toArray()
 
-      const totalCount = await postCollection.countDocuments()
+      const totalCount = await postCollection.countDocuments({ blogId })
       const pagesCount = Math.ceil(totalCount / pageSize)
 
       return {
