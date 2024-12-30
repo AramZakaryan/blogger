@@ -1,24 +1,44 @@
-import { CreatePostBody, GetArrangedPostsQuery, PostType, UpdatePostBody } from '../types'
+import {
+  ArrangedPostsViewModel,
+  CreatePostBody,
+  GetArrangedPostsQuery,
+  PostType,
+  UpdatePostBody,
+} from '../types'
 import { blogRepository } from './blogRepository'
-import { postCollection } from '../db'
+import { blogCollection, postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
+import { blogMap, postMap } from '../common'
 
 export const postRepository = {
-  getArrangedPosts: async (query: GetArrangedPostsQuery): Promise<WithId<PostType>[] | null> => {
+  getArrangedPosts: async (
+    query: GetArrangedPostsQuery,
+  ): Promise<ArrangedPostsViewModel | null> => {
     const pageNumber = query.pageNumber || 1
     const pageSize = query.pageSize || 10
     const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
 
     const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
-    const sortDirection = query.sortDirection === 'desc' ? -1 : 1
+    const sortDirection = query.sortDirection === 'asc' ? 1 : -1
 
     try {
-      return await postCollection
+      const posts = await postCollection
         .find()
         .sort({ [sortBy]: sortDirection })
         .skip(skip)
         .limit(pageSize)
         .toArray()
+
+      const totalCount = await postCollection.countDocuments()
+      const pagesCount = Math.ceil(totalCount / pageSize)
+
+      return {
+        pagesCount,
+        page: pageNumber,
+        pageSize,
+        totalCount,
+        items: posts.map(postMap),
+      }
     } catch (err) {
       // console.log(err)
       return null

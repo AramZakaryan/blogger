@@ -23,7 +23,7 @@ export const postControllers = {
 
     const posts = await postRepository.getArrangedPosts(query)
     if (posts) {
-      res.json(posts.map(postMap))
+      res.json(posts)
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
