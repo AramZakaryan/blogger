@@ -1,6 +1,5 @@
 import { ObjectId } from 'mongodb'
-
-export type PostViewModel = PostType & { id: string }
+import { ArrangedViewModel } from './general'
 
 export type PostType = {
   title: string // maxLength: 30
@@ -10,3 +9,7 @@ export type PostType = {
   blogName: string
   createdAt: Date
 }
+
+export type PostViewModel = PostType & { id: string }
+
+export type ArrangedPostsViewModel = ArrangedViewModel<PostViewModel>

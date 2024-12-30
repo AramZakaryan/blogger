@@ -1,6 +1,5 @@
 import { ObjectId } from 'mongodb'
-
-export type BlogViewModel = BlogType & { id: string }
+import { ArrangedViewModel } from './general'
 
 export type BlogType = {
   name: string // maxLength: 15
@@ -9,3 +8,7 @@ export type BlogType = {
   createdAt: Date
   isMembership: boolean
 }
+
+export type BlogViewModel = BlogType & { id: string }
+
+export type ArrangedBlogsViewModel = ArrangedViewModel<BlogViewModel>

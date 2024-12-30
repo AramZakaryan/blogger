@@ -10,3 +10,11 @@ export type ArrangementQuery = {
   sortBy?: keyof PostViewModel
   sortDirection?: 'asc' | 'desc'
 }
+
+export type ArrangedViewModel<T> = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items: T[]
+}

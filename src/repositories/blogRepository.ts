@@ -1,4 +1,5 @@
 import {
+  ArrangedBlogsViewModel,
   BlogType,
   CreateBlogBody,
   GetArrangedBlogsQuery,
@@ -8,9 +9,12 @@ import {
 } from '../types'
 import { blogCollection, postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
+import { blogMap } from '../common'
 
 export const blogRepository = {
-  getArrangedBlogs: async (query: GetArrangedBlogsQuery): Promise<WithId<BlogType>[] | null> => {
+  getArrangedBlogs: async (
+    query: GetArrangedBlogsQuery,
+  ): Promise<ArrangedBlogsViewModel | null> => {
     const pageNumber = query.pageNumber || 1
     const pageSize = query.pageSize || 10
     const skip = (pageNumber - 1) * pageSize // skip blogs for previous pages
@@ -21,14 +25,24 @@ export const blogRepository = {
     const searchNameTerm = query.searchNameTerm || ''
     const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
 
-
     try {
-      return await blogCollection
+      const blogs = await blogCollection
         .find({ name: { $regex: searchNameTermRegExp } })
         .sort({ [sortBy]: sortDirection })
         .skip(skip)
         .limit(pageSize)
         .toArray()
+
+      const totalCount = await blogCollection.countDocuments()
+      const pagesCount = Math.ceil(totalCount / pageSize)
+
+      return {
+        pagesCount,
+        page: pageNumber,
+        pageSize,
+        totalCount,
+        items: blogs.map(blogMap),
+      }
     } catch (err) {
       // console.log(err)
       return null

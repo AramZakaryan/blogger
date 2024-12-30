@@ -11,7 +11,7 @@ import {
   GetArrangedBlogsRequest,
   GetArrangedPostsByBlogRequest,
   GetArrangedPostsByBlogResponse,
-  GetArrangedResponse,
+  GetArrangedBlogsResponse,
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
@@ -22,14 +22,14 @@ import { blogServices } from '../services/blogServices'
 export const blogControllers = {
   getArrangedBlogs: async (
     req: GetArrangedBlogsRequest,
-    res: GetArrangedResponse,
+    res: GetArrangedBlogsResponse,
   ): Promise<void> => {
     const query = req.query
 
     const blogs = await blogRepository.getArrangedBlogs(query)
 
     if (blogs) {
-      res.json(blogs.map(blogMap))
+      res.json(blogs)
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
