@@ -33,7 +33,9 @@ export const blogRepository = {
         .limit(pageSize)
         .toArray()
 
-      const totalCount = await blogCollection.countDocuments()
+      const totalCount = await blogCollection.countDocuments({
+        name: { $regex: searchNameTermRegExp },
+      })
       const pagesCount = Math.ceil(totalCount / pageSize)
 
       return {
