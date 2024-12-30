@@ -19,7 +19,7 @@ blogRouter.get(
   blogParamsValidator,
   postQueryValidator,
   handleValidationErrors,
-  blogControllers.getArrangedPostsByBlog,
+  blogControllers.getArrangedPostsOfBlog,
 )
 
 blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControllers.findBlog)

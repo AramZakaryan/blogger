@@ -1,11 +1,11 @@
 import { Response } from 'express'
 import { ArrangedBlogsViewModel, BlogViewModel } from '../blog.type'
 import { OutputErrorsType } from '../general'
-import { PostViewModel } from '../post.type'
+import { GetArrangedPostsResponse } from './post.response.type'
 
 export type GetArrangedBlogsResponse = Response<ArrangedBlogsViewModel | OutputErrorsType>
 
-export type GetArrangedPostsByBlogResponse = Response<PostViewModel[] | OutputErrorsType>
+export type GetArrangedPostsByBlogResponse = GetArrangedPostsResponse
 
 export type FindBlogResponse = Response<BlogViewModel | OutputErrorsType>
 

@@ -1,5 +1,6 @@
 import {
   ArrangedBlogsViewModel,
+  ArrangedPostsViewModel,
   BlogType,
   CreateBlogBody,
   GetArrangedBlogsQuery,
@@ -9,7 +10,7 @@ import {
 } from '../types'
 import { blogCollection, postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
-import { blogMap } from '../common'
+import { blogMap, postMap } from '../common'
 
 export const blogRepository = {
   getArrangedBlogs: async (
@@ -51,10 +52,10 @@ export const blogRepository = {
     }
   },
 
-  getArrangedPostsByBlog: async (
+  getArrangedPostsOfBlog: async (
     id: string,
     query: GetArrangedPostsByBlogQuery,
-  ): Promise<WithId<PostType>[] | null> => {
+  ): Promise<ArrangedPostsViewModel | null> => {
     const pageNumber = query.pageNumber || 1
     const pageSize = query.pageSize || 10
     const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
@@ -63,13 +64,25 @@ export const blogRepository = {
 
     try {
       const blogId = new ObjectId(id)
-      return await postCollection
-        .find({})
+
+      const posts = await postCollection
+        .find()
         .sort({ [sortBy]: sortDirection })
         .filter({ blogId })
         .skip(skip)
         .limit(pageSize)
         .toArray()
+
+      const totalCount = await postCollection.countDocuments()
+      const pagesCount = Math.ceil(totalCount / pageSize)
+
+      return {
+        pagesCount,
+        page: pageNumber,
+        pageSize,
+        totalCount,
+        items: posts.map(postMap),
+      }
     } catch (err) {
       // console.log(err)
       return null

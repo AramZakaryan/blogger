@@ -42,8 +42,7 @@ export const blogControllers = {
     }
   },
 
-  // "Arranged" means "Paginated and Sorted"
-  getArrangedPostsByBlog: async (
+  getArrangedPostsOfBlog: async (
     req: GetArrangedPostsByBlogRequest,
     res: GetArrangedPostsByBlogResponse,
   ): Promise<void> => {
@@ -51,10 +50,10 @@ export const blogControllers = {
     const id = params.id
     const query = req.query
 
-    const posts = await blogRepository.getArrangedPostsByBlog(id, query)
+    const posts = await blogRepository.getArrangedPostsOfBlog(id, query)
 
     if (posts) {
-      res.json(posts.map(postMap))
+      res.json(posts)
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [
