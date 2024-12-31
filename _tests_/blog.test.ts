@@ -37,9 +37,9 @@ describe('/blogs', () => {
   })
 
   it('should get object containing blogs', async () => {
-    const response = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetArrangedBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
 
-    expect(response.body).toMatchObject({
+    expect(responseGetArrangedBlogs.body).toMatchObject({
       pagesCount: expect.any(Number),
       page: expect.any(Number),
       pageSize: expect.any(Number),

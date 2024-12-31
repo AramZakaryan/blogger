@@ -82,11 +82,20 @@ export const postRepository = {
 
   updatePost: async (id: string, body: UpdatePostBody): Promise<WithId<PostType> | null> => {
     try {
+      const blog = await blogRepository.findBlog(body.blogId)
+
+      if (!blog) return null
+
+      const blogName = blog.name
+
       const _id = new ObjectId(id)
 
       const blogId = new ObjectId(body.blogId)
 
-      const updateOneInfo = await postCollection.updateOne({ _id }, { $set: { ...body, blogId } })
+      const updateOneInfo = await postCollection.updateOne(
+        { _id },
+        { $set: { ...body, blogId, blogName } },
+      )
 
       if (!updateOneInfo.acknowledged) return null
 
