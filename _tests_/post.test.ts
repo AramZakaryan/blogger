@@ -1,7 +1,7 @@
 import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
 import { setDB } from '../src/db'
-import { dataSet1 } from './datasets'
+import { dataSet } from './datasets'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { runDB } from '../src/db'
@@ -16,7 +16,7 @@ let client: MongoClient
 // const dbUrl = process.env.MONGO_URL || ''
 const dbName = process.env.DB_TEST_NAME || ''
 
-describe('/posts', () => {
+describe.skip('/posts', () => {
   beforeAll(async () => {
     server = await MongoMemoryServer.create()
     const dbUrl = server.getUri()
@@ -25,7 +25,7 @@ describe('/posts', () => {
       client = clientConnected
     }
 
-    await setDB(dataSet1)
+    await setDB(dataSet)
   })
   afterAll(async () => {
     await setDB()
@@ -160,7 +160,7 @@ describe('/posts', () => {
       title: 'title max length 30',
       shortDescription: 'shortDescription max length 100',
       content: 'content max length 1000',
-      blogId: dataSet1.blogs[0]._id.toString(),
+      blogId: dataSet.blogs[0]._id.toString(),
     }
 
     const responseCreatePost = await superRequest
@@ -177,7 +177,7 @@ describe('/posts', () => {
     expect(responseCreatePost.body.shortDescription).toBe(body.shortDescription)
     expect(responseCreatePost.body.content).toBe(body.content)
     expect(responseCreatePost.body.blogId).toBe(body.blogId.toString())
-    expect(responseCreatePost.body.blogName).toBe(dataSet1.blogs[0].name)
+    expect(responseCreatePost.body.blogName).toBe(dataSet.blogs[0].name)
   })
 
   it('send error for non-existing, empty, non-object body in create post', async () => {

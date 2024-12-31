@@ -1,9 +1,12 @@
 // src/db/db.ts
 
-import { Collection, MongoClient } from 'mongodb'
+import { Collection, MongoClient, ObjectId, WithId } from 'mongodb'
 import { config } from 'dotenv'
-import { BlogType, PostType } from '../types'
+import { BlogType, BlogViewModel, PostType, PostViewModel } from '../types'
 import { Db } from './db.type'
+import { blogMap, postMap } from '../common'
+import { customSort } from '../common/helpers/customSort'
+import { blogsSet } from '../../_tests_/datasets'
 
 config()
 
@@ -35,6 +38,7 @@ export const setDB = async (dataset?: Partial<Db>) => {
   await blogCollection.drop()
   await postCollection.drop()
 
+
   if (dataset?.blogs) {
     await blogCollection.insertMany(dataset.blogs)
   }
@@ -43,3 +47,5 @@ export const setDB = async (dataset?: Partial<Db>) => {
     await postCollection.insertMany(dataset.posts)
   }
 }
+
+

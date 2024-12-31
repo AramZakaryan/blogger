@@ -9,6 +9,9 @@ export type BlogType = {
   isMembership: boolean
 }
 
-export type BlogViewModel = BlogType & { id: string }
+export type BlogViewModel = Omit<BlogType, 'createdAt'> & {
+  id: string
+  createdAt: string
+}
 
 export type ArrangedBlogsViewModel = ArrangedViewModel<BlogViewModel>

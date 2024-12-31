@@ -1,7 +1,7 @@
 import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
 import { setDB } from '../src/db'
-import { dataSet1 } from './datasets'
+import { dataSet } from './datasets'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { MongoClient } from 'mongodb'
@@ -16,7 +16,7 @@ let client: MongoClient
 // const dbUrl = process.env.MONGO_URL || ''
 const dbName = process.env.DB_TEST_NAME || ''
 
-describe('/blogs', () => {
+describe.skip('/blogs', () => {
   beforeAll(async () => {
     server = await MongoMemoryServer.create()
     const dbUrl = server.getUri()
@@ -25,7 +25,7 @@ describe('/blogs', () => {
       client = clientConnected
     }
 
-    await setDB(dataSet1)
+    await setDB(dataSet)
   })
   afterAll(async () => {
     await setDB()

@@ -1,47 +1,60 @@
 import { Db } from '../src/db'
-import { BlogType, PostType } from '../src/types'
+import { BlogType, BlogViewModel, PostType, PostViewModel } from '../src/types'
 import { ObjectId, WithId } from 'mongodb'
+import { blogMap, postMap } from '../src/common'
 
-export const blogsSet1: WithId<BlogType>[] = Array.from({ length: 15 }, () => ({
+const blogNamesAppendices = [
+  'IjKL',
+  'iJKL',
+  'IJKl',
+  'EFgh',
+  'abCd',
+  'AbCD',
+  'Mnop',
+  'AbCd',
+  'IJkL',
+  'eFGh',
+  'mNop',
+  'EFGh',
+  'ABcd',
+  'MnOP',
+  'eFGH',
+] // frequencies { 'ijkl': 4, 'efgh': 4, 'abcd': 4, 'mnop': 3 }
+
+export const blogsSet: WithId<BlogType>[] = Array.from({ length: 15 }, (_, i) => ({
   _id: new ObjectId(),
-  name: 'blogName' + Date.now() + Math.random(),
-  description: 'blogDescription' + Date.now() + Math.random(),
-  websiteUrl: 'websiteUrl' + Date.now() + Math.random(),
-  createdAt: new Date(),
-  isMembership: false,
+  name: `blog name ${i}  ${blogNamesAppendices[i]}`,
+  description: `blog description ${i}`,
+  websiteUrl: `https://someblogurl${i}.com`,
+  createdAt: new Date(Date.now() + i * 1000),
+  isMembership: i % 3 === 0 && true,
 }))
 
-export const postsSet1: WithId<PostType>[] = [
-  ...Array.from({ length: 5 }, () => ({
-    _id: new ObjectId(),
-    title: 'postTitle' + Date.now() + Math.random().toFixed(6),
-    shortDescription: 'postSortDescription' + Date.now() + Math.random(),
-    content: 'postContent' + Date.now() + Math.random(),
-    blogId: blogsSet1[0]._id,
-    blogName: blogsSet1[0].name,
-    createdAt: new Date(),
-  })),
-  ...Array.from({ length: 5 }, () => ({
-    _id: new ObjectId(),
-    title: 'postTitle' + Date.now() + Math.random().toFixed(6),
-    shortDescription: 'postSortDescription' + Date.now() + Math.random(),
-    content: 'postContent' + Date.now() + Math.random(),
-    blogId: blogsSet1[1]._id,
-    blogName: blogsSet1[1].name,
-    createdAt: new Date(),
-  })),
-  ...Array.from({ length: 5 }, () => ({
-    _id: new ObjectId(),
-    title: 'postTitle' + Date.now() + Math.random().toFixed(6),
-    shortDescription: 'postSortDescription' + Date.now() + Math.random(),
-    content: 'postContent' + Date.now() + Math.random(),
-    blogId: blogsSet1[2]._id,
-    blogName: blogsSet1[2].name,
-    createdAt: new Date(),
-  })),
-]
+export const postsSet: WithId<PostType>[] = Array.from({ length: 15 }, (_, i) => ({
+  _id: new ObjectId(),
+  title: `post title ${i}`,
+  shortDescription: `post short description ${i}`,
+  content: `post content ${i}`,
+  blogId: blogsSet[~~(i / 5)]._id,
+  blogName: blogsSet[~~(i / 5)].name,
+  createdAt: new Date(Date.now() + i * 1000),
+}))
 
-export const dataSet1: Db = {
-  blogs: blogsSet1,
-  posts: postsSet1,
+export const dataSet: Db = {
+  blogs: blogsSet,
+  posts: postsSet,
+}
+
+export const blogsSetMapped = blogsSet.map(blogMap)
+
+export const postsSetMapped = postsSet.map(postMap)
+
+export const dataSetMapped: DbMapped = {
+  blogs: blogsSetMapped,
+  posts: postsSetMapped,
+}
+
+type DbMapped = {
+  blogs: BlogViewModel[]
+  posts: PostViewModel[]
 }

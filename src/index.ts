@@ -2,7 +2,7 @@
 
 import { config } from 'dotenv'
 import { app } from './app'
-import { runDB } from './db'
+import { dataSet, runDB, setDB } from './db'
 
 config()
 

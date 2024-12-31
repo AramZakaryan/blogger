@@ -6,6 +6,6 @@ export const blogMap = (blog: WithId<BlogType>): BlogViewModel => ({
   name: blog.name,
   description: blog.description,
   websiteUrl: blog.websiteUrl,
-  createdAt: blog.createdAt,
+  createdAt: blog.createdAt.toString(),
   isMembership: blog.isMembership,
 })

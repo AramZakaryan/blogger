@@ -1,8 +1,8 @@
-import { PostType } from '../post.type'
+import { PostType, PostViewModel } from '../post.type'
 import { WithId } from 'mongodb'
 import { ArrangementQuery } from '../general'
 
-export type GetArrangedPostsQuery = ArrangementQuery
+export type GetArrangedPostsQuery = ArrangementQuery<PostViewModel>
 
 export type FindPostParams = { id: string }
 

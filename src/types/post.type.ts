@@ -10,6 +10,10 @@ export type PostType = {
   createdAt: Date
 }
 
-export type PostViewModel = PostType & { id: string }
+export type PostViewModel = Omit<PostType, 'blogId' | 'createdAt'> & {
+  id: string
+  blogId: string
+  createdAt: string
+}
 
 export type ArrangedPostsViewModel = ArrangedViewModel<PostViewModel>
