@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import {
   CreatePostBody,
-  CreatePostByBlogBody,
+  CreatePostOfBlogBody,
   CreatePostByBlogParams,
   DeletePostParams,
   FindPostParams,
@@ -16,7 +16,7 @@ export type FindPostRequest = Request<FindPostParams>
 
 export type CreatePostRequest = Request<{}, any, CreatePostBody>
 
-export type CreatePostByBlogRequest = Request<CreatePostByBlogParams, any, CreatePostByBlogBody>
+export type CreatePostByBlogRequest = Request<CreatePostByBlogParams, any, CreatePostOfBlogBody>
 
 export type UpdatePostRequest = Request<UpdatePostParams, any, UpdatePostBody>
 

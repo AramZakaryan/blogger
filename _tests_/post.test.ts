@@ -5,7 +5,7 @@ import { dataSet, postsSetMapped } from './datasets'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { GetArrangedPostsQuery, UpdatePostBody } from '../src/types'
+import { CreatePostBody, GetArrangedPostsQuery, UpdatePostBody } from '../src/types'
 import { customSort } from '../src/common/helpers/customSort'
 
 config()
@@ -312,10 +312,10 @@ describe('/posts', () => {
       .get(PATHS.BLOGS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
-    const body = {
-      title: 'title max length 30',
-      shortDescription: 'shortDescription max length 100',
-      content: 'content max length 1000',
+    const body:CreatePostBody = {
+      title: 'new title',
+      shortDescription: 'new shortDescription',
+      content: 'new content',
       blogId: responseGetArrangedBlogs.body.items[0].id,
     }
 

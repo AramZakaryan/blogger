@@ -6,9 +6,9 @@ export type GetArrangedPostsQuery = ArrangementQuery<PostViewModel>
 
 export type FindPostParams = { id: string }
 
-export type CreatePostBody = CreatePostByBlogBody & { blogId: string }
+export type CreatePostBody = CreatePostOfBlogBody & { blogId: string }
 
-export type CreatePostByBlogBody = Omit<
+export type CreatePostOfBlogBody = Omit<
   WithId<PostType>,
   '_id' | 'blogName' | 'blogId' | 'createdAt'
 >

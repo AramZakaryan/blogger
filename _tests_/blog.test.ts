@@ -6,7 +6,8 @@ import { blogsSetMapped, dataSet, postsSetMapped } from './datasets'
 import { MongoClient } from 'mongodb'
 import { config } from 'dotenv'
 import {
-  CreateBlogBody,
+  CreateBlogBody, CreatePostBody,
+  CreatePostOfBlogBody,
   GetArrangedBlogsQuery,
   GetArrangedPostsQuery,
   PostViewModel,
@@ -442,6 +443,8 @@ describe('/blogs', () => {
   })
 
   it('send error for non-existing credentials (header) in create, update, delete blog', async () => {
+    ////////// case: create blog
+
     const bodyCreate = {
       name: 'name max len 15',
       description: 'description max length 500',
@@ -464,20 +467,45 @@ describe('/blogs', () => {
       ],
     })
 
+    ////////// case: create post of blog
+
     const responseGetArrangedBlogs = await superRequest
       .get(PATHS.BLOGS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
-    const bodyUpdate0 = {
-      name: 'new2 name max15',
-      description: 'description2 max length 500',
-      websiteUrl: 'https://someurl2.com',
+    const bodyCreatePostOfBlog: CreatePostOfBlogBody = {
+      title: 'new title',
+      shortDescription: 'new shortDescription',
+      content: 'new content',
+    }
+
+    const responseCreatePostOfBlog = await superRequest
+      .post(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[0].id}/posts`)
+      .set('Authorization', '') // setting headers
+      .send(bodyCreatePostOfBlog)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
+
+    expect(responseCreatePostOfBlog.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+
+    ////////// case: update blog
+
+    const bodyUpdate: UpdateBlogBody = {
+      name: 'new name',
+      description: 'new description',
+      websiteUrl: 'https://someurl.com',
     }
 
     const responseUpdateBlog = await superRequest
       .put(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[0].id}`)
       .set('Authorization', '') // setting headers
-      .send(bodyUpdate0)
+      .send(bodyUpdate)
       .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
 
     expect(responseUpdateBlog.body).toEqual({
@@ -488,6 +516,8 @@ describe('/blogs', () => {
         },
       ],
     })
+
+    ////////// case: delete blog
 
     const responseDeleteBlog = await superRequest
       .delete(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[0].id}`)
@@ -525,6 +555,35 @@ describe('/blogs', () => {
       websiteUrl: body.websiteUrl,
       createdAt: expect.any(String),
       isMembership: false,
+    })
+  })
+
+  it('create a post of blog', async () => {
+    const responseGetArrangedBlogs = await superRequest
+      .get(PATHS.BLOGS)
+      .expect(HTTP_STATUS_CODES.OK_200)
+
+    const body:CreatePostOfBlogBody = {
+      title: 'new title',
+      shortDescription: 'new shortDescription',
+      content: 'new content',
+    }
+
+    const responseCreatePost = await superRequest
+      .post(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[0].id}/posts`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(body)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.CREATED_201)
+
+    expect(responseCreatePost.body).toMatchObject({
+      id: expect.any(String),
+      title: body.title,
+      shortDescription: body.shortDescription,
+      content: body.content,
+      blogId: responseGetArrangedBlogs.body.items[0].id,
+      blogName: responseGetArrangedBlogs.body.items[0].name,
+      createdAt: expect.any(String),
     })
   })
 
