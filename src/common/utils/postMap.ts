@@ -8,5 +8,5 @@ export const postMap = (post: WithId<PostType>): PostViewModel => ({
   content: post.content,
   blogId: post.blogId.toString(),
   blogName: post.blogName,
-  createdAt: post.createdAt.toString(),
+  createdAt: post.createdAt.toISOString(),
 })

@@ -9,15 +9,14 @@ import {
   FindBlogRequest,
   FindBlogResponse,
   GetArrangedBlogsRequest,
+  GetArrangedBlogsResponse,
   GetArrangedPostsByBlogRequest,
   GetArrangedPostsByBlogResponse,
-  GetArrangedBlogsResponse,
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { blogMap, postMap } from '../common'
-import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
-import { blogServices } from '../services/blogServices'
+import { blogMap, HTTP_STATUS_CODES, postMap } from '../common'
+import { blogServices } from '../services'
 
 export const blogControllers = {
   getArrangedBlogs: async (

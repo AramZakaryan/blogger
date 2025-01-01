@@ -11,8 +11,7 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
-import { postMap } from '../common'
-import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
+import { HTTP_STATUS_CODES, postMap } from '../common'
 
 export const postControllers = {
   getArrangedPosts: async (

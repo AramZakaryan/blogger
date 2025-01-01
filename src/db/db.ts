@@ -1,12 +1,9 @@
 // src/db/db.ts
 
-import { Collection, MongoClient, ObjectId, WithId } from 'mongodb'
+import { Collection, MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { BlogType, BlogViewModel, PostType, PostViewModel } from '../types'
+import { BlogType, PostType } from '../types'
 import { Db } from './db.type'
-import { blogMap, postMap } from '../common'
-import { customSort } from '../common/helpers/customSort'
-import { blogsSet } from '../../_tests_/datasets'
 
 config()
 
