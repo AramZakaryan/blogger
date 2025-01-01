@@ -2,17 +2,22 @@ import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { runDB, setDB } from '../src/db'
-import { blogsSetMapped, dataSet } from './datasets'
-import { MongoMemoryServer } from 'mongodb-memory-server'
+import { blogsSetMapped, dataSet, postsSetMapped } from './datasets'
 import { MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { CreateBlogBody, GetArrangedBlogsQuery, UpdateBlogBody } from '../src/types'
+import {
+  CreateBlogBody,
+  GetArrangedBlogsQuery,
+  GetArrangedPostsQuery,
+  PostViewModel,
+  UpdateBlogBody,
+} from '../src/types'
 import { customSort } from '../src/common/helpers/customSort'
 import { customFilter } from '../src/common/helpers/customFilter'
 
 config()
 
-let server: MongoMemoryServer
+// let server: MongoMemoryServer
 let client: MongoClient
 
 const dbUrl = process.env.MONGO_URL || ''
@@ -37,7 +42,9 @@ describe('/blogs', () => {
   })
 
   it('should get object containing blogs', async () => {
-    const responseGetArrangedBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetArrangedBlogs = await superRequest
+      .get(PATHS.BLOGS)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseGetArrangedBlogs.body).toMatchObject({
       pagesCount: expect.any(Number),
@@ -251,6 +258,169 @@ describe('/blogs', () => {
         .expect(HTTP_STATUS_CODES.OK_200)
 
       expect(responseFindBlog.body).toEqual(responseGetArrangedBlogs.body.items[i])
+    }
+  })
+
+  it('should get arranged posts of blog', async () => {
+    const queryGetArrangedBlogs: GetArrangedBlogsQuery = {
+      pageSize: 15,
+    }
+
+    const responseGetArrangedBlogs = await superRequest
+      .get(PATHS.BLOGS)
+      .query(queryGetArrangedBlogs)
+      .expect(HTTP_STATUS_CODES.OK_200)
+
+    ////////// case 1
+
+    for (let i = 0; i < responseGetArrangedBlogs.body.items.length; i++) {
+      const queryGetArrangedPosts: GetArrangedPostsQuery = {
+        pageSize: 15,
+      }
+
+      const responseGetArrangedPosts = await superRequest
+        .get(PATHS.POSTS)
+        .query(queryGetArrangedPosts)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      const queryGetArrangedPostsOfBlog: GetArrangedPostsQuery = {
+        pageSize: 15,
+      }
+
+      const responseGetArrangedPostsOfBlog = await superRequest
+        .get(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[i].id}/posts`)
+        .query(queryGetArrangedPostsOfBlog)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      expect(
+        responseGetArrangedPosts.body.items.filter(
+          (item: PostViewModel) => item.blogId === responseGetArrangedBlogs.body.items[i].id,
+        ),
+      ).toEqual(responseGetArrangedPostsOfBlog.body.items)
+    }
+
+    ////////// case 2
+
+    for (let i = 0; i < responseGetArrangedBlogs.body.items.length; i++) {
+      const queryGetArrangedPosts: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortDirection: 'asc',
+      }
+
+      const responseGetArrangedPosts = await superRequest
+        .get(PATHS.POSTS)
+        .query(queryGetArrangedPosts)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      const queryGetArrangedPostsOfBlog: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortDirection: 'asc',
+      }
+
+      const responseGetArrangedPostsOfBlog = await superRequest
+        .get(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[i].id}/posts`)
+        .query(queryGetArrangedPostsOfBlog)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      expect(
+        responseGetArrangedPosts.body.items.filter(
+          (item: PostViewModel) => item.blogId === responseGetArrangedBlogs.body.items[i].id,
+        ),
+      ).toEqual(responseGetArrangedPostsOfBlog.body.items)
+    }
+
+    ////////// case 3
+
+    for (let i = 0; i < responseGetArrangedBlogs.body.items.length; i++) {
+      const queryGetArrangedPosts: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortBy: 'id',
+      }
+
+      const responseGetArrangedPosts = await superRequest
+        .get(PATHS.POSTS)
+        .query(queryGetArrangedPosts)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      const queryGetArrangedPostsOfBlog: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortBy: 'id',
+      }
+
+      const responseGetArrangedPostsOfBlog = await superRequest
+        .get(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[i].id}/posts`)
+        .query(queryGetArrangedPostsOfBlog)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      expect(
+        responseGetArrangedPosts.body.items.filter(
+          (item: PostViewModel) => item.blogId === responseGetArrangedBlogs.body.items[i].id,
+        ),
+      ).toEqual(responseGetArrangedPostsOfBlog.body.items)
+    }
+
+    ////////// case with complex query 4
+
+    for (let i = 0; i < responseGetArrangedBlogs.body.items.length; i++) {
+      const queryGetArrangedPosts: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortBy: 'id',
+        sortDirection: 'asc',
+      }
+
+      const responseGetArrangedPosts = await superRequest
+        .get(PATHS.POSTS)
+        .query(queryGetArrangedPosts)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      const queryGetArrangedPostsOfBlog: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortBy: 'id',
+        sortDirection: 'asc',
+      }
+
+      const responseGetArrangedPostsOfBlog = await superRequest
+        .get(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[i].id}/posts`)
+        .query(queryGetArrangedPostsOfBlog)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      expect(
+        responseGetArrangedPosts.body.items.filter(
+          (item: PostViewModel) => item.blogId === responseGetArrangedBlogs.body.items[i].id,
+        ),
+      ).toEqual(responseGetArrangedPostsOfBlog.body.items)
+    }
+
+    ////////// case with complex query 5
+
+    for (let i = 0; i < responseGetArrangedBlogs.body.items.length; i++) {
+      const queryGetArrangedPosts: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortBy: 'content',
+        sortDirection: 'asc',
+      }
+
+      const responseGetArrangedPosts = await superRequest
+        .get(PATHS.POSTS)
+        .query(queryGetArrangedPosts)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      const queryGetArrangedPostsOfBlog: GetArrangedPostsQuery = {
+        pageSize: 15,
+        sortBy: 'content',
+        sortDirection: 'asc',
+      }
+
+      const responseGetArrangedPostsOfBlog = await superRequest
+        .get(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[i].id}/posts`)
+        .query(queryGetArrangedPostsOfBlog)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      expect(
+        responseGetArrangedPosts.body.items.filter(
+          (item: PostViewModel) => item.blogId === responseGetArrangedBlogs.body.items[i].id,
+        ),
+      ).toEqual(responseGetArrangedPostsOfBlog.body.items)
     }
   })
 
@@ -537,7 +707,9 @@ describe('/blogs', () => {
   })
 
   it('send error for non-existing, empty, non-object body in update blog', async () => {
-    const responseGetArrangedBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetArrangedBlogs = await superRequest
+      .get(PATHS.BLOGS)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyErrorV1 = {
       name: 'error name actual length is more than 15', // error message: name max length is 15
@@ -636,7 +808,9 @@ describe('/blogs', () => {
   })
 
   it('delete blog', async () => {
-    const responseGetArrangedBlogs = await superRequest.get(PATHS.BLOGS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetArrangedBlogs = await superRequest
+      .get(PATHS.BLOGS)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     const responseFindBlog = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[0].id}`)

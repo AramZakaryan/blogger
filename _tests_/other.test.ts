@@ -1,11 +1,9 @@
 import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
-import { setDB } from '../src/db'
+import { runDB, setDB } from '../src/db'
 import { dataSet } from './datasets'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
-import { MongoMemoryServer } from 'mongodb-memory-server'
 import { MongoClient } from 'mongodb'
-import { runDB } from '../src/db'
 import { config } from 'dotenv'
 
 config()
@@ -28,7 +26,7 @@ describe('/blogs', () => {
     await setDB(dataSet)
   })
   afterAll(async () => {
-    await setDB()
+    // await setDB()
     // await server.stop()
     await client.close()
   })

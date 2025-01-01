@@ -24,7 +24,7 @@ export const runDB = async (dbUrl: string, dbName: string) => {
   try {
     await client.connect()
     await db.command({ ping: 1 })
-    console.log(`Connected to db: ${dbName} on url: ${dbUrl}`)
+    // console.log(`Connected to db: ${dbName} on url: ${dbUrl}`)
     return client
   } catch (e) {
     console.log(e)

@@ -23,7 +23,7 @@ const blogNamesAppendices = [
 
 export const blogsSet: WithId<BlogType>[] = Array.from({ length: 15 }, (_, i) => ({
   _id: new ObjectId(),
-  name: `blog name ${i}  ${blogNamesAppendices[i]}`,
+  name: `blog name ${i} ${blogNamesAppendices[i]}`,
   description: `blog description ${i}`,
   websiteUrl: `https://someblogurl${i}.com`,
   createdAt: new Date(Date.now() + i * 1000),

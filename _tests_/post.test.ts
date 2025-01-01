@@ -1,19 +1,16 @@
 import { superRequest } from './testHelpers'
 import { PATHS } from '../src/common'
-import { setDB } from '../src/db'
-import { blogsSetMapped, dataSet, dataSetMapped, postsSetMapped } from './datasets'
+import { runDB, setDB } from '../src/db'
+import { dataSet, postsSetMapped } from './datasets'
 import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
-import { MongoMemoryServer } from 'mongodb-memory-server'
-import { runDB } from '../src/db'
 import { MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { GetArrangedBlogsQuery, GetArrangedPostsQuery, UpdatePostBody } from '../src/types'
+import { GetArrangedPostsQuery, UpdatePostBody } from '../src/types'
 import { customSort } from '../src/common/helpers/customSort'
-import { customFilter } from '../src/common/helpers/customFilter'
 
 config()
 
-let server: MongoMemoryServer
+// let server: MongoMemoryServer
 let client: MongoClient
 
 const dbUrl = process.env.MONGO_URL || ''
@@ -543,7 +540,9 @@ describe('/posts', () => {
   })
 
   it('send error for non-existing, empty, non-object body in update post', async () => {
-    const responseGetArrangedPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetArrangedPosts = await superRequest
+      .get(PATHS.POSTS)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyErrorV1 = {
       title: 'title'.repeat(30), // error message: title max length is 30
@@ -644,7 +643,9 @@ describe('/posts', () => {
   })
 
   it('delete post', async () => {
-    const responseGetArrangedPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200)
+    const responseGetArrangedPosts = await superRequest
+      .get(PATHS.POSTS)
+      .expect(HTTP_STATUS_CODES.OK_200)
 
     const responseFindPost = await superRequest
       .get(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[0].id}`)
