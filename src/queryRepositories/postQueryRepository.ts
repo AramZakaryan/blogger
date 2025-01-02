@@ -1,37 +1,38 @@
-import { ArrangedPostsViewModel, GetArrangedPostsQuery, PostViewModel } from '../types'
+import { GetArrangedPostsQuery, PostViewModel } from '../types'
 import { postCollection } from '../db'
-import { postMap } from '../common'
+import { postMap, toObjectId } from '../common'
 import { ObjectId } from 'mongodb'
 
 export const postQueryRepository = {
   getArrangedPosts: async (
-    query: GetArrangedPostsQuery,
-  ): Promise<ArrangedPostsViewModel | null> => {
-    const pageNumber = query.pageNumber || 1
-    const pageSize = query.pageSize || 10
-    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
+    queryNormalized: Required<GetArrangedPostsQuery>,
+    blogId?: string,
+  ): Promise<PostViewModel[] | null> => {
+    const { pageNumber, pageSize, sortBy, sortDirection } = queryNormalized
 
-    const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
-    const sortDirection = query.sortDirection === 'asc' ? 1 : -1
+    const filter = blogId ? { blogId: toObjectId(blogId) } : {}
+
+    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
 
     try {
       const posts = await postCollection
-        .find()
-        .sort({ [sortBy]: sortDirection })
+        .find(filter)
+        .sort({ [sortBy === 'id' ? '_id' : sortBy]: sortDirection })
         .skip(skip)
         .limit(pageSize)
         .toArray()
 
-      const totalCount = await postCollection.countDocuments()
-      const pagesCount = Math.ceil(totalCount / pageSize)
+      return posts.map(postMap)
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
 
-      return {
-        pagesCount,
-        page: pageNumber,
-        pageSize,
-        totalCount,
-        items: posts.map(postMap),
-      }
+  getPostsCount: async (blogId?: string): Promise<number | null> => {
+    const filter = blogId ? { blogId: toObjectId(blogId) } : {}
+    try {
+      return await postCollection.countDocuments(filter)
     } catch (err) {
       // console.log(err)
       return null

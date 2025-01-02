@@ -1,20 +1,17 @@
 import { superRequest } from './testHelpers'
-import { PATHS } from '../src/common'
-import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
+import { customFilter, customSort, HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
-import { blogsSetMapped, dataSet, postsSetMapped } from './datasets'
+import { blogsSetMapped, dataSet } from './datasets'
 import { MongoClient } from 'mongodb'
 import { config } from 'dotenv'
 import {
-  CreateBlogBody, CreatePostBody,
+  CreateBlogBody,
   CreatePostOfBlogBody,
   GetArrangedBlogsQuery,
   GetArrangedPostsQuery,
   PostViewModel,
   UpdateBlogBody,
 } from '../src/types'
-import { customSort } from '../src/common/helpers/customSort'
-import { customFilter } from '../src/common/helpers/customFilter'
 
 config()
 
@@ -563,7 +560,7 @@ describe('/blogs', () => {
       .get(PATHS.BLOGS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
-    const body:CreatePostOfBlogBody = {
+    const body: CreatePostOfBlogBody = {
       title: 'new title',
       shortDescription: 'new shortDescription',
       content: 'new content',

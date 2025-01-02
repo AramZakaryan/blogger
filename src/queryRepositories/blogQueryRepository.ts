@@ -1,85 +1,39 @@
-import {
-  ArrangedBlogsViewModel,
-  ArrangedPostsViewModel,
-  BlogViewModel,
-  GetArrangedBlogsQuery,
-  GetArrangedPostsByBlogQuery,
-} from '../types'
-import { blogCollection, postCollection } from '../db'
-import { blogMap, postMap } from '../common'
-import { ObjectId } from 'mongodb'
-import { toObjectId } from '../common/helpers/toObjectId'
+import { BlogViewModel, GetArrangedBlogsQuery } from '../types'
+import { blogCollection } from '../db'
+import { blogMap, toObjectId } from '../common'
 
 export const blogQueryRepository = {
   getArrangedBlogs: async (
-    query: GetArrangedBlogsQuery,
-  ): Promise<ArrangedBlogsViewModel | null> => {
-    const pageNumber = query.pageNumber || 1
-    const pageSize = query.pageSize || 10
+    queryNormalized: Required<GetArrangedBlogsQuery>,
+  ): Promise<BlogViewModel[] | null> => {
+    const { pageNumber, pageSize, sortBy, sortDirection, searchNameTerm } = queryNormalized
+
     const skip = (pageNumber - 1) * pageSize // skip blogs for previous pages
 
-    const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
-    const sortDirection = query.sortDirection === 'asc' ? 1 : -1
-
-    const searchNameTerm = query.searchNameTerm || ''
     const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
 
     try {
       const blogs = await blogCollection
         .find({ name: { $regex: searchNameTermRegExp } })
-        .sort({ [sortBy]: sortDirection })
+        .sort({ [sortBy === 'id' ? '_id' : sortBy]: sortDirection })
         .skip(skip)
         .limit(pageSize)
         .toArray()
 
-      const totalCount = await blogCollection.countDocuments({
-        name: { $regex: searchNameTermRegExp },
-      })
-      const pagesCount = Math.ceil(totalCount / pageSize)
-
-      return {
-        pagesCount,
-        page: pageNumber,
-        pageSize,
-        totalCount,
-        items: blogs.map(blogMap),
-      }
+      return blogs.map(blogMap)
     } catch (err) {
       // console.log(err)
       return null
     }
   },
 
-  getArrangedPostsOfBlog: async (
-    id: string,
-    query: GetArrangedPostsByBlogQuery,
-  ): Promise<ArrangedPostsViewModel | null> => {
-    const pageNumber = query.pageNumber || 1
-    const pageSize = query.pageSize || 10
-    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
-    const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
-    const sortDirection = query.sortDirection === 'asc' ? 1 : -1
+  getBlogsCount: async (searchNameTerm: string): Promise<number | null> => {
+    const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
 
     try {
-      const blogId = new ObjectId(id)
-
-      const posts = await postCollection
-        .find({ blogId })
-        .sort({ [sortBy]: sortDirection })
-        .skip(skip)
-        .limit(pageSize)
-        .toArray()
-
-      const totalCount = await postCollection.countDocuments({ blogId })
-      const pagesCount = Math.ceil(totalCount / pageSize)
-
-      return {
-        pagesCount,
-        page: pageNumber,
-        pageSize,
-        totalCount,
-        items: posts.map(postMap),
-      }
+      return await blogCollection.countDocuments({
+        name: { $regex: searchNameTermRegExp },
+      })
     } catch (err) {
       // console.log(err)
       return null

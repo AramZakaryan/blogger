@@ -14,11 +14,10 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { HTTP_STATUS_CODES } from '../common'
+import { handleResponseError, HTTP_STATUS_CODES } from '../common'
 import { blogService } from '../services'
 import { blogRepository } from '../repositories'
 import { blogQueryRepository } from '../queryRepositories'
-import { handleResponseError } from '../common/helpers/handleResponseError'
 
 export const blogControllers = {
   getArrangedBlogs: async (
@@ -27,7 +26,7 @@ export const blogControllers = {
   ): Promise<void> => {
     const { query } = req
 
-    const blogs = await blogQueryRepository.getArrangedBlogs(query)
+    const blogs = await blogService.getArrangedBlogs(query)
 
     if (blogs) {
       res.json(blogs)
@@ -52,10 +51,10 @@ export const blogControllers = {
     req: GetArrangedPostsByBlogRequest,
     res: GetArrangedPostsByBlogResponse,
   ): Promise<void> => {
-    const { id } = req.params
     const { query } = req
+    const { id } = req.params
 
-    const posts = await blogQueryRepository.getArrangedPostsOfBlog(id, query)
+    const posts = await blogService.getArrangedPostsOfBlog(query, id)
 
     if (posts) {
       res.json(posts)

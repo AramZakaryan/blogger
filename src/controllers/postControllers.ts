@@ -11,9 +11,8 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
-import { HTTP_STATUS_CODES, postMap } from '../common'
+import { handleResponseError, HTTP_STATUS_CODES } from '../common'
 import { postQueryRepository } from '../queryRepositories'
-import { handleResponseError } from '../common/helpers/handleResponseError'
 import { postService } from '../services'
 
 export const postControllers = {
@@ -23,7 +22,7 @@ export const postControllers = {
   ): Promise<void> => {
     const { query } = req
 
-    const posts = await postQueryRepository.getArrangedPosts(query)
+    const posts = await postService.getArrangedPosts(query)
     if (posts) {
       res.json(posts)
     } else {
