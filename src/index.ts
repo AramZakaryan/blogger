@@ -20,4 +20,3 @@ const startApp = async () => {
 }
 
 void startApp()
-export { blogRepository } from './repositories/blogRepository'
