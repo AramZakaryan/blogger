@@ -179,7 +179,7 @@ describe('/posts', () => {
   })
 
   it('should get error for wrong query to get arranged posts', async () => {
-    ///////// case 1: too big page size
+    ///////// case 1
 
     const query1: any = {
       pageNumber: -1,
@@ -188,15 +188,50 @@ describe('/posts', () => {
       sortDirection: 400,
     }
 
-    const response2 = await superRequest
+    const response1 = await superRequest
       .get(PATHS.POSTS)
       .query(query1)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
+
+    expect(response1.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'pageNumber must contain only numeric digits',
+          field: 'query',
+        },
+        {
+          message: 'pageSize must contain only numeric digits',
+          field: 'query',
+        },
+        {
+          message: 'sortDirection must be key of asc or desc',
+          field: 'query',
+        },
+        {
+          message: 'sortBy must be key of post',
+          field: 'query',
+        },
+      ],
+    })
+
+    ///////// case 2
+
+    const query2: any = {
+      pageNumber: 0,
+      pageSize: 'a',
+      sortBy: null,
+      sortDirection: ['a'],
+    }
+
+    const response2 = await superRequest
+      .get(PATHS.POSTS)
+      .query(query2)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(response2.body).toEqual({
       errorsMessages: [
         {
-          message: 'pageNumber must contain only numeric digits',
+          message: 'pageNumber must be greater than 0',
           field: 'query',
         },
         {
@@ -312,7 +347,7 @@ describe('/posts', () => {
       .get(PATHS.BLOGS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
-    const body:CreatePostBody = {
+    const body: CreatePostBody = {
       title: 'new title',
       shortDescription: 'new shortDescription',
       content: 'new content',

@@ -209,7 +209,7 @@ describe('/blogs', () => {
   })
 
   it('should get error for wrong query to get arranged blogs', async () => {
-    ///////// case 1: too big page size
+    ///////// case 1
 
     const query1: any = {
       pageNumber: -1,
@@ -218,12 +218,12 @@ describe('/blogs', () => {
       sortDirection: 400,
     }
 
-    const response2 = await superRequest
+    const response1 = await superRequest
       .get(PATHS.BLOGS)
       .query(query1)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
-    expect(response2.body).toEqual({
+    expect(response1.body).toEqual({
       errorsMessages: [
         {
           message: 'pageNumber must contain only numeric digits',
@@ -243,6 +243,43 @@ describe('/blogs', () => {
         },
       ],
     })
+
+
+    ///////// case 2
+
+    const query2: any = {
+      pageNumber: 0,
+      pageSize: 'a',
+      sortBy: null,
+      sortDirection: ['a'],
+    }
+
+    const response2 = await superRequest
+      .get(PATHS.BLOGS)
+      .query(query2)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
+
+    expect(response2.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'pageNumber must be greater than 0',
+          field: 'query',
+        },
+        {
+          message: 'pageSize must contain only numeric digits',
+          field: 'query',
+        },
+        {
+          message: 'sortDirection must be key of asc or desc',
+          field: 'query',
+        },
+        {
+          message: 'sortBy must be key of post',
+          field: 'query',
+        },
+      ],
+    })
+
   })
 
   it('should get the blog', async () => {

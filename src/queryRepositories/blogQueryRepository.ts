@@ -10,11 +10,9 @@ export const blogQueryRepository = {
 
     const skip = (pageNumber - 1) * pageSize // skip blogs for previous pages
 
-    const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
-
     try {
       const blogs = await blogCollection
-        .find({ name: { $regex: searchNameTermRegExp } })
+        .find({ name: { $regex: searchNameTerm, $options: 'i' } })
         .sort({ [sortBy === 'id' ? '_id' : sortBy]: sortDirection })
         .skip(skip)
         .limit(pageSize)

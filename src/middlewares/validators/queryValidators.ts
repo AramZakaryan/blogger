@@ -8,12 +8,22 @@ const queryValidator = [
       message: 'pageNumber must contain only numeric digits',
       field: 'query',
     })
+    .isInt({ min: 1 })
+    .withMessage({
+      message: 'pageNumber must be greater than 0',
+      field: 'query',
+    })
     .toInt(), // convert to integer to use it in app
   query('pageSize')
     .optional()
     .isNumeric({ no_symbols: true })
     .withMessage({
       message: 'pageSize must contain only numeric digits',
+      field: 'query',
+    })
+    .isInt({ min: 1 })
+    .withMessage({
+      message: 'pageSize must be greater than 0',
       field: 'query',
     })
     .toInt(), // convert to integer to use it in app
