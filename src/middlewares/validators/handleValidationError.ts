@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { validationResult, ValidationError } from 'express-validator'
 import { OutputErrorsType } from '../../types'
-import { toObjectIfJson } from '../utils/toObjectIfJson'
-import { HTTP_STATUS_CODES } from '../httpStatusCodes'
+import { toObjectIfJson } from '../../common/utils/toObjectIfJson'
+import { HTTP_STATUS_CODES } from '../../common/httpStatusCodes'
 
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)

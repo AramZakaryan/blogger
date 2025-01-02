@@ -61,7 +61,7 @@ export const postControllers = {
     const createdPost = await postRepository.createPost(body)
 
     if (createdPost) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(postMap(createdPost))
+      res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
     } else {
       res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
         errorsMessages: [

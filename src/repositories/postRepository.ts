@@ -2,13 +2,14 @@ import {
   ArrangedPostsViewModel,
   CreatePostBody,
   GetArrangedPostsQuery,
-  PostType,
+  PostType, PostViewModel,
   UpdatePostBody,
 } from '../types'
-import { blogRepository } from './blogRepository'
-import { blogCollection, postCollection } from '../db'
+import { postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
-import { blogMap, postMap } from '../common'
+import { postMap } from '../common'
+import { blogQueryRepository } from '../queryRepositories'
+import { toObjectId } from '../common/helpers/toObjectId'
 
 export const postRepository = {
   getArrangedPosts: async (
@@ -56,24 +57,33 @@ export const postRepository = {
     }
   },
 
-  createPost: async (body: CreatePostBody): Promise<WithId<PostType> | null> => {
+  createPost: async (body: CreatePostBody): Promise<PostViewModel | null> => {
     try {
-      const blog = await blogRepository.findBlog(body.blogId)
+      const blog = await blogQueryRepository.findBlog(body.blogId)
 
       if (!blog) return null
 
-      const post = {
+      const blogId = toObjectId(blog.id)
+
+      if (!blogId) return null
+
+      const postDocument = {
         ...body,
-        blogId: blog._id,
+        blogId,
         blogName: blog.name,
         createdAt: new Date(),
       }
 
-      const insertOneInfo = await postCollection.insertOne(post)
+      const insertOneInfo = await postCollection.insertOne(postDocument)
 
       if (!insertOneInfo.acknowledged) return null
 
-      return await postCollection.findOne({ _id: insertOneInfo.insertedId })
+      const post = await postCollection.findOne({ _id: insertOneInfo.insertedId })
+
+      if (!post) return null
+
+      return postMap(post)
+
     } catch (err) {
       // console.log(err)
       return null
@@ -82,7 +92,7 @@ export const postRepository = {
 
   updatePost: async (id: string, body: UpdatePostBody): Promise<WithId<PostType> | null> => {
     try {
-      const blog = await blogRepository.findBlog(body.blogId)
+      const blog = await blogQueryRepository.findBlog(body.blogId)
 
       if (!blog) return null
 

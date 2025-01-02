@@ -1,5 +1,8 @@
 
+
 // HTTP_STATUS_CODES.NOT_FOUND_404
+import { EntryType } from 'node:perf_hooks'
+
 export const HTTP_STATUS_CODES = {
   // Informational responses (100–199)
   // CONTINUE_100: 100,
@@ -47,4 +50,4 @@ export const HTTP_STATUS_CODES = {
   // SERVICE_UNAVAILABLE_503: 503,
   // GATEWAY_TIMEOUT_504: 504,
   // HTTP_VERSION_NOT_SUPPORTED_505: 505,
-};
+} as const

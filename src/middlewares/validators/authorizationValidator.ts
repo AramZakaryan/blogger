@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { config } from 'dotenv'
-import { HTTP_STATUS_CODES } from '../httpStatusCodes'
+import { HTTP_STATUS_CODES } from '../../common/httpStatusCodes'
 
 config()
 

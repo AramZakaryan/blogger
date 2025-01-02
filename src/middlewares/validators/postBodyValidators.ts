@@ -1,8 +1,11 @@
 import { body } from 'express-validator'
-import { blogRepository } from '../../repositories'
 import { handleNotEmpty } from './handleNotEmpty'
 import { handleIsStringIsLength } from './handleIsStringIsLength'
 import { handleIsString } from './handleIsString'
+import { blogQueryRepository } from '../../queryRepositories'
+import { ObjectId } from 'mongodb'
+import { toObjectId } from '../../common/helpers/toObjectId'
+
 
 export const createPostBodyByBlogValidator = [
   handleNotEmpty('title'),
@@ -17,7 +20,7 @@ export const createPostBodyValidator = [
   ...createPostBodyByBlogValidator,
   handleNotEmpty('blogId', false),
   handleIsString('blogId').custom(async (value, { req }) => {
-    const blog = await blogRepository.findBlog(req.body.blogId)
+    const blog = await blogQueryRepository.findBlog(req.body.blogId)
     if (!blog) {
       throw new Error(
         JSON.stringify({

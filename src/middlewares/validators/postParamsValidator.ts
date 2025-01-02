@@ -10,7 +10,8 @@ export const postParamsValidator = [
     })
     .bail()
     .custom(async (_, { req }) => {
-      const post = await postRepository.findPost(req.params?.id)
+      const id = req.params?.id
+      const post = await postRepository.findPost(id)
       if (!post) {
         throw new Error(
           JSON.stringify({

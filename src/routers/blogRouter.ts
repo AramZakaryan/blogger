@@ -1,14 +1,14 @@
 import router from 'express'
 import { blogControllers } from '../controllers'
 import {
-  handleValidationErrors,
   authorizationValidator,
+  blogBodyValidator,
+  blogParamsValidator,
+  blogQueryValidator,
   createPostBodyByBlogValidator,
+  handleValidationErrors,
   postQueryValidator,
-} from '../common'
-import { blogBodyValidator } from '../common'
-import { blogParamsValidator } from '../common'
-import { blogQueryValidator } from '../common'
+} from '../middlewares'
 
 export const blogRouter = router()
 

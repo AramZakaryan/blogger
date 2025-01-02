@@ -1,5 +1,7 @@
 import { param } from 'express-validator'
-import { blogRepository } from '../../repositories'
+
+import { blogQueryRepository } from '../../queryRepositories'
+import { toObjectId } from '../../common/helpers/toObjectId'
 
 export const blogParamsValidator = [
   param('id')
@@ -9,7 +11,8 @@ export const blogParamsValidator = [
       field: 'params',
     })
     .custom(async (_, { req }) => {
-      const blog = await blogRepository.findBlog(req.params?.id)
+      const id = req.params?.id
+      const blog = await blogQueryRepository.findBlog(id)
       if (!blog) {
         throw new Error(
           JSON.stringify({

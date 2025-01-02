@@ -1,4 +1,3 @@
-import { blogRepository } from '../repositories'
 import {
   CreateBlogRequest,
   CreateBlogResponse,
@@ -17,6 +16,9 @@ import {
 } from '../types'
 import { blogMap, HTTP_STATUS_CODES, postMap } from '../common'
 import { blogServices } from '../services'
+import { blogRepository } from '../repositories'
+import { blogQueryRepository } from '../queryRepositories'
+import { handleResponseError } from '../common/helpers/handleResponseError'
 
 export const blogControllers = {
   getArrangedBlogs: async (
@@ -25,19 +27,12 @@ export const blogControllers = {
   ): Promise<void> => {
     const query = req.query
 
-    const blogs = await blogRepository.getArrangedBlogs(query)
+    const blogs = await blogQueryRepository.getArrangedBlogs(query)
 
     if (blogs) {
       res.json(blogs)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
@@ -45,19 +40,12 @@ export const blogControllers = {
     const params = req.params
     const id = params.id
 
-    const blog = await blogRepository.findBlog(id)
+    const blog = await blogQueryRepository.findBlog(id)
 
     if (blog) {
-      res.json(blogMap(blog))
+      res.json(blog)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
@@ -69,38 +57,24 @@ export const blogControllers = {
     const id = params.id
     const query = req.query
 
-    const posts = await blogRepository.getArrangedPostsOfBlog(id, query)
+    const posts = await blogQueryRepository.getArrangedPostsOfBlog(id, query)
 
     if (posts) {
       res.json(posts)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
   createBlog: async (req: CreateBlogRequest, res: CreateBlogResponse): Promise<void> => {
     const body = req.body
 
-    const createdBlog = await blogRepository.createBlog(body)
+    const createdBlog = await blogServices.createBlog(body)
 
     if (createdBlog) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(blogMap(createdBlog))
+      res.status(HTTP_STATUS_CODES.CREATED_201).json(createdBlog)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
@@ -115,16 +89,9 @@ export const blogControllers = {
     const createdPost = await blogServices.createPostOfBlog(blogId, body)
 
     if (createdPost) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(postMap(createdPost))
+      res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
@@ -138,14 +105,7 @@ export const blogControllers = {
     if (updatedBlog) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
@@ -158,14 +118,7 @@ export const blogControllers = {
     if (deletedBlog) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 }
