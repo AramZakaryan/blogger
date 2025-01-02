@@ -14,8 +14,8 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { blogMap, HTTP_STATUS_CODES, postMap } from '../common'
-import { blogServices } from '../services'
+import { HTTP_STATUS_CODES } from '../common'
+import { blogService } from '../services'
 import { blogRepository } from '../repositories'
 import { blogQueryRepository } from '../queryRepositories'
 import { handleResponseError } from '../common/helpers/handleResponseError'
@@ -25,7 +25,7 @@ export const blogControllers = {
     req: GetArrangedBlogsRequest,
     res: GetArrangedBlogsResponse,
   ): Promise<void> => {
-    const query = req.query
+    const { query } = req
 
     const blogs = await blogQueryRepository.getArrangedBlogs(query)
 
@@ -37,8 +37,7 @@ export const blogControllers = {
   },
 
   findBlog: async (req: FindBlogRequest, res: FindBlogResponse): Promise<void> => {
-    const params = req.params
-    const id = params.id
+    const { id } = req.params
 
     const blog = await blogQueryRepository.findBlog(id)
 
@@ -53,9 +52,8 @@ export const blogControllers = {
     req: GetArrangedPostsByBlogRequest,
     res: GetArrangedPostsByBlogResponse,
   ): Promise<void> => {
-    const params = req.params
-    const id = params.id
-    const query = req.query
+    const { id } = req.params
+    const { query } = req
 
     const posts = await blogQueryRepository.getArrangedPostsOfBlog(id, query)
 
@@ -67,9 +65,9 @@ export const blogControllers = {
   },
 
   createBlog: async (req: CreateBlogRequest, res: CreateBlogResponse): Promise<void> => {
-    const body = req.body
+    const { body } = req
 
-    const createdBlog = await blogServices.createBlog(body)
+    const createdBlog = await blogService.createBlog(body)
 
     if (createdBlog) {
       res.status(HTTP_STATUS_CODES.CREATED_201).json(createdBlog)
@@ -82,11 +80,10 @@ export const blogControllers = {
     req: CreatePostByBlogRequest,
     res: CreatePostByBlogResponse,
   ): Promise<void> => {
-    const params = req.params
-    const blogId = params.id
-    const body = req.body
+    const { id } = req.params
+    const { body } = req
 
-    const createdPost = await blogServices.createPostOfBlog(blogId, body)
+    const createdPost = await blogService.createPostOfBlog(id, body)
 
     if (createdPost) {
       res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
@@ -96,9 +93,8 @@ export const blogControllers = {
   },
 
   updateBlog: async (req: UpdateBlogRequest, res: UpdateBlogResponse): Promise<void> => {
-    const params = req.params
-    const id = params.id
-    const body = req.body
+    const { id } = req.params
+    const { body } = req
 
     const updatedBlog = await blogRepository.updateBlog(id, body)
 
@@ -110,8 +106,7 @@ export const blogControllers = {
   },
 
   deleteBlog: async (req: DeleteBlogRequest, res: DeleteBlogResponse): Promise<void> => {
-    const params = req.params
-    const id = params.id
+    const { id } = req.params
 
     const deletedBlog = await blogRepository.deleteBlog(id)
 

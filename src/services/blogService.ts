@@ -8,8 +8,9 @@ import {
   PostViewModel,
 } from '../types'
 import { blogQueryRepository } from '../queryRepositories'
+import { postService } from './postService'
 
-export const blogServices = {
+export const blogService = {
   createBlog: async (body: CreateBlogBody): Promise<BlogViewModel | null> => {
     try {
       const blog: BlogType = {
@@ -35,6 +36,6 @@ export const blogServices = {
   ): Promise<PostViewModel | null> => {
     const updatedBody: CreatePostBody = { ...body, blogId }
 
-    return await postRepository.createPost(updatedBody)
+    return await postService.createPost(updatedBody)
   },
 }

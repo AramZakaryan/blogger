@@ -1,89 +1,16 @@
-import {
-  ArrangedPostsViewModel,
-  CreatePostBody,
-  GetArrangedPostsQuery,
-  PostType, PostViewModel,
-  UpdatePostBody,
-} from '../types'
+import { PostType, UpdatePostBody } from '../types'
 import { postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
-import { postMap } from '../common'
 import { blogQueryRepository } from '../queryRepositories'
-import { toObjectId } from '../common/helpers/toObjectId'
 
 export const postRepository = {
-  getArrangedPosts: async (
-    query: GetArrangedPostsQuery,
-  ): Promise<ArrangedPostsViewModel | null> => {
-    const pageNumber = query.pageNumber || 1
-    const pageSize = query.pageSize || 10
-    const skip = (pageNumber - 1) * pageSize // skip posts for previous pages
-
-    const sortBy = query.sortBy === 'id' ? '_id' : query.sortBy || 'createdAt'
-    const sortDirection = query.sortDirection === 'asc' ? 1 : -1
-
+  createPost: async (post: PostType): Promise<string | null> => {
     try {
-      const posts = await postCollection
-        .find()
-        .sort({ [sortBy]: sortDirection })
-        .skip(skip)
-        .limit(pageSize)
-        .toArray()
-
-      const totalCount = await postCollection.countDocuments()
-      const pagesCount = Math.ceil(totalCount / pageSize)
-
-      return {
-        pagesCount,
-        page: pageNumber,
-        pageSize,
-        totalCount,
-        items: posts.map(postMap),
-      }
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
-  findPost: async (id: string): Promise<WithId<PostType> | null> => {
-    try {
-      const _id = new ObjectId(id)
-
-      return await postCollection.findOne({ _id })
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
-  createPost: async (body: CreatePostBody): Promise<PostViewModel | null> => {
-    try {
-      const blog = await blogQueryRepository.findBlog(body.blogId)
-
-      if (!blog) return null
-
-      const blogId = toObjectId(blog.id)
-
-      if (!blogId) return null
-
-      const postDocument = {
-        ...body,
-        blogId,
-        blogName: blog.name,
-        createdAt: new Date(),
-      }
-
-      const insertOneInfo = await postCollection.insertOne(postDocument)
+      const insertOneInfo = await postCollection.insertOne(post)
 
       if (!insertOneInfo.acknowledged) return null
 
-      const post = await postCollection.findOne({ _id: insertOneInfo.insertedId })
-
-      if (!post) return null
-
-      return postMap(post)
-
+      return insertOneInfo.insertedId.toString()
     } catch (err) {
       // console.log(err)
       return null

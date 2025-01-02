@@ -1,5 +1,5 @@
 import { param } from 'express-validator'
-import { postRepository } from '../../repositories'
+import { postQueryRepository } from '../../queryRepositories'
 
 export const postParamsValidator = [
   param('id')
@@ -11,7 +11,7 @@ export const postParamsValidator = [
     .bail()
     .custom(async (_, { req }) => {
       const id = req.params?.id
-      const post = await postRepository.findPost(id)
+      const post = await postQueryRepository.findPost(id)
       if (!post) {
         throw new Error(
           JSON.stringify({

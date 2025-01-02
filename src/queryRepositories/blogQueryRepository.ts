@@ -1,14 +1,13 @@
 import {
   ArrangedBlogsViewModel,
   ArrangedPostsViewModel,
-  BlogType,
   BlogViewModel,
   GetArrangedBlogsQuery,
   GetArrangedPostsByBlogQuery,
 } from '../types'
 import { blogCollection, postCollection } from '../db'
 import { blogMap, postMap } from '../common'
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import { toObjectId } from '../common/helpers/toObjectId'
 
 export const blogQueryRepository = {

@@ -12,106 +12,71 @@ import {
   UpdatePostResponse,
 } from '../types'
 import { HTTP_STATUS_CODES, postMap } from '../common'
+import { postQueryRepository } from '../queryRepositories'
+import { handleResponseError } from '../common/helpers/handleResponseError'
+import { postService } from '../services'
 
 export const postControllers = {
   getArrangedPosts: async (
     req: GetArrangedPostsRequest,
     res: GetArrangedPostsResponse,
   ): Promise<void> => {
-    const query = req.query
+    const { query } = req
 
-    const posts = await postRepository.getArrangedPosts(query)
+    const posts = await postQueryRepository.getArrangedPosts(query)
     if (posts) {
       res.json(posts)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
   findPost: async (req: FindPostRequest, res: FindPostResponse): Promise<void> => {
-    const params = req.params
-    const id = params.id
+    const { id } = req.params
 
-    const post = await postRepository.findPost(id)
+    const post = await postQueryRepository.findPost(id)
 
     if (post) {
-      res.json(postMap(post))
+      res.json(post)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
   createPost: async (req: CreatePostRequest, res: CreatePostResponse): Promise<void> => {
-    const body = req.body
+    const { body } = req
 
-    const createdPost = await postRepository.createPost(body)
+    const createdPost = await postService.createPost(body)
 
     if (createdPost) {
       res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
   updatePost: async (req: UpdatePostRequest, res: UpdatePostResponse): Promise<void> => {
-    const params = req.params
-    const id = params.id
-    const body = req.body
+    const { id } = req.params
+    const { body } = req
 
     const updatedPost = await postRepository.updatePost(id, body)
 
     if (updatedPost) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 
   deletePost: async (req: DeletePostRequest, res: DeletePostResponse): Promise<void> => {
-    const params = req.params
-    const id = params.id
+    const { id } = req.params
 
     const deletedPost = await postRepository.deletePost(id)
 
     if (deletedPost) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
-      res.status(HTTP_STATUS_CODES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'something went wrong',
-            field: 'unknown',
-          },
-        ],
-      })
+      handleResponseError(res, 'BAD_REQUEST_400')
     }
   },
 }

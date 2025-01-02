@@ -1,1 +1,2 @@
-export * from "./blogServices"
+export * from "./blogService"
+export * from "./postService"
