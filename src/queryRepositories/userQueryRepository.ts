@@ -21,8 +21,10 @@ export const userQueryRepository = {
     try {
       const users = await userCollection
         .find({
-          login: { $regex: searchLoginTerm, $options: 'i' },
-          email: { $regex: searchEmailTerm, $options: 'i' },
+          $or: [
+            { login: { $regex: searchLoginTerm, $options: 'i' } },
+            { email: { $regex: searchEmailTerm, $options: 'i' } },
+          ],
         })
         .sort({ [sortBy === 'id' ? '_id' : sortBy]: sortDirection })
         .skip(skip)
@@ -42,8 +44,10 @@ export const userQueryRepository = {
   ): Promise<number | null> => {
     try {
       return await userCollection.countDocuments({
-        login: { $regex: searchLoginTerm, $options: 'i' },
-        email: { $regex: searchEmailTerm, $options: 'i' },
+        $or: [
+          { login: { $regex: searchLoginTerm, $options: 'i' } },
+          { email: { $regex: searchEmailTerm, $options: 'i' } },
+        ],
       })
     } catch (err) {
       // console.log(err)
