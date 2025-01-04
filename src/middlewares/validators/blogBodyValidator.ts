@@ -1,6 +1,4 @@
-import { body } from 'express-validator'
-import { handleNotEmpty } from './handlers/handleNotEmpty'
-import { handleIsStringIsLengthMax } from './handlers/handleIsStringIsLengthMax'
+import { handleIsStringIsLengthMax, handleNotEmpty } from './handlers'
 
 export const blogBodyValidator = [
   handleNotEmpty('name'),

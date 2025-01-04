@@ -1,5 +1,6 @@
 export * from './blogBodyValidator'
 export * from './userBodyValidator'
+export * from './authBodyValidator'
 export * from './postBodyValidators'
 export * from './postParamsValidator'
 export * from './userParamsValidator'

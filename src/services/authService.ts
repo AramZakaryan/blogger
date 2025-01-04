@@ -1,5 +1,6 @@
 import { LoginUserBody } from '../types'
 import { userQueryRepository } from '../queryRepositories'
+import bcrypt from 'bcrypt'
 
 export const authService = {
   loginUser: async (body: LoginUserBody): Promise<boolean | null> => {
@@ -10,7 +11,9 @@ export const authService = {
 
       if (!user) return false
 
-      if (user.password === password) {
+      const isPasswordCorrect = await bcrypt.compare(password, user.password)
+
+      if (isPasswordCorrect) {
         return true
       } else {
         return false
