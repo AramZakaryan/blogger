@@ -9,7 +9,7 @@ export type GetArrangedUsersQuery = ArrangementQuery<UserViewModel> & {
 
 export type FindUserParams = { id: string }
 
-export type CreateUserBody = Omit<WithId<UserType>, 'createdAt'>
+export type CreateUserBody = Omit<WithId<UserType>, '_id' | 'createdAt'>
 
 export type DeleteUserParams = FindUserParams
 

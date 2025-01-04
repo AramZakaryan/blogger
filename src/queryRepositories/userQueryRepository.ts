@@ -2,12 +2,12 @@ import {
   BlogViewModel,
   GetArrangedBlogsQuery,
   GetArrangedUsersQuery,
-  UserDbType,
+  UserType,
   UserViewModel,
 } from '../types'
 import { blogCollection, userCollection } from '../db'
 import { blogMap, toObjectId, userMap } from '../common'
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 export const userQueryRepository = {
   getArrangedUsers: async (
@@ -92,7 +92,7 @@ export const userQueryRepository = {
     }
   },
 
-  findUserByLoginOrEmail: async (loginOrEmail: string): Promise<UserDbType | null> => {
+  findUserByLoginOrEmail: async (loginOrEmail: string): Promise<WithId<UserType> | null> => {
     try {
       const user = await userCollection.findOne({
         $or: [{ login: loginOrEmail }, { email: loginOrEmail }],

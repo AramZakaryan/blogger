@@ -8,9 +8,6 @@ export type UserType = {
   createdAt: Date
 }
 
-export type UserDbType = UserType & {
-  _id: ObjectId
-}
 
 export type UserViewModel = Omit<UserType, 'password' | 'createdAt'> & {
   id: string

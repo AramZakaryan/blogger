@@ -4,11 +4,10 @@ import {
   CreateUserBody,
   CreateUserResult,
   GetArrangedUsersQuery,
-  OutputErrorsType,
   UserType,
-  UserViewModel,
 } from '../types'
 import { userQueryRepository } from '../queryRepositories'
+import bcrypt from 'bcrypt'
 
 export const userService = {
   getArrangedUsers: async (
@@ -51,13 +50,13 @@ export const userService = {
   },
 
   createUser: async (body: CreateUserBody): Promise<CreateUserResult | null> => {
+    const { login, email, password } = body
+
     // checking if the user with given login or email is unique
     try {
-      const { login, email } = body
+      const usersWithEmail = await userQueryRepository.findUserByEmail(email)
 
-      const usersWithEmail = await userService.getArrangedUsers({ searchEmailTerm: email })
-
-      if (usersWithEmail?.items.length)
+      if (usersWithEmail)
         return {
           errors: {
             errorsMessages: [
@@ -69,9 +68,9 @@ export const userService = {
           },
         }
 
-      const usersWithLogin = await userService.getArrangedUsers({ searchLoginTerm: login })
+      const usersWithLogin = await userQueryRepository.findUserByLogin(login)
 
-      if (usersWithLogin?.items.length)
+      if (usersWithLogin)
         return {
           errors: {
             errorsMessages: [
@@ -88,8 +87,12 @@ export const userService = {
     }
 
     try {
+      const passwordHash = await bcrypt.hash(password, 12)
+
       const userNormalized: UserType = {
-        ...body,
+        login,
+        email,
+        password: passwordHash,
         createdAt: new Date(),
       }
 
