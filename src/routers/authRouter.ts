@@ -4,4 +4,4 @@ import { authBodyValidator, handleValidationErrors } from '../middlewares'
 
 export const authRouter = router()
 
-authRouter.post('/', authBodyValidator, handleValidationErrors, authControllers.loginUser)
+authRouter.post('/login', authBodyValidator, handleValidationErrors, authControllers.loginUser)

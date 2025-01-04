@@ -40,7 +40,7 @@ export const userService = {
         pagesCount,
         page: queryNormalized.pageNumber,
         pageSize: queryNormalized.pageSize,
-        totalCount: pagesCount,
+        totalCount: usersCount,
         items: users,
       }
     } catch (err) {
