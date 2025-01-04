@@ -1,7 +1,7 @@
-import { PostType, UpdatePostBody } from '../types'
+import { PostType, PostViewModel, UpdatePostBody } from '../types'
 import { postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
-import { blogQueryRepository } from '../queryRepositories'
+import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
 
 export const postRepository = {
   createPost: async (post: PostType): Promise<string | null> => {
@@ -43,11 +43,11 @@ export const postRepository = {
     }
   },
 
-  deletePost: async (id: string): Promise<WithId<PostType> | null> => {
+  deletePost: async (id: string): Promise<PostViewModel | null> => {
     try {
-      const _id = new ObjectId(id)
+      const post = await postQueryRepository.findPost(id)
 
-      const post = await postCollection.findOne({ _id })
+      const _id = new ObjectId(id)
 
       const deleteOneInfo = await postCollection.deleteOne({ _id })
 

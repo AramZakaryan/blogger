@@ -95,9 +95,9 @@ export const blogControllers = {
     const { id } = req.params
     const { body } = req
 
-    const updatedBlog = await blogRepository.updateBlog(id, body)
+    const blog = await blogRepository.updateBlog(id, body)
 
-    if (updatedBlog) {
+    if (blog) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
       handleResponseError(res, 'BAD_REQUEST_400')
@@ -107,9 +107,9 @@ export const blogControllers = {
   deleteBlog: async (req: DeleteBlogRequest, res: DeleteBlogResponse): Promise<void> => {
     const { id } = req.params
 
-    const deletedBlog = await blogRepository.deleteBlog(id)
+    const blog = await blogRepository.deleteBlog(id)
 
-    if (deletedBlog) {
+    if (blog) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
       handleResponseError(res, 'BAD_REQUEST_400')

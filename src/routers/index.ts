@@ -1,3 +1,5 @@
 export * from './testingRouter'
 export * from './blogRouter'
 export * from './postRouter'
+export * from './userRouter'
+export * from './authRouter'

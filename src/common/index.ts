@@ -1,5 +1,5 @@
 export * from './helpers'
-export * from './utils'
+export * from './mappers'
 export * from './paths'
 export * from './httpStatusCodes'
 

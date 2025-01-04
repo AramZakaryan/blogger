@@ -2,21 +2,22 @@
 
 import { Collection, MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { BlogType, PostType } from '../types'
+import { BlogType, PostType, UserType } from '../types'
 import { Db } from './db.type'
 
 config()
 
 export let blogCollection: Collection<BlogType>
 export let postCollection: Collection<PostType>
+export let userCollection: Collection<UserType>
 
 export const runDB = async (dbUrl: string, dbName: string) => {
   const client: MongoClient = new MongoClient(dbUrl)
   const db = client.db(dbName)
 
   blogCollection = db.collection<BlogType>(process.env.BLOG_COLLECTION_NAME || '')
-
   postCollection = db.collection<PostType>(process.env.POST_COLLECTION_NAME || '')
+  userCollection = db.collection<UserType>(process.env.USER_COLLECTION_NAME || '')
 
   try {
     await client.connect()
@@ -34,7 +35,7 @@ export const runDB = async (dbUrl: string, dbName: string) => {
 export const setDB = async (dataset?: Partial<Db>) => {
   await blogCollection.drop()
   await postCollection.drop()
-
+  await userCollection.drop()
 
   if (dataset?.blogs) {
     await blogCollection.insertMany(dataset.blogs)
@@ -43,6 +44,8 @@ export const setDB = async (dataset?: Partial<Db>) => {
   if (dataset?.posts) {
     await postCollection.insertMany(dataset.posts)
   }
+
+  if (dataset?.users) {
+    await userCollection.insertMany(dataset.users)
+  }
 }
-
-

@@ -45,10 +45,10 @@ export const postControllers = {
   createPost: async (req: CreatePostRequest, res: CreatePostResponse): Promise<void> => {
     const { body } = req
 
-    const createdPost = await postService.createPost(body)
+    const post = await postService.createPost(body)
 
-    if (createdPost) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
+    if (post) {
+      res.status(HTTP_STATUS_CODES.CREATED_201).json(post)
     } else {
       handleResponseError(res, 'BAD_REQUEST_400')
     }
@@ -58,9 +58,9 @@ export const postControllers = {
     const { id } = req.params
     const { body } = req
 
-    const updatedPost = await postRepository.updatePost(id, body)
+    const post = await postRepository.updatePost(id, body)
 
-    if (updatedPost) {
+    if (post) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
       handleResponseError(res, 'BAD_REQUEST_400')
@@ -70,9 +70,9 @@ export const postControllers = {
   deletePost: async (req: DeletePostRequest, res: DeletePostResponse): Promise<void> => {
     const { id } = req.params
 
-    const deletedPost = await postRepository.deletePost(id)
+    const post = await postRepository.deletePost(id)
 
-    if (deletedPost) {
+    if (post) {
       res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
     } else {
       handleResponseError(res, 'BAD_REQUEST_400')

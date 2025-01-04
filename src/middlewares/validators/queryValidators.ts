@@ -61,3 +61,11 @@ export const postQueryValidator = [
       field: 'query',
     }),
 ]
+
+export const userQueryValidator = [
+  ...queryValidator,
+  query('sortBy').optional().isString().isIn(['id', 'login', 'email', 'createdAt']).withMessage({
+    message: 'sortBy must be key of user',
+    field: 'query',
+  }),
+]

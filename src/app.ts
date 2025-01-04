@@ -1,7 +1,7 @@
 import express, { Response, Request, NextFunction } from 'express'
 import cors from 'cors'
 import { PATHS } from './common'
-import { blogRouter } from './routers'
+import { authRouter, blogRouter, userRouter } from './routers'
 import { postRouter } from './routers'
 import { testingRouter } from './routers'
 import { incorrectBodyMiddleware } from './middlewares'
@@ -21,3 +21,5 @@ app.get('/', (_, res: Response) => {
 app.use(PATHS.TESTING, testingRouter)
 app.use(PATHS.BLOGS, blogRouter)
 app.use(PATHS.POSTS, postRouter)
+app.use(PATHS.USERS, userRouter)
+app.use(PATHS.AUTH, authRouter)

@@ -19,7 +19,7 @@ export const incorrectBodyMiddleware = (
       ],
     })
   } else {
-    // Not a JSON parse error, let other error utils (or default) handle it
+    // Not a JSON parse error, let other error mappers (or default) handle it
     next(err)
   }
 }

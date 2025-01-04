@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { setDB } from '../db'
-import { HTTP_STATUS_CODES } from '../common/httpStatusCodes'
+import { HTTP_STATUS_CODES } from '../common'
 
 export const testingControllers = {
   clearDb: async (req: Request, res: Response) => {

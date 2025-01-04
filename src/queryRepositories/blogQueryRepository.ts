@@ -1,6 +1,7 @@
 import { BlogViewModel, GetArrangedBlogsQuery } from '../types'
 import { blogCollection } from '../db'
 import { blogMap, toObjectId } from '../common'
+import { ObjectId } from 'mongodb'
 
 export const blogQueryRepository = {
   getArrangedBlogs: async (
@@ -26,11 +27,9 @@ export const blogQueryRepository = {
   },
 
   getBlogsCount: async (searchNameTerm: string): Promise<number | null> => {
-    const searchNameTermRegExp = new RegExp(searchNameTerm, 'i') // case-insensitive search
-
     try {
       return await blogCollection.countDocuments({
-        name: { $regex: searchNameTermRegExp },
+        name: { $regex: searchNameTerm, $options: 'i' },
       })
     } catch (err) {
       // console.log(err)

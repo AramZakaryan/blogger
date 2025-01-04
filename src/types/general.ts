@@ -1,11 +1,12 @@
 import { PostViewModel } from './post.type'
 import { BlogViewModel } from './blog.type'
+import { UserViewModel } from './user.type'
 
 export type OutputErrorsType = {
   errorsMessages: { message: string; field: string }[]
 }
 
-export type ArrangementQuery<T extends PostViewModel | BlogViewModel> = {
+export type ArrangementQuery<T extends PostViewModel | BlogViewModel | UserViewModel> = {
   pageNumber?: number
   pageSize?: number
   sortBy?: keyof T

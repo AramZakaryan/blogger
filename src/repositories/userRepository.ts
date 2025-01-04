@@ -1,28 +1,29 @@
 import {
   ArrangedBlogsViewModel,
   ArrangedPostsViewModel,
-  BlogType, BlogViewModel,
+  BlogType,
   CreateBlogBody,
   GetArrangedBlogsQuery,
   GetArrangedPostsByBlogQuery,
   UpdateBlogBody,
+  UserType,
+  UserViewModel,
 } from '../types'
-import { blogCollection, postCollection } from '../db'
+import { blogCollection, postCollection, userCollection } from '../db'
 import { blogMap, postMap } from '../common'
 import { ObjectId, WithId } from 'mongodb'
-import { blogQueryRepository } from '../queryRepositories'
+import { userQueryRepository } from '../queryRepositories'
 
-export const blogRepository = {
-  createBlog: async (blog: BlogType): Promise<string | null> => {
+export const userRepository = {
+  createUser: async (user: UserType): Promise<string | null> => {
     try {
-      const insertOneInfo = await blogCollection.insertOne(blog)
+      const insertOneInfo = await userCollection.insertOne(user)
 
       if (!insertOneInfo.acknowledged) return null
 
       return insertOneInfo.insertedId.toString()
-
     } catch (err) {
-      // console.log(err)
+      // console.log(err)s
       return null
     }
   },
@@ -41,18 +42,17 @@ export const blogRepository = {
       return null
     }
   },
-  deleteBlog: async (id: string): Promise<BlogViewModel | null> => {
+  deleteUser: async (id: string): Promise<UserViewModel | null> => {
     try {
-
-      const blog = await blogQueryRepository.findBlog(id )
+      const user = await userQueryRepository.findUserById(id)
 
       const _id = new ObjectId(id)
 
-      const deleteOneInfo = await blogCollection.deleteOne({ _id })
+      const deleteOneInfo = await userCollection.deleteOne({ _id })
 
       if (!deleteOneInfo.acknowledged) return null
 
-      return blog
+      return user
     } catch (err) {
       // console.log(err)
       return null

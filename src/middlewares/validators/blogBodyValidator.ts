@@ -1,14 +1,14 @@
 import { body } from 'express-validator'
-import { handleNotEmpty } from './handleNotEmpty'
-import { handleIsStringIsLength } from './handleIsStringIsLength'
+import { handleNotEmpty } from './handlers/handleNotEmpty'
+import { handleIsStringIsLengthMax } from './handlers/handleIsStringIsLengthMax'
 
 export const blogBodyValidator = [
   handleNotEmpty('name'),
-  handleIsStringIsLength('name', 15),
+  handleIsStringIsLengthMax('name', 15),
   handleNotEmpty('description'),
-  handleIsStringIsLength('description', 500),
+  handleIsStringIsLengthMax('description', 500),
   handleNotEmpty('websiteUrl', false),
-  handleIsStringIsLength('websiteUrl', 100)
+  handleIsStringIsLengthMax('websiteUrl', 100)
     .isURL()
     .withMessage({ message: 'websiteUrl incorrect format', field: 'websiteUrl' }),
 ]

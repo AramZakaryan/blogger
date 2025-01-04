@@ -1,6 +1,6 @@
 import { body } from 'express-validator'
 
-export const handleIsStringIsLength = (field: string, maxLength: number) =>
+export const handleIsStringIsLengthMax = (field: string, maxLength: number) =>
   body(field)
     .isString()
     .withMessage({ message: `${field} must be a string`, field })

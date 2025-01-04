@@ -1,7 +1,7 @@
 import { body } from 'express-validator'
-import { handleNotEmpty } from './handleNotEmpty'
-import { handleIsStringIsLength } from './handleIsStringIsLength'
-import { handleIsString } from './handleIsString'
+import { handleNotEmpty } from './handlers/handleNotEmpty'
+import { handleIsStringIsLengthMax } from './handlers/handleIsStringIsLengthMax'
+import { handleIsString } from './handlers/handleIsString'
 import { blogQueryRepository } from '../../queryRepositories'
 import { ObjectId } from 'mongodb'
 import { toObjectId } from '../../common/helpers/toObjectId'
@@ -9,11 +9,11 @@ import { toObjectId } from '../../common/helpers/toObjectId'
 
 export const createPostBodyByBlogValidator = [
   handleNotEmpty('title'),
-  handleIsStringIsLength('title', 30),
+  handleIsStringIsLengthMax('title', 30),
   handleNotEmpty('shortDescription'),
-  handleIsStringIsLength('shortDescription', 100),
+  handleIsStringIsLengthMax('shortDescription', 100),
   handleNotEmpty('content'),
-  handleIsStringIsLength('content', 1000),
+  handleIsStringIsLengthMax('content', 1000),
 ]
 
 export const createPostBodyValidator = [
