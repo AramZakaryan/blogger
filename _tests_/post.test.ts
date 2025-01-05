@@ -1,12 +1,10 @@
 import { superRequest } from './testHelpers'
-import { PATHS } from '../src/common'
+import { customSort, HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
 import { dataSet, postsSetMapped } from './datasets'
-import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { MongoClient } from 'mongodb'
 import { config } from 'dotenv'
 import { CreatePostBody, GetArrangedPostsQuery, UpdatePostBody } from '../src/types'
-import { customSort } from '../src/common/helpers/customSort'
 
 config()
 

@@ -18,14 +18,14 @@ export const userQueryRepository = {
 
     const skip = (pageNumber - 1) * pageSize // skip users for previous pages
 
+    let conditions = []
+    if (searchLoginTerm) conditions.push({ login: { $regex: searchLoginTerm, $options: 'i' } })
+    if (searchEmailTerm) conditions.push({ email: { $regex: searchEmailTerm, $options: 'i' } })
+    if (!searchLoginTerm && !searchEmailTerm) conditions.push({})
+
     try {
       const users = await userCollection
-        .find({
-          $or: [
-            { login: { $regex: searchLoginTerm, $options: 'i' } },
-            { email: { $regex: searchEmailTerm, $options: 'i' } },
-          ],
-        })
+        .find({ $or: conditions })
         .sort({ [sortBy === 'id' ? '_id' : sortBy]: sortDirection })
         .skip(skip)
         .limit(pageSize)
@@ -42,13 +42,13 @@ export const userQueryRepository = {
     searchLoginTerm: string,
     searchEmailTerm: string,
   ): Promise<number | null> => {
+    let conditions = []
+    if (searchLoginTerm) conditions.push({ login: { $regex: searchLoginTerm, $options: 'i' } })
+    if (searchEmailTerm) conditions.push({ email: { $regex: searchEmailTerm, $options: 'i' } })
+    if (!searchLoginTerm && !searchEmailTerm) conditions.push({})
+
     try {
-      return await userCollection.countDocuments({
-        $or: [
-          { login: { $regex: searchLoginTerm, $options: 'i' } },
-          { email: { $regex: searchEmailTerm, $options: 'i' } },
-        ],
-      })
+      return await userCollection.countDocuments({ $or: conditions })
     } catch (err) {
       // console.log(err)
       return null

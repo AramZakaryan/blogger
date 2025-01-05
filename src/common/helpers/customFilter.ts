@@ -1,2 +1,2 @@
-export const customFilter = (name: string, searchNameTerm: string = ''): boolean =>
-  name.toLowerCase().includes(searchNameTerm?.toLowerCase())
+export const customFilter = (field: string, searchFieldTerm: string = ''): boolean =>
+  field.toLowerCase().includes(searchFieldTerm?.toLowerCase())

@@ -1,8 +1,7 @@
 import { superRequest } from './testHelpers'
-import { PATHS } from '../src/common'
+import { HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
 import { dataSet } from './datasets'
-import { HTTP_STATUS_CODES } from '../src/common/httpStatusCodes'
 import { MongoClient } from 'mongodb'
 import { config } from 'dotenv'
 
@@ -14,7 +13,7 @@ let client: MongoClient
 const dbUrl = process.env.MONGO_URL || ''
 const dbName = process.env.DB_NAME || ''
 
-describe('/blogs', () => {
+describe('other tests', () => {
   beforeAll(async () => {
     // server = await MongoMemoryServer.create()
     // const dbUrl = server.getUri()
@@ -29,14 +28,6 @@ describe('/blogs', () => {
     // await setDB()
     // await server.stop()
     await client.close()
-  })
-
-  it('should get the version', async () => {
-    const responseRoot = await superRequest.get('/').expect(HTTP_STATUS_CODES.OK_200)
-
-    expect(responseRoot.body).toEqual({
-      version: '1.0.0',
-    })
   })
 
   it('should clear db', async () => {

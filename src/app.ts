@@ -1,11 +1,9 @@
-import express, { Response, Request, NextFunction } from 'express'
+import express, { Response } from 'express'
 import cors from 'cors'
-import { PATHS } from './common'
-import { authRouter, blogRouter, userRouter } from './routers'
-import { postRouter } from './routers'
-import { testingRouter } from './routers'
+import { HTTP_STATUS_CODES, PATHS } from './common'
+import { authRouter, blogRouter, postRouter, testingRouter, userRouter } from './routers'
 import { incorrectBodyMiddleware } from './middlewares'
-import { HTTP_STATUS_CODES } from './common/httpStatusCodes'
+import { config } from 'dotenv'
 
 export const app = express()
 
@@ -14,8 +12,11 @@ app.use(cors())
 
 app.use(incorrectBodyMiddleware)
 
+config()
+const version = process.env.VERSION
+
 app.get('/', (_, res: Response) => {
-  res.status(HTTP_STATUS_CODES.OK_200).json({ version: '1.0.0' })
+  res.status(HTTP_STATUS_CODES.OK_200).json({ version })
 })
 
 app.use(PATHS.TESTING, testingRouter)

@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from 'express'
-import { validationResult, ValidationError } from 'express-validator'
+import { NextFunction, Request, Response } from 'express'
+import { ValidationError, validationResult } from 'express-validator'
 import { OutputErrorsType } from '../../../types'
-import { toObjectIfJson } from '../../../common'
-import { HTTP_STATUS_CODES } from '../../../common'
+import { HTTP_STATUS_CODES, toObjectIfJson } from '../../../common'
 
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
@@ -20,7 +19,9 @@ export const handleValidationErrors = (req: Request, res: Response, next: NextFu
       }),
     }
 
-    const status = outputErrors.errorsMessages.some(({ field }) => field === 'params') ? HTTP_STATUS_CODES.NOT_FOUND_404 : HTTP_STATUS_CODES.BAD_REQUEST_400
+    const status = outputErrors.errorsMessages.some(({ field }) => field === 'params')
+      ? HTTP_STATUS_CODES.NOT_FOUND_404
+      : HTTP_STATUS_CODES.BAD_REQUEST_400
 
     res.status(status).json(outputErrors)
   } else {
