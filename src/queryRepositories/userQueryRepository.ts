@@ -1,8 +1,52 @@
-import { GetArrangedUsersQuery, UserViewModel } from '../types'
+import { ArrangedUsersViewModel, GetArrangedUsersQuery, UserDbType, UserViewModel } from '../types'
 import { userCollection } from '../db'
 import { toObjectId, userMap } from '../common'
+import { WithId } from 'mongodb'
 
 export const userQueryRepository = {
+  findUserByEmail: async (email: UserViewModel['email']): Promise<UserViewModel | null> => {
+    try {
+      const user = await userCollection.findOne({ email })
+
+      if (!user) return null
+
+      return userMap(user)
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+
+  findUserByLogin: async (login: UserViewModel['login']): Promise<UserViewModel | null> => {
+    try {
+      const user = await userCollection.findOne({ login })
+
+      if (!user) return null
+
+      return userMap(user)
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+
+  findUserByLoginOrEmail: async (
+    loginOrEmail: UserViewModel['login'] | UserViewModel['email'],
+  ): Promise<WithId<UserDbType> | null> => {
+    try {
+      const user = await userCollection.findOne({
+        $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+      })
+
+      if (!user) return null
+
+      return user
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+
   getArrangedUsers: async (
     queryNormalized: Required<GetArrangedUsersQuery>,
   ): Promise<UserViewModel[] | null> => {
@@ -32,9 +76,9 @@ export const userQueryRepository = {
   },
 
   getUsersCount: async (
-    searchLoginTerm: string,
-    searchEmailTerm: string,
-  ): Promise<number | null> => {
+    searchLoginTerm: GetArrangedUsersQuery['searchLoginTerm'],
+    searchEmailTerm: GetArrangedUsersQuery['searchEmailTerm'],
+  ): Promise<ArrangedUsersViewModel['totalCount'] | null> => {
     let conditions = []
     if (searchLoginTerm) conditions.push({ login: { $regex: searchLoginTerm, $options: 'i' } })
     if (searchEmailTerm) conditions.push({ email: { $regex: searchEmailTerm, $options: 'i' } })
@@ -48,7 +92,7 @@ export const userQueryRepository = {
     }
   },
 
-  findUserById: async (id: string): Promise<UserViewModel | null> => {
+  findUserById: async (id: UserViewModel['id']): Promise<UserViewModel | null> => {
     try {
       const _id = toObjectId(id)
 

@@ -1,4 +1,4 @@
-import { BlogViewModel, GetArrangedBlogsQuery } from '../types'
+import { ArrangedBlogsViewModel, BlogViewModel, GetArrangedBlogsQuery } from '../types'
 import { blogCollection } from '../db'
 import { blogMap, toObjectId } from '../common'
 
@@ -25,7 +25,9 @@ export const blogQueryRepository = {
     }
   },
 
-  getBlogsCount: async (searchNameTerm: string): Promise<number | null> => {
+  getBlogsCount: async (
+    searchNameTerm: GetArrangedBlogsQuery['searchNameTerm'],
+  ): Promise<ArrangedBlogsViewModel['totalCount'] | null> => {
     try {
       return await blogCollection.countDocuments({
         name: { $regex: searchNameTerm, $options: 'i' },
@@ -36,7 +38,7 @@ export const blogQueryRepository = {
     }
   },
 
-  findBlog: async (id: string): Promise<BlogViewModel | null> => {
+  findBlog: async (id: BlogViewModel['id']): Promise<BlogViewModel | null> => {
     try {
       const _id = toObjectId(id)
 

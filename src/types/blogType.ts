@@ -1,7 +1,6 @@
-import { ObjectId } from 'mongodb'
 import { ArrangedViewModel } from './general'
 
-export type BlogType = {
+export type BlogDbType = {
   name: string // maxLength: 15
   description: string // maxLength: 500
   websiteUrl: string // maxLength: 100
@@ -9,7 +8,7 @@ export type BlogType = {
   isMembership: boolean
 }
 
-export type BlogViewModel = Omit<BlogType, 'createdAt'> & {
+export type BlogViewModel = Omit<BlogDbType, 'createdAt'> & {
   id: string
   createdAt: string
 }

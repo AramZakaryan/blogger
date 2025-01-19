@@ -1,5 +1,5 @@
 import { PostViewModel } from './postDbType'
-import { BlogViewModel } from './blog.type'
+import { BlogViewModel } from './blogType'
 import { UserViewModel } from './user.type'
 
 export type OutputErrorsType = {

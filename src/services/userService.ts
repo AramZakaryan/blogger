@@ -1,110 +1,85 @@
 import { userRepository } from '../repositories'
-import {
-  ArrangedUsersViewModel,
-  CreateUserBody,
-  CreateUserResult,
-  GetArrangedUsersQuery,
-  UserType,
-} from '../types'
+import { CreateUserBody, UserDbType, UserViewModel } from '../types'
 import { userQueryRepository } from '../queryRepositories'
 import bcrypt from 'bcrypt'
+import { HTTP_STATUS_CODES } from '../common'
 
 export const userService = {
-  getArrangedUsers: async (
-    query: GetArrangedUsersQuery,
-  ): Promise<ArrangedUsersViewModel | null> => {
-    const queryNormalized: Required<GetArrangedUsersQuery> = {
-      pageNumber: Number(query.pageNumber) || 1,
-      pageSize: Number(query.pageSize) || 10,
-      sortBy: query.sortBy || 'createdAt',
-      sortDirection: query.sortDirection || 'desc',
-      searchLoginTerm: query.searchLoginTerm || '',
-      searchEmailTerm: query.searchEmailTerm || '',
-    }
-
-    try {
-      let users = await userQueryRepository.getArrangedUsers(queryNormalized)
-
-      users ??= []
-
-      let usersCount = await userQueryRepository.getUsersCount(
-        queryNormalized.searchLoginTerm,
-        queryNormalized.searchEmailTerm,
-      )
-
-      usersCount ??= 0
-
-      const pagesCount = Math.ceil(usersCount / queryNormalized.pageSize)
-
-      return {
-        pagesCount,
-        page: queryNormalized.pageNumber,
-        pageSize: queryNormalized.pageSize,
-        totalCount: usersCount,
-        items: users,
-      }
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
-  createUser: async (body: CreateUserBody): Promise<CreateUserResult | null> => {
+  createUser: async (body: CreateUserBody): Promise<UserViewModel['id'] | null> => {
     const { login, email, password } = body
 
-    // checking if the user with given login or email is unique
-    try {
-      const usersWithEmail = await userRepository.findUserByEmail(email)
+    // check if user with given email is unique
+    const usersWithEmail = await userQueryRepository.findUserByEmail(email)
+    if (usersWithEmail) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.CONFLICT_409,
+          errorsMessages: [
+            {
+              message: 'email should be unique',
+              field: 'email',
+            },
+          ],
+        }),
+      )
+    }
 
-      if (usersWithEmail)
-        return {
-          errors: {
-            errorsMessages: [
-              {
-                message: 'email should be unique',
-                field: 'email',
-              },
-            ],
-          },
-        }
-
-      const usersWithLogin = await userRepository.findUserByLogin(login)
-
-      if (usersWithLogin)
-        return {
-          errors: {
-            errorsMessages: [
-              {
-                message: 'login should be unique',
-                field: 'login',
-              },
-            ],
-          },
-        }
-    } catch (err) {
-      // console.log(err)
-      return null
+    // check if user with given login is unique
+    const usersWithLogin = await userQueryRepository.findUserByLogin(login)
+    if (usersWithLogin) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.CONFLICT_409,
+          errorsMessages: [
+            {
+              message: 'login should be unique',
+              field: 'login',
+            },
+          ],
+        }),
+      )
     }
 
     try {
       const passwordHash = await bcrypt.hash(password, 12)
 
-      const userNormalized: UserType = {
+      const userNormalized: UserDbType = {
         login,
         email,
         password: passwordHash,
         createdAt: new Date(),
       }
 
-      const id = await userRepository.createUser(userNormalized)
+      const createdUserId = await userRepository.createUser(userNormalized)
 
-      if (!id) return null
+      if (!createdUserId) return null
 
-      const user = await userQueryRepository.findUserById(id)
+      return createdUserId
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
 
-      if (!user) return null
+  deleteUser: async (id: UserViewModel['id']): Promise<UserViewModel['id'] | null> => {
+    // check if user with given id exists
+    const usersWithEmail = await userQueryRepository.findUserById(id)
+    if (!usersWithEmail) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'user with provided id does not exist',
+              field: 'params',
+            },
+          ],
+        }),
+      )
+    }
 
-      return { user }
+    try {
+      return await userRepository.deleteUser(id)
     } catch (err) {
       // console.log(err)
       return null

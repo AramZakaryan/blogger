@@ -2,22 +2,22 @@
 
 import { Collection, MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { BlogType, PostDbType, UserType } from '../types'
+import { BlogDbType, PostDbType, UserDbType } from '../types'
 import { Db } from './db.type'
 
 config()
 
-export let blogCollection: Collection<BlogType>
+export let blogCollection: Collection<BlogDbType>
 export let postCollection: Collection<PostDbType>
-export let userCollection: Collection<UserType>
+export let userCollection: Collection<UserDbType>
 
 export const runDB = async (dbUrl: string, dbName: string) => {
   const client: MongoClient = new MongoClient(dbUrl)
   const db = client.db(dbName)
 
-  blogCollection = db.collection<BlogType>(process.env.BLOG_COLLECTION_NAME || '')
+  blogCollection = db.collection<BlogDbType>(process.env.BLOG_COLLECTION_NAME || '')
   postCollection = db.collection<PostDbType>(process.env.POST_COLLECTION_NAME || '')
-  userCollection = db.collection<UserType>(process.env.USER_COLLECTION_NAME || '')
+  userCollection = db.collection<UserDbType>(process.env.USER_COLLECTION_NAME || '')
 
   try {
     await client.connect()

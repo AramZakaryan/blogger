@@ -1,10 +1,10 @@
 import { Db } from '../src/db'
 import {
-  BlogType,
+  BlogDbType,
   BlogViewModel,
   PostDbType,
   PostViewModel,
-  UserType,
+  UserDbType,
   UserViewModel,
 } from '../src/types'
 import { ObjectId, WithId } from 'mongodb'
@@ -69,7 +69,7 @@ const userEmailAppendices = [
 ]
 // { qrst: 7, uvwx: 4, yyzz: 4 }
 
-export const blogsSet: WithId<BlogType>[] = Array.from({ length: 15 }, (_, i) => ({
+export const blogsSet: WithId<BlogDbType>[] = Array.from({ length: 15 }, (_, i) => ({
   _id: new ObjectId(),
   name: `blog name ${i} ${blogNameAppendices[i]}`,
   description: `blog description ${i}`,
@@ -88,7 +88,7 @@ export const postsSet: WithId<PostDbType>[] = Array.from({ length: 15 }, (_, i) 
   createdAt: new Date(Date.now() + i * 1000),
 }))
 
-export const usersSet: WithId<UserType>[] = Array.from({ length: 15 }, (_, i) => ({
+export const usersSet: WithId<UserDbType>[] = Array.from({ length: 15 }, (_, i) => ({
   _id: new ObjectId(),
   login: `login${i}${userLoginAppendices[i]}`,
   email: `user@email${i}${userEmailAppendices[i]}.com`,

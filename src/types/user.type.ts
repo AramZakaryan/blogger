@@ -1,7 +1,7 @@
 import { ArrangedViewModel, OutputErrorsType } from './general'
 import { ObjectId } from 'mongodb'
 
-export type UserType = {
+export type UserDbType = {
   login: string // minLength: 3; maxLength: 10
   password: string // minLength: 6; maxLength: 20
   email: string
@@ -9,7 +9,7 @@ export type UserType = {
 }
 
 
-export type UserViewModel = Omit<UserType, 'password' | 'createdAt'> & {
+export type UserViewModel = Omit<UserDbType, 'password' | 'createdAt'> & {
   id: string
   createdAt: string
 }

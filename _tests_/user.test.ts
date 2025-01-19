@@ -2,7 +2,7 @@ import { superRequest } from './testHelpers'
 import { customFilter, customSort, HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
 import { usersSetMapped, dataSet } from './datasets'
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import {
   CreateUserBody,
@@ -361,15 +361,35 @@ describe('/users', () => {
     }
   })
 
-  it('send error for non-existing user', async () => {
-    const paramsIdNonExisting = 'paramsNonExisting'
+  it('send error for not correct user id params, non-existing user id params in find user', async () => {
+    ////////// case1: user id not correct MongoDb _id format
 
-    const responseFindUserError = await superRequest
+    const paramsFindUserError1 = 'formatNotCorrect'
+
+    const responseFindUserError1 = await superRequest
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .get(`${PATHS.USERS}/${paramsIdNonExisting}`)
+      .get(`${PATHS.USERS}/${paramsFindUserError1}`)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
-    expect(responseFindUserError.body).toEqual({
+    expect(responseFindUserError1.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'user id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ////////// case2: non-existing user id (but correct MongoDb _id format)
+
+    const paramsFindUserError2 = new ObjectId()
+
+    const responseFindUserError2 = await superRequest
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .get(`${PATHS.USERS}/${paramsFindUserError2}`)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseFindUserError2.body).toEqual({
       errorsMessages: [
         {
           message: 'user with provided id does not exist',
@@ -743,6 +763,44 @@ describe('/users', () => {
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseFindUserAfterDelete.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'user with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+  })
+
+  it('send error for not correct format user id params, non-existing user id params in delete user', async () => {
+    ////////// case1: user id not correct MongoDb _id format
+
+    const paramsDeleteUserError1 = 'formatNotCorrect'
+
+    const responseDeleteUserError1 = await superRequest
+      .delete(`${PATHS.USERS}/${paramsDeleteUserError1}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseDeleteUserError1.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'user id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ////////// case2: non-existing user id (but correct MongoDb _id format)
+
+    const paramsDeleteUserError2 = new ObjectId()
+
+    const responseDeleteUserError2 = await superRequest
+      .delete(`${PATHS.USERS}/${paramsDeleteUserError2}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseDeleteUserError2.body).toEqual({
       errorsMessages: [
         {
           message: 'user with provided id does not exist',

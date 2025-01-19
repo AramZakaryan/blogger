@@ -18,7 +18,7 @@ export const handleResponseError = (
 export const handleResponseNotFoundError = (
   response: Response,
   statusCode: keyof typeof HTTP_STATUS_CODES,
-  item: 'blog' | 'post',
+  item: 'blog' | 'post' | 'user',
 ) => {
   return response.status(HTTP_STATUS_CODES[statusCode]).json({
     errorsMessages: [
@@ -36,7 +36,7 @@ export const handleCustomError = (response: Response, error: any) => {
       const errorParsed = JSON.parse(error.message)
 
       if (errorParsed?.statusCode && errorParsed?.errorsMessages) {
-        response.status(errorParsed.statusCode).json({errorsMessages:errorParsed.errorsMessages})
+        response.status(errorParsed.statusCode).json({ errorsMessages: errorParsed.errorsMessages })
       } else {
         handleResponseError(response, 'BAD_REQUEST_400')
       }

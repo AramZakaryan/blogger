@@ -77,10 +77,15 @@ export const blogControllers = {
   createBlog: async (req: CreateBlogRequest, res: CreateBlogResponse): Promise<void> => {
     const { body } = req
 
-    const createdBlog = await blogService.createBlog(body)
+    const createdBlogId = await blogService.createBlog(body)
 
-    if (createdBlog) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(createdBlog)
+    if (createdBlogId) {
+      const createdBlog = await blogQueryRepository.findBlog(createdBlogId)
+      if (createdBlog) {
+        res.status(HTTP_STATUS_CODES.CREATED_201).json(createdBlog)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
     } else {
       handleResponseError(res, 'BAD_REQUEST_400')
     }

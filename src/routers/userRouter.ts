@@ -4,9 +4,9 @@ import {
   authorizationValidator,
   handleValidationErrors,
   userBodyValidator,
-  userParamsValidator,
   userQueryValidator,
 } from '../middlewares'
+import { userParamsValidator } from '../middlewares/validators/userParamsValidator'
 
 export const userRouter = router()
 

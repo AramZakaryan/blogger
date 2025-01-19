@@ -2,7 +2,7 @@ import { blogRepository } from '../repositories'
 import {
   ArrangedBlogsViewModel,
   ArrangedPostsViewModel,
-  BlogType,
+  BlogDbType,
   BlogViewModel,
   CreateBlogBody,
   CreatePostBody,
@@ -18,19 +18,13 @@ import { HTTP_STATUS_CODES } from '../common'
 import { ObjectId } from 'mongodb'
 
 export const blogService = {
-  createBlog: async (body: CreateBlogBody): Promise<BlogViewModel | null> => {
+  createBlog: async (body: CreateBlogBody): Promise<BlogViewModel['id'] | null> => {
     try {
-      const blog: BlogType = {
-        ...body,
-        createdAt: new Date(),
-        isMembership: false,
-      }
+      const createdBlogId = await blogRepository.createBlog(body)
 
-      const id = await blogRepository.createBlog(blog)
+      if (!createdBlogId) return null
 
-      if (!id) return null
-
-      return await blogQueryRepository.findBlog(id)
+      return createdBlogId
     } catch (err) {
       // console.log(err)
       return null
@@ -38,7 +32,7 @@ export const blogService = {
   },
 
   createPostOfBlog: async (
-    blogId: string,
+    blogId: PostViewModel['blogId'],
     body: CreatePostOfBlogBody,
   ): Promise<PostViewModel['id'] | null> => {
     // check if blog exists
@@ -62,7 +56,10 @@ export const blogService = {
     return await postService.createPost(updatedBody)
   },
 
-  updateBlog: async (id: string, body: UpdateBlogBody): Promise<ObjectId | null> => {
+  updateBlog: async (
+    id: BlogViewModel['id'],
+    body: UpdateBlogBody,
+  ): Promise<BlogViewModel['id'] | null> => {
     // check if blog exists
     const blog = await blogQueryRepository.findBlog(id)
     if (!blog) {
@@ -86,7 +83,7 @@ export const blogService = {
     }
   },
 
-  deleteBlog: async (id: string): Promise<ObjectId | null> => {
+  deleteBlog: async (id: BlogViewModel['id']): Promise<BlogViewModel['id'] | null> => {
     // check if blog exists
     const blog = await blogQueryRepository.findBlog(id)
     if (!blog) {

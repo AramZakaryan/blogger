@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb'
 import { ArrangementQuery } from '../general'
-import { UserType, UserViewModel } from '../user.type'
+import { UserDbType, UserViewModel } from '../user.type'
 
 export type GetArrangedUsersQuery = ArrangementQuery<UserViewModel> & {
   searchLoginTerm?: string
@@ -9,7 +9,7 @@ export type GetArrangedUsersQuery = ArrangementQuery<UserViewModel> & {
 
 export type FindUserParams = { id: string }
 
-export type CreateUserBody = Omit<WithId<UserType>, '_id' | 'createdAt'>
+export type CreateUserBody = Omit<WithId<UserDbType>, '_id' | 'createdAt'>
 
 export type DeleteUserParams = FindUserParams
 

@@ -16,11 +16,11 @@ export const postRepository = {
         createdAt: new Date(),
       }
 
-      const insertOneInfo = await postCollection.insertOne(post)
+      const insertOneResult = await postCollection.insertOne(post)
 
-      if (!insertOneInfo.acknowledged) return null
+      if (!insertOneResult.acknowledged) return null
 
-      return insertOneInfo.insertedId.toString()
+      return insertOneResult.insertedId.toString()
     } catch (err) {
       // console.log(err)
       return null

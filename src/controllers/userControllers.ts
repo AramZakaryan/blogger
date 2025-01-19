@@ -1,8 +1,6 @@
 import {
   CreateUserRequest,
   CreateUserResponse,
-  DeleteBlogRequest,
-  DeleteBlogResponse,
   DeleteUserRequest,
   DeleteUserResponse,
   FindUserRequest,
@@ -10,10 +8,15 @@ import {
   GetArrangedUsersRequest,
   GetArrangedUsersResponse,
 } from '../types'
-import { handleResponseError, HTTP_STATUS_CODES } from '../common'
+import {
+  handleCustomError,
+  handleResponseError,
+  handleResponseNotFoundError,
+  HTTP_STATUS_CODES,
+} from '../common'
 import { userService } from '../services'
-import { blogRepository, userRepository } from '../repositories'
 import { userQueryRepository } from '../queryRepositories'
+import { userQueryService } from '../queryServices'
 
 export const userControllers = {
   getArrangedUsers: async (
@@ -22,7 +25,7 @@ export const userControllers = {
   ): Promise<void> => {
     const { query } = req
 
-    const users = await userService.getArrangedUsers(query)
+    const users = await userQueryService.getArrangedUsers(query)
 
     if (users) {
       res.json(users)
@@ -39,33 +42,42 @@ export const userControllers = {
     if (user) {
       res.json(user)
     } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      handleResponseNotFoundError(res, 'NOT_FOUND_404', 'user')
     }
   },
 
   createUser: async (req: CreateUserRequest, res: CreateUserResponse): Promise<void> => {
     const { body } = req
-
-    const result = await userService.createUser(body)
-
-    if (result?.user) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(result.user)
-    } else if (result?.errors) {
-      res.status(HTTP_STATUS_CODES.CONFLICT_409).json(result.errors)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+    try {
+      const createdUserId = await userService.createUser(body)
+      if (createdUserId) {
+        const createdUser = await userQueryRepository.findUserById(createdUserId)
+        if (createdUser) {
+          res.status(HTTP_STATUS_CODES.CREATED_201).json(createdUser)
+        } else {
+          handleResponseError(res, 'BAD_REQUEST_400')
+        }
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 
   deleteUser: async (req: DeleteUserRequest, res: DeleteUserResponse): Promise<void> => {
     const { id } = req.params
 
-    const user = await userRepository.deleteUser(id)
+    try {
+      const deletedUserId = await userService.deleteUser(id)
 
-    if (user) {
-      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      if (deletedUserId) {
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 }

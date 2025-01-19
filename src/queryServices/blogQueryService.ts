@@ -3,6 +3,7 @@ import {
   ArrangedPostsViewModel,
   GetArrangedBlogsQuery,
   GetArrangedPostsByBlogQuery,
+  PostViewModel,
 } from '../types'
 import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
 import { STATUS_CODES } from 'node:http'
@@ -46,9 +47,8 @@ export const blogQueryService = {
 
   getArrangedPostsOfBlog: async (
     query: GetArrangedPostsByBlogQuery,
-    blogId: string,
+    blogId: PostViewModel['blogId'],
   ): Promise<ArrangedPostsViewModel | null> => {
-
     // check if blog exists
     const blog = await blogQueryRepository.findBlog(blogId)
     if (!blog) {
