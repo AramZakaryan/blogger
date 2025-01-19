@@ -12,8 +12,7 @@ const queryValidator = [
     .withMessage({
       message: 'pageNumber must be greater than 0',
       field: 'query',
-    })
-    .toInt(), // convert to integer to use it in app
+    }),
   query('pageSize')
     .optional()
     .isNumeric({ no_symbols: true })
@@ -25,9 +24,7 @@ const queryValidator = [
     .withMessage({
       message: 'pageSize must be greater than 0',
       field: 'query',
-    })
-    .toInt(), // convert to integer to use it in app
-
+    }),
   query('sortDirection').optional().isString().isIn(['asc', 'desc']).withMessage({
     message: 'sortDirection must be key of asc or desc',
     field: 'query',

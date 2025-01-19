@@ -1,11 +1,5 @@
-import { body } from 'express-validator'
-import { handleNotEmpty } from './handlers/handleNotEmpty'
-import { handleIsStringIsLengthMax } from './handlers/handleIsStringIsLengthMax'
-import { handleIsString } from './handlers/handleIsString'
+import { handleIsString, handleIsStringIsLengthMax, handleNotEmpty } from './handlers'
 import { blogQueryRepository } from '../../queryRepositories'
-import { ObjectId } from 'mongodb'
-import { toObjectId } from '../../common/helpers/toObjectId'
-
 
 export const createPostBodyByBlogValidator = [
   handleNotEmpty('title'),

@@ -14,8 +14,8 @@ export const userService = {
     query: GetArrangedUsersQuery,
   ): Promise<ArrangedUsersViewModel | null> => {
     const queryNormalized: Required<GetArrangedUsersQuery> = {
-      pageNumber: query.pageNumber || 1,
-      pageSize: query.pageSize || 10,
+      pageNumber: Number(query.pageNumber) || 1,
+      pageSize: Number(query.pageSize) || 10,
       sortBy: query.sortBy || 'createdAt',
       sortDirection: query.sortDirection || 'desc',
       searchLoginTerm: query.searchLoginTerm || '',
@@ -54,7 +54,7 @@ export const userService = {
 
     // checking if the user with given login or email is unique
     try {
-      const usersWithEmail = await userQueryRepository.findUserByEmail(email)
+      const usersWithEmail = await userRepository.findUserByEmail(email)
 
       if (usersWithEmail)
         return {
@@ -68,7 +68,7 @@ export const userService = {
           },
         }
 
-      const usersWithLogin = await userQueryRepository.findUserByLogin(login)
+      const usersWithLogin = await userRepository.findUserByLogin(login)
 
       if (usersWithLogin)
         return {

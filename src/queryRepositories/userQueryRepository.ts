@@ -1,13 +1,6 @@
-import {
-  BlogViewModel,
-  GetArrangedBlogsQuery,
-  GetArrangedUsersQuery,
-  UserType,
-  UserViewModel,
-} from '../types'
-import { blogCollection, userCollection } from '../db'
-import { blogMap, toObjectId, userMap } from '../common'
-import { ObjectId, WithId } from 'mongodb'
+import { GetArrangedUsersQuery, UserViewModel } from '../types'
+import { userCollection } from '../db'
+import { toObjectId, userMap } from '../common'
 
 export const userQueryRepository = {
   getArrangedUsers: async (
@@ -64,47 +57,6 @@ export const userQueryRepository = {
       if (!user) return null
 
       return userMap(user)
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
-  findUserByEmail: async (email: string): Promise<UserViewModel | null> => {
-    try {
-      const user = await userCollection.findOne({ email })
-
-      if (!user) return null
-
-      return userMap(user)
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
-  findUserByLogin: async (login: string): Promise<UserViewModel | null> => {
-    try {
-      const user = await userCollection.findOne({ login })
-
-      if (!user) return null
-
-      return userMap(user)
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
-  findUserByLoginOrEmail: async (loginOrEmail: string): Promise<WithId<UserType> | null> => {
-    try {
-      const user = await userCollection.findOne({
-        $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-      })
-
-      if (!user) return null
-
-      return user
     } catch (err) {
       // console.log(err)
       return null

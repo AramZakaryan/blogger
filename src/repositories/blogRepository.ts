@@ -1,14 +1,5 @@
-import {
-  ArrangedBlogsViewModel,
-  ArrangedPostsViewModel,
-  BlogType, BlogViewModel,
-  CreateBlogBody,
-  GetArrangedBlogsQuery,
-  GetArrangedPostsByBlogQuery,
-  UpdateBlogBody,
-} from '../types'
-import { blogCollection, postCollection } from '../db'
-import { blogMap, postMap } from '../common'
+import { BlogType, BlogViewModel, UpdateBlogBody } from '../types'
+import { blogCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
 import { blogQueryRepository } from '../queryRepositories'
 
@@ -20,31 +11,27 @@ export const blogRepository = {
       if (!insertOneInfo.acknowledged) return null
 
       return insertOneInfo.insertedId.toString()
-
     } catch (err) {
       // console.log(err)
       return null
     }
   },
 
-  updateBlog: async (id: string, body: UpdateBlogBody): Promise<WithId<BlogType> | null> => {
+  updateBlog: async (id: string, body: UpdateBlogBody): Promise<ObjectId | null> => {
     try {
       const _id = new ObjectId(id)
 
       const updateOneInfo = await blogCollection.updateOne({ _id }, { $set: { ...body } })
 
       if (!updateOneInfo.acknowledged) return null
-
-      return await blogCollection.findOne({ _id })
+      return _id
     } catch (err) {
       // console.log(err)
       return null
     }
   },
-  deleteBlog: async (id: string): Promise<BlogViewModel | null> => {
+  deleteBlog: async (id: string): Promise<ObjectId | null> => {
     try {
-
-      const blog = await blogQueryRepository.findBlog(id )
 
       const _id = new ObjectId(id)
 
@@ -52,7 +39,7 @@ export const blogRepository = {
 
       if (!deleteOneInfo.acknowledged) return null
 
-      return blog
+      return _id
     } catch (err) {
       // console.log(err)
       return null

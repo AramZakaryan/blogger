@@ -543,8 +543,6 @@ describe('/users', () => {
     })
   })
 
-  // todo: with same login and with same email
-
   it('send error for error body in create user', async () => {
     ///////// case 1
 

@@ -14,10 +14,17 @@ import {
   UpdateBlogRequest,
   UpdateBlogResponse,
 } from '../types'
-import { handleResponseError, HTTP_STATUS_CODES } from '../common'
+import {
+  handleCustomError,
+  handleResponseError,
+  handleResponseNotFoundError,
+  HTTP_STATUS_CODES,
+} from '../common'
 import { blogService } from '../services'
 import { blogRepository } from '../repositories'
 import { blogQueryRepository } from '../queryRepositories'
+import { blogQueryService } from '../queryServices'
+import { blogCollection } from '../db'
 
 export const blogControllers = {
   getArrangedBlogs: async (
@@ -26,7 +33,7 @@ export const blogControllers = {
   ): Promise<void> => {
     const { query } = req
 
-    const blogs = await blogService.getArrangedBlogs(query)
+    const blogs = await blogQueryService.getArrangedBlogs(query)
 
     if (blogs) {
       res.json(blogs)
@@ -43,7 +50,7 @@ export const blogControllers = {
     if (blog) {
       res.json(blog)
     } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      handleResponseNotFoundError(res, 'NOT_FOUND_404', 'blog')
     }
   },
 
@@ -54,12 +61,16 @@ export const blogControllers = {
     const { query } = req
     const { id } = req.params
 
-    const posts = await blogService.getArrangedPostsOfBlog(query, id)
+    try {
+      const posts = await blogQueryService.getArrangedPostsOfBlog(query, id)
 
-    if (posts) {
-      res.json(posts)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      if (posts) {
+        res.json(posts)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 
@@ -82,12 +93,16 @@ export const blogControllers = {
     const { id } = req.params
     const { body } = req
 
-    const createdPost = await blogService.createPostOfBlog(id, body)
+    try {
+      const createdPost = await blogService.createPostOfBlog(id, body)
 
-    if (createdPost) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      if (createdPost) {
+        res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 
@@ -95,24 +110,32 @@ export const blogControllers = {
     const { id } = req.params
     const { body } = req
 
-    const blog = await blogRepository.updateBlog(id, body)
+    try {
+      const updatedBlogId = await blogService.updateBlog(id, body)
 
-    if (blog) {
-      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      if (updatedBlogId) {
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 
   deleteBlog: async (req: DeleteBlogRequest, res: DeleteBlogResponse): Promise<void> => {
     const { id } = req.params
 
-    const blog = await blogRepository.deleteBlog(id)
+    try {
+      const deletedBlogId = await blogService.deleteBlog(id)
 
-    if (blog) {
-      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      if (deletedBlogId) {
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 }

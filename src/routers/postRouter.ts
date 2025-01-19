@@ -4,7 +4,7 @@ import {
   authorizationValidator,
   createPostBodyValidator,
   handleValidationErrors,
-  postParamsValidator,
+  postParamsValidatorOld,
   postQueryValidator,
   updatePostBodyValidator,
 } from '../middlewares'
@@ -13,7 +13,7 @@ export const postRouter = router()
 
 postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.getArrangedPosts)
 
-postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControllers.findPost)
+postRouter.get('/:id', postParamsValidatorOld, handleValidationErrors, postControllers.findPost)
 
 postRouter.post(
   '/',
@@ -26,7 +26,7 @@ postRouter.post(
 postRouter.put(
   '/:id',
   authorizationValidator,
-  postParamsValidator,
+  postParamsValidatorOld,
   updatePostBodyValidator,
   handleValidationErrors,
   postControllers.updatePost,
@@ -35,7 +35,7 @@ postRouter.put(
 postRouter.delete(
   '/:id',
   authorizationValidator,
-  postParamsValidator,
+  postParamsValidatorOld,
   handleValidationErrors,
   postControllers.deletePost,
 )

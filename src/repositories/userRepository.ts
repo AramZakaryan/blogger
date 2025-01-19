@@ -1,20 +1,43 @@
-import {
-  ArrangedBlogsViewModel,
-  ArrangedPostsViewModel,
-  BlogType,
-  CreateBlogBody,
-  GetArrangedBlogsQuery,
-  GetArrangedPostsByBlogQuery,
-  UpdateBlogBody,
-  UserType,
-  UserViewModel,
-} from '../types'
-import { blogCollection, postCollection, userCollection } from '../db'
-import { blogMap, postMap } from '../common'
+import { BlogType, UpdateBlogBody, UserType, UserViewModel } from '../types'
+import { blogCollection, userCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
 import { userQueryRepository } from '../queryRepositories'
+import { userMap } from '../common'
 
 export const userRepository = {
+  findUserByEmail: async (email: string): Promise<WithId<UserType> | null> => {
+    try {
+      return await userCollection.findOne({ email })
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+
+  findUserByLogin: async (login: string): Promise<WithId<UserType> | null> => {
+    try {
+      return await userCollection.findOne({ login })
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+
+  findUserByLoginOrEmail: async (loginOrEmail: string): Promise<WithId<UserType> | null> => {
+    try {
+      const user = await userCollection.findOne({
+        $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+      })
+
+      if (!user) return null
+
+      return user
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
+  },
+
   createUser: async (user: UserType): Promise<string | null> => {
     try {
       const insertOneInfo = await userCollection.insertOne(user)

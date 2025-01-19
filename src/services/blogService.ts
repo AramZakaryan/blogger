@@ -10,81 +10,14 @@ import {
   GetArrangedBlogsQuery,
   GetArrangedPostsByBlogQuery,
   PostViewModel,
+  UpdateBlogBody,
 } from '../types'
 import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
 import { postService } from './postService'
+import { HTTP_STATUS_CODES } from '../common'
+import { ObjectId } from 'mongodb'
 
 export const blogService = {
-  getArrangedBlogs: async (
-    query: GetArrangedBlogsQuery,
-  ): Promise<ArrangedBlogsViewModel | null> => {
-    const queryNormalized: Required<GetArrangedBlogsQuery> = {
-      pageNumber: query.pageNumber || 1,
-      pageSize: query.pageSize || 10,
-      sortBy: query.sortBy || 'createdAt',
-      sortDirection: query.sortDirection || 'desc',
-      searchNameTerm: query.searchNameTerm || '',
-    }
-
-    try {
-      let blogs = await blogQueryRepository.getArrangedBlogs(queryNormalized)
-
-      blogs ??= []
-
-      let blogsCount = await blogQueryRepository.getBlogsCount(queryNormalized.searchNameTerm)
-
-      blogsCount ??= 0
-
-      const pagesCount = Math.ceil(blogsCount / queryNormalized.pageSize)
-
-      return {
-        pagesCount,
-        page: queryNormalized.pageNumber,
-        pageSize: queryNormalized.pageSize,
-        totalCount: blogsCount,
-        items: blogs,
-      }
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
-  getArrangedPostsOfBlog: async (
-    query: GetArrangedPostsByBlogQuery,
-    blogId: string,
-  ): Promise<ArrangedPostsViewModel | null> => {
-    const queryNormalized: Required<GetArrangedPostsByBlogQuery> = {
-      pageNumber: query.pageNumber || 1,
-      pageSize: query.pageSize || 10,
-      sortBy: query.sortBy || 'createdAt',
-      sortDirection: query.sortDirection || 'desc',
-    }
-
-    try {
-      let posts = await postQueryRepository.getArrangedPosts(queryNormalized, blogId)
-
-      posts ??= []
-
-      let postsCount = await postQueryRepository.getPostsCount(blogId)
-
-      postsCount ??= 0
-
-      const pagesCount = Math.ceil(postsCount / queryNormalized.pageSize)
-
-      return {
-        pagesCount,
-        page: queryNormalized.pageNumber,
-        pageSize: queryNormalized.pageSize,
-        totalCount: postsCount,
-        items: posts,
-      }
-    } catch (err) {
-      // console.log(err)
-      return null
-    }
-  },
-
   createBlog: async (body: CreateBlogBody): Promise<BlogViewModel | null> => {
     try {
       const blog: BlogType = {
@@ -108,8 +41,72 @@ export const blogService = {
     blogId: string,
     body: CreatePostOfBlogBody,
   ): Promise<PostViewModel | null> => {
+    // check if blog exists
+    const blog = await blogQueryRepository.findBlog(blogId)
+    if (!blog) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'blog with provided id does not exist',
+              field: 'params',
+            },
+          ],
+        }),
+      )
+    }
+
     const updatedBody: CreatePostBody = { ...body, blogId }
 
     return await postService.createPost(updatedBody)
+  },
+
+  updateBlog: async (id: string, body: UpdateBlogBody): Promise<ObjectId | null> => {
+    // check if blog exists
+    const blog = await blogQueryRepository.findBlog(id)
+    if (!blog) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'blog with provided id does not exist',
+              field: 'params',
+            },
+          ],
+        }),
+      )
+    }
+
+    try {
+      return await blogRepository.updateBlog(id, body)
+    } catch (err) {
+      return null
+    }
+  },
+
+  deleteBlog: async (id: string): Promise<ObjectId | null> => {
+    // check if blog exists
+    const blog = await blogQueryRepository.findBlog(id)
+    if (!blog) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'blog with provided id does not exist',
+              field: 'params',
+            },
+          ],
+        }),
+      )
+    }
+
+    try {
+      return await blogRepository.deleteBlog(id)
+    } catch (err) {
+      return null
+    }
   },
 }

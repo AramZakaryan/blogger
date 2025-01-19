@@ -1,13 +1,13 @@
 import { LoginUserBody } from '../types'
-import { userQueryRepository } from '../queryRepositories'
 import bcrypt from 'bcrypt'
+import { userRepository } from '../repositories'
 
 export const authService = {
   loginUser: async (body: LoginUserBody): Promise<boolean | null> => {
     try {
       const { loginOrEmail, password } = body
 
-      const user = await userQueryRepository.findUserByLoginOrEmail(loginOrEmail)
+      const user = await userRepository.findUserByLoginOrEmail(loginOrEmail)
 
       if (!user) return false
 

@@ -13,8 +13,8 @@ export const postService = {
     query: GetArrangedPostsQuery,
   ): Promise<ArrangedPostsViewModel | null> => {
     const queryNormalized: Required<GetArrangedPostsQuery> = {
-      pageNumber: query.pageNumber || 1,
-      pageSize: query.pageSize || 10,
+      pageNumber: Number(query.pageNumber) || 1,
+      pageSize: Number(query.pageSize) || 10,
       sortBy: query.sortBy || 'createdAt',
       sortDirection: query.sortDirection || 'desc',
     }

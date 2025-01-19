@@ -1,7 +1,6 @@
 import { BlogViewModel, GetArrangedBlogsQuery } from '../types'
 import { blogCollection } from '../db'
 import { blogMap, toObjectId } from '../common'
-import { ObjectId } from 'mongodb'
 
 export const blogQueryRepository = {
   getArrangedBlogs: async (

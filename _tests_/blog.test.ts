@@ -2,7 +2,7 @@ import { superRequest } from './testHelpers'
 import { customFilter, customSort, HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
 import { blogsSetMapped, dataSet } from './datasets'
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import {
   CreateBlogBody,
@@ -244,7 +244,6 @@ describe('/blogs', () => {
       ],
     })
 
-
     ///////// case 2
 
     const query2: any = {
@@ -279,7 +278,6 @@ describe('/blogs', () => {
         },
       ],
     })
-
   })
 
   it('should get the blog', async () => {
@@ -328,9 +326,9 @@ describe('/blogs', () => {
         .expect(HTTP_STATUS_CODES.OK_200)
 
       expect(
-        responseGetArrangedPosts.body.items.filter(
-          (item: PostViewModel) => item.blogId === responseGetArrangedBlogs.body.items[i].id,
-        ),
+        responseGetArrangedPosts.body.items.filter((item: PostViewModel) => {
+          return item.blogId === responseGetArrangedBlogs.body.items[i].id
+        }),
       ).toEqual(responseGetArrangedPostsOfBlog.body.items)
     }
 
@@ -459,14 +457,33 @@ describe('/blogs', () => {
     }
   })
 
-  it('send error for non-existing blog', async () => {
-    const paramsIdNonExisting = 'paramsNonExisting'
+  it('send error for not correct format blog id, non-existing blog', async () => {
+    ////////// case1: blog id is not MongoDb _id format
+    const paramsIdNonExisting1 = 'paramsNotCorrect'
 
-    const responseFindBlogError = await superRequest
-      .get(`${PATHS.BLOGS}/${paramsIdNonExisting}`)
+    const responseFindBlogError1 = await superRequest
+      .get(`${PATHS.BLOGS}/${paramsIdNonExisting1}`)
+      .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
-    expect(responseFindBlogError.body).toEqual({
+    expect(responseFindBlogError1.body).toMatchObject({
+      errorsMessages: [
+        {
+          message: 'blog id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ////////// case2: non-existing blog id (blog id is correct format of MongoDb _id)
+    const paramsIdNonExisting2 = new ObjectId()
+
+    const responseFindBlogError2 = await superRequest
+      .get(`${PATHS.BLOGS}/${paramsIdNonExisting2}`)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseFindBlogError2.body).toMatchObject({
       errorsMessages: [
         {
           message: 'blog with provided id does not exist',
@@ -618,6 +635,59 @@ describe('/blogs', () => {
       blogId: responseGetArrangedBlogs.body.items[0].id,
       blogName: responseGetArrangedBlogs.body.items[0].name,
       createdAt: expect.any(String),
+    })
+  })
+
+  it('send error for not correct format blog id, non-existing blog', async () => {
+    ////////// case1: blog id is not MongoDb _id format
+    const paramsIdNonExisting1 = 'paramsNotCorrect'
+
+    const body1: CreatePostOfBlogBody = {
+      title: 'new title',
+      shortDescription: 'new shortDescription',
+      content: 'new content',
+    }
+
+    const responseCreatePostError1 = await superRequest
+      .post(`${PATHS.BLOGS}/${paramsIdNonExisting1}/posts`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(body1)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseCreatePostError1.body).toMatchObject({
+      errorsMessages: [
+        {
+          message: 'blog id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ////////// case2: non-existing blog id (blog id is correct format of MongoDb _id)
+
+    const paramsIdNonExisting2 = new ObjectId()
+
+    const body2: CreatePostOfBlogBody = {
+      title: 'new title',
+      shortDescription: 'new shortDescription',
+      content: 'new content',
+    }
+
+    const responseCreatePostError2 = await superRequest
+      .post(`${PATHS.BLOGS}/${paramsIdNonExisting2}/posts`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(body2)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseCreatePostError2.body).toMatchObject({
+      errorsMessages: [
+        {
+          message: 'blog with provided id does not exist',
+          field: 'params',
+        },
+      ],
     })
   })
 
@@ -866,23 +936,25 @@ describe('/blogs', () => {
     })
   })
 
-  it('send error for non-existing params in update blog', async () => {
-    const paramsIdNonExisting = 'paramsNonExisting'
+  it('send error for not correct format blog id, non-existing params in update blog', async () => {
+    ///////// case1: blog id params is not correct MongoDb _id and empty body
 
-    const bodyUpdateError = {}
+    const paramsError1 = 'paramsNotCorrect'
 
-    const responseUpdateBlogError = await superRequest
-      .put(`${PATHS.BLOGS}/${paramsIdNonExisting}`)
+    const bodyUpdateError1 = {}
+
+    const responseUpdateBlogError1 = await superRequest
+      .put(`${PATHS.BLOGS}/${paramsError1}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyUpdateError)
+      .send(bodyUpdateError1)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
-    expect(responseUpdateBlogError.body).toEqual({
+    expect(responseUpdateBlogError1.body).toEqual({
       errorsMessages: [
         {
           field: 'params',
-          message: 'blog with provided id does not exist',
+          message: 'blog id must be in a valid format',
         },
         {
           message: 'name is required',
@@ -895,6 +967,33 @@ describe('/blogs', () => {
         {
           field: 'websiteUrl',
           message: 'websiteUrl is required',
+        },
+      ],
+    })
+
+    ///////// case2: blog id non-existing (but correct MongoDb _id) and with correct body
+
+    // const paramsError2 = new ObjectId()
+    const paramsError2 = '678bf09bb7324c4b1f61c4ba'
+
+    const bodyUpdateError2 = {
+      name: `new name`,
+      description: `new description`,
+      websiteUrl: `https://newurl.com`,
+    }
+
+    const responseUpdateBlogError2 = await superRequest
+      .put(`${PATHS.BLOGS}/${paramsError2}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(bodyUpdateError2)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseUpdateBlogError2.body).toEqual({
+      errorsMessages: [
+        {
+          field: 'params',
+          message: 'blog with provided id does not exist',
         },
       ],
     })
@@ -918,9 +1017,48 @@ describe('/blogs', () => {
 
     const responseFindBlogAfterDelete = await superRequest
       .get(`${PATHS.BLOGS}/${responseGetArrangedBlogs.body.items[0].id}`)
+      .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseFindBlogAfterDelete.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'blog with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+  })
+
+  it('send error for not correct format blog id, non-existing params in delete blog', async () => {
+    ///////// case1: blog id params is not correct MongoDb _id
+    const paramsError1 = 'paramsNotCorrect'
+
+    const responseDeleteBlogError1 = await superRequest
+      .delete(`${PATHS.BLOGS}/${paramsError1}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseDeleteBlogError1.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'blog id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ///////// case2: non-existing blog id params (but correct MongoDb _id)
+    const paramsError2 = new ObjectId()
+
+    const responseDeleteBlogError2 = await superRequest
+      .delete(`${PATHS.BLOGS}/${paramsError2}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseDeleteBlogError2.body).toEqual({
       errorsMessages: [
         {
           message: 'blog with provided id does not exist',
