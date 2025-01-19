@@ -1,12 +1,5 @@
-import { postRepository } from '../repositories'
-import {
-  ArrangedPostsViewModel,
-  CreatePostBody,
-  GetArrangedPostsQuery,
-  PostViewModel,
-} from '../types'
-import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
-import { toObjectId } from '../common'
+import { ArrangedPostsViewModel, GetArrangedPostsQuery } from '../types'
+import { postQueryRepository } from '../queryRepositories'
 
 export const postQueryService = {
   getArrangedPosts: async (
@@ -42,5 +35,4 @@ export const postQueryService = {
       return null
     }
   },
-
 }

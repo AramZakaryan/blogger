@@ -36,7 +36,7 @@ export const postService = {
     }
   },
 
-  updatePost: async (id: string, body: UpdatePostBody): Promise<PostViewModel['id'] | null> => {
+  updatePost: async (id: PostViewModel['id'], body: UpdatePostBody): Promise<PostViewModel['id'] | null> => {
     // check if post exists
     const post = await postQueryRepository.findPost(id)
     if (!post) {

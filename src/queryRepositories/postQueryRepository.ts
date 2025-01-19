@@ -39,7 +39,7 @@ export const postQueryRepository = {
     }
   },
 
-  findPost: async (id: string): Promise<PostViewModel | null> => {
+  findPost: async (id: PostViewModel['id']): Promise<PostViewModel | null> => {
     try {
       const _id = new ObjectId(id)
 
