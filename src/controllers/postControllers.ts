@@ -1,4 +1,3 @@
-import { postRepository } from '../repositories'
 import {
   CreatePostRequest,
   CreatePostResponse,
@@ -11,9 +10,15 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from '../types'
-import { handleResponseError, HTTP_STATUS_CODES } from '../common'
+import {
+  handleCustomError,
+  handleResponseError,
+  handleResponseNotFoundError,
+  HTTP_STATUS_CODES,
+} from '../common'
 import { postQueryRepository } from '../queryRepositories'
 import { postService } from '../services'
+import { postQueryService } from '../queryServices/postQueryService'
 
 export const postControllers = {
   getArrangedPosts: async (
@@ -22,7 +27,7 @@ export const postControllers = {
   ): Promise<void> => {
     const { query } = req
 
-    const posts = await postService.getArrangedPosts(query)
+    const posts = await postQueryService.getArrangedPosts(query)
     if (posts) {
       res.json(posts)
     } else {
@@ -38,19 +43,28 @@ export const postControllers = {
     if (post) {
       res.json(post)
     } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      handleResponseNotFoundError(res, 'NOT_FOUND_404', 'post')
     }
   },
 
   createPost: async (req: CreatePostRequest, res: CreatePostResponse): Promise<void> => {
     const { body } = req
 
-    const post = await postService.createPost(body)
+    const createdPosId = await postService.createPost(body)
 
-    if (post) {
-      res.status(HTTP_STATUS_CODES.CREATED_201).json(post)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+    try {
+      if (createdPosId) {
+        const createdPost = await postQueryRepository.findPost(createdPosId)
+        if (createdPost) {
+          res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
+        } else {
+          handleResponseError(res, 'BAD_REQUEST_400')
+        }
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 
@@ -58,24 +72,32 @@ export const postControllers = {
     const { id } = req.params
     const { body } = req
 
-    const post = await postRepository.updatePost(id, body)
+    try {
+      const updatedPostId = await postService.updatePost(id, body)
 
-    if (post) {
-      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      if (updatedPostId) {
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 
   deletePost: async (req: DeletePostRequest, res: DeletePostResponse): Promise<void> => {
     const { id } = req.params
 
-    const post = await postRepository.deletePost(id)
+    try {
+      const deletedPostId = await postService.deletePost(id)
 
-    if (post) {
-      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
-    } else {
-      handleResponseError(res, 'BAD_REQUEST_400')
+      if (deletedPostId) {
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
     }
   },
 }

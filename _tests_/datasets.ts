@@ -2,7 +2,7 @@ import { Db } from '../src/db'
 import {
   BlogType,
   BlogViewModel,
-  PostType,
+  PostDbType,
   PostViewModel,
   UserType,
   UserViewModel,
@@ -78,7 +78,7 @@ export const blogsSet: WithId<BlogType>[] = Array.from({ length: 15 }, (_, i) =>
   isMembership: i % 3 === 0 && true,
 }))
 
-export const postsSet: WithId<PostType>[] = Array.from({ length: 15 }, (_, i) => ({
+export const postsSet: WithId<PostDbType>[] = Array.from({ length: 15 }, (_, i) => ({
   _id: new ObjectId(),
   title: `post title ${i}`,
   shortDescription: `post short description ${i}`,

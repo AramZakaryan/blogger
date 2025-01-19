@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { ArrangedPostsViewModel, PostViewModel } from '../post.type'
+import { ArrangedPostsViewModel, PostViewModel } from '../postDbType'
 import { OutputErrorsType } from '../general'
 
 export type GetArrangedPostsResponse = Response<ArrangedPostsViewModel | OutputErrorsType>

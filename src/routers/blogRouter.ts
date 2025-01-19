@@ -5,9 +5,10 @@ import {
   blogBodyValidator,
   blogParamsValidator,
   blogQueryValidator,
-  createPostBodyByBlogValidator,
+  postBodyValidator,
   handleValidationErrors,
   postQueryValidator,
+  postBodyValidatorWithoutBodyId,
 } from '../middlewares'
 
 export const blogRouter = router()
@@ -36,7 +37,7 @@ blogRouter.post(
   '/:id/posts',
   authorizationValidator,
   blogParamsValidator,
-  createPostBodyByBlogValidator,
+  postBodyValidatorWithoutBodyId,
   handleValidationErrors,
   blogControllers.createPostOfBlog,
 )

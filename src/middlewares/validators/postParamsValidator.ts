@@ -8,18 +8,9 @@ export const postParamsValidator = [
       message: 'post id as URI parameter is required',
       field: 'params',
     })
-    .bail()
-    .custom(async (_, { req }) => {
-      const id = req.params?.id
-      const post = await postQueryRepository.findPost(id)
-      if (!post) {
-        throw new Error(
-          JSON.stringify({
-            message: `post with provided id does not exist`,
-            field: 'params',
-          }),
-        )
-      }
-      return true
+    .isMongoId()
+    .withMessage({
+      message: 'post id must be in a valid format',
+      field: 'params',
     }),
 ]

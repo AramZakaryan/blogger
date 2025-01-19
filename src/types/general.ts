@@ -1,4 +1,4 @@
-import { PostViewModel } from './post.type'
+import { PostViewModel } from './postDbType'
 import { BlogViewModel } from './blog.type'
 import { UserViewModel } from './user.type'
 

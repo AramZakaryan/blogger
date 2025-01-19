@@ -2,13 +2,13 @@
 
 import { Collection, MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { BlogType, PostType, UserType } from '../types'
+import { BlogType, PostDbType, UserType } from '../types'
 import { Db } from './db.type'
 
 config()
 
 export let blogCollection: Collection<BlogType>
-export let postCollection: Collection<PostType>
+export let postCollection: Collection<PostDbType>
 export let userCollection: Collection<UserType>
 
 export const runDB = async (dbUrl: string, dbName: string) => {
@@ -16,7 +16,7 @@ export const runDB = async (dbUrl: string, dbName: string) => {
   const db = client.db(dbName)
 
   blogCollection = db.collection<BlogType>(process.env.BLOG_COLLECTION_NAME || '')
-  postCollection = db.collection<PostType>(process.env.POST_COLLECTION_NAME || '')
+  postCollection = db.collection<PostDbType>(process.env.POST_COLLECTION_NAME || '')
   userCollection = db.collection<UserType>(process.env.USER_COLLECTION_NAME || '')
 
   try {

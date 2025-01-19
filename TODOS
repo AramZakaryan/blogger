@@ -1,5 +1,6 @@
 // todo: to get rid of check of existence of blog or post in validator middleware, do it in service, in middlewares can be params('id').isMongoId()
 done in blog
+// todo: create, delete, update from repositories should return string as id
 
 // todo: for command (mutation commands) make two flows in controllers
 

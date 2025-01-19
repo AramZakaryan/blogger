@@ -4,67 +4,98 @@ import {
   CreatePostBody,
   GetArrangedPostsQuery,
   PostViewModel,
+  UpdatePostBody,
 } from '../types'
 import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
-import { toObjectId } from '../common'
+import { HTTP_STATUS_CODES, toObjectId } from '../common'
+import { ObjectId } from 'mongodb'
 
 export const postService = {
-  getArrangedPosts: async (
-    query: GetArrangedPostsQuery,
-  ): Promise<ArrangedPostsViewModel | null> => {
-    const queryNormalized: Required<GetArrangedPostsQuery> = {
-      pageNumber: Number(query.pageNumber) || 1,
-      pageSize: Number(query.pageSize) || 10,
-      sortBy: query.sortBy || 'createdAt',
-      sortDirection: query.sortDirection || 'desc',
-    }
-
+  createPost: async (body: CreatePostBody): Promise<PostViewModel['id'] | null> => {
     try {
-      let posts = await postQueryRepository.getArrangedPosts(queryNormalized)
-
-      posts ??= []
-
-      let postsCount = await postQueryRepository.getPostsCount()
-
-      postsCount ??= 0
-
-      const pagesCount = Math.ceil(postsCount / queryNormalized.pageSize)
-
-      return {
-        pagesCount,
-        page: queryNormalized.pageNumber,
-        pageSize: queryNormalized.pageSize,
-        totalCount: postsCount,
-        items: posts,
+      // check if blog exists (body.blogId)
+      const blog = await blogQueryRepository.findBlog(body.blogId)
+      if (!blog) {
+        throw new Error(
+          JSON.stringify({
+            statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+            errorsMessages: [
+              {
+                message: 'blog with provided id does not exist',
+                field: 'blogId',
+              },
+            ],
+          }),
+        )
       }
+
+      return await postRepository.createPost(body, blog.name)
     } catch (err) {
       // console.log(err)
       return null
     }
   },
 
-  createPost: async (body: CreatePostBody): Promise<PostViewModel | null> => {
+  updatePost: async (id: string, body: UpdatePostBody): Promise<PostViewModel['id'] | null> => {
+    // check if post exists
+    const post = await postQueryRepository.findPost(id)
+    if (!post) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'post with provided id does not exist',
+              field: 'params',
+            },
+          ],
+        }),
+      )
+    }
+
+    // check if blog exists (body.blogId)
+    const blog = await blogQueryRepository.findBlog(body.blogId)
+    if (!blog) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'blog with provided id does not exist',
+              field: 'blogId',
+            },
+          ],
+        }),
+      )
+    }
+
+    const blogName = blog.name
+
     try {
-      const blog = await blogQueryRepository.findBlog(body.blogId)
+      return await postRepository.updatePost(id, body, blogName)
+    } catch (err) {
+      return null
+    }
+  },
+  deletePost: async (id: PostViewModel['id']): Promise<PostViewModel['id'] | null> => {
+    // check if post exists
+    const post = await postQueryRepository.findPost(id)
+    if (!post) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'post with provided id does not exist',
+              field: 'params',
+            },
+          ],
+        }),
+      )
+    }
 
-      if (!blog) return null
-
-      const blogId = toObjectId(blog.id)
-
-      if (!blogId) return null
-
-      const post = {
-        ...body,
-        blogId,
-        blogName: blog.name,
-        createdAt: new Date(),
-      }
-
-      const id = await postRepository.createPost(post)
-
-      if (!id) return null
-
-      return await postQueryRepository.findPost(id)
+    try {
+      return await postRepository.deletePost(id)
     } catch (err) {
       // console.log(err)
       return null

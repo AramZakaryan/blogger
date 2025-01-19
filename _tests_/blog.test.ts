@@ -638,7 +638,7 @@ describe('/blogs', () => {
     })
   })
 
-  it('send error for not correct format blog id, non-existing blog', async () => {
+  it('send error for not correct format blog id, non-existing blog in create a post of blog', async () => {
     ////////// case1: blog id is not MongoDb _id format
     const paramsIdNonExisting1 = 'paramsNotCorrect'
 

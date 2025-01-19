@@ -1,11 +1,21 @@
-import { PostType, PostViewModel, UpdatePostBody } from '../types'
+import { BlogViewModel, CreatePostBody, PostDbType, PostViewModel, UpdatePostBody } from '../types'
 import { postCollection } from '../db'
 import { ObjectId, WithId } from 'mongodb'
 import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
 
 export const postRepository = {
-  createPost: async (post: PostType): Promise<string | null> => {
+  createPost: async (
+    body: CreatePostBody,
+    blogName: PostViewModel['blogName'],
+  ): Promise<PostViewModel['id'] | null> => {
     try {
+      const post = {
+        ...body,
+        blogId: new ObjectId(body.blogId),
+        blogName,
+        createdAt: new Date(),
+      }
+
       const insertOneInfo = await postCollection.insertOne(post)
 
       if (!insertOneInfo.acknowledged) return null
@@ -17,14 +27,12 @@ export const postRepository = {
     }
   },
 
-  updatePost: async (id: string, body: UpdatePostBody): Promise<WithId<PostType> | null> => {
+  updatePost: async (
+    id: PostViewModel['id'],
+    body: UpdatePostBody,
+    blogName: PostViewModel['blogName'],
+  ): Promise<PostViewModel['id'] | null> => {
     try {
-      const blog = await blogQueryRepository.findBlog(body.blogId)
-
-      if (!blog) return null
-
-      const blogName = blog.name
-
       const _id = new ObjectId(id)
 
       const blogId = new ObjectId(body.blogId)
@@ -36,24 +44,22 @@ export const postRepository = {
 
       if (!updateOneInfo.acknowledged) return null
 
-      return await postCollection.findOne({ _id })
+      return _id.toString()
     } catch (err) {
       // console.log(err)
       return null
     }
   },
 
-  deletePost: async (id: string): Promise<PostViewModel | null> => {
+  deletePost: async (id: PostViewModel['id']): Promise<PostViewModel['id'] | null> => {
     try {
-      const post = await postQueryRepository.findPost(id)
-
       const _id = new ObjectId(id)
 
       const deleteOneInfo = await postCollection.deleteOne({ _id })
 
       if (!deleteOneInfo.acknowledged) return null
 
-      return post
+      return _id.toString()
     } catch (err) {
       // console.log(err)
       return null

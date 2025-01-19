@@ -2,23 +2,22 @@ import router from 'express'
 import { postControllers } from '../controllers'
 import {
   authorizationValidator,
-  createPostBodyValidator,
   handleValidationErrors,
-  postParamsValidatorOld,
+  postBodyValidator,
   postQueryValidator,
-  updatePostBodyValidator,
 } from '../middlewares'
+import { postParamsValidator } from '../middlewares/validators/postParamsValidator'
 
 export const postRouter = router()
 
 postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.getArrangedPosts)
 
-postRouter.get('/:id', postParamsValidatorOld, handleValidationErrors, postControllers.findPost)
+postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControllers.findPost)
 
 postRouter.post(
   '/',
   authorizationValidator,
-  createPostBodyValidator,
+  postBodyValidator,
   handleValidationErrors,
   postControllers.createPost,
 )
@@ -26,8 +25,8 @@ postRouter.post(
 postRouter.put(
   '/:id',
   authorizationValidator,
-  postParamsValidatorOld,
-  updatePostBodyValidator,
+  postParamsValidator,
+  postBodyValidator,
   handleValidationErrors,
   postControllers.updatePost,
 )
@@ -35,7 +34,7 @@ postRouter.put(
 postRouter.delete(
   '/:id',
   authorizationValidator,
-  postParamsValidatorOld,
+  postParamsValidator,
   handleValidationErrors,
   postControllers.deletePost,
 )

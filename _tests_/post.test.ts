@@ -2,7 +2,7 @@ import { superRequest } from './testHelpers'
 import { customSort, HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
 import { dataSet, postsSetMapped } from './datasets'
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import { CreatePostBody, GetArrangedPostsQuery, UpdatePostBody } from '../src/types'
 
@@ -262,14 +262,31 @@ describe('/posts', () => {
     }
   })
 
-  it('send error for non-existing post', async () => {
-    const paramsIdNonExisting = 'paramsNonExisting'
+  it('send error for not correct format post id, non-existing post', async () => {
+    ////////// case1: not correct MongoDb _id format fo post id
+    const paramsError1 = 'paramsNotCorrect'
 
-    const responseFindPostError = await superRequest
-      .get(`${PATHS.POSTS}/${paramsIdNonExisting}`)
+    const responseFindPostError1 = await superRequest
+      .get(`${PATHS.POSTS}/${paramsError1}`)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
-    expect(responseFindPostError.body).toEqual({
+    expect(responseFindPostError1.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'post id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ////////// case2: non-existing post id (but correct MongoDb _id format fo post id)
+    const paramsError2 = new ObjectId()
+
+    const responseFindPostError2 = await superRequest
+      .get(`${PATHS.POSTS}/${paramsError2}`)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseFindPostError2.body).toEqual({
       errorsMessages: [
         {
           message: 'post with provided id does not exist',
@@ -463,22 +480,23 @@ describe('/posts', () => {
   })
 
   it('send error for error body in create post', async () => {
-    const bodyErrorV1 = {
+    ////////// case1
+    const bodyError1 = {
       title: 'title'.repeat(30), // error message: name max length is 30
       shortDescription: 'shortDescription max length 100',
       // content: 'content max length 1000', // error message: content is required
-      blogId: 'error blogId', // error message: blog with this id does not exist
+      blogId: 'formatNotCorrect', // error message: blogId must be in a valid format
       unexpectedKey: 'unexpectedValue', // no error message
     }
 
-    const responseCreatePostErrorV1 = await superRequest
+    const responseCreatePostError1 = await superRequest
       .post(PATHS.POSTS)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyErrorV1)
+      .send(bodyError1)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
-    expect(responseCreatePostErrorV1.body).toEqual({
+    expect(responseCreatePostError1.body).toEqual({
       errorsMessages: [
         {
           message: 'title max length is 30',
@@ -489,26 +507,28 @@ describe('/posts', () => {
           field: 'content',
         },
         {
-          message: 'blog with provided id does not exist',
+          message: 'blogId must be in a valid format',
           field: 'blogId',
         },
       ],
     })
-    const bodyErrorV2 = {
+
+    ////////// case2
+    const bodyError2 = {
       title: '         ', // error message: name max length is 30
       shortDescription: 'shortDescription max length 100',
       content: 'content'.repeat(1000), // error message: content max length is 1000
       // blogId: 'error blogId', // no error message
     }
 
-    const responseCreatePostErrorV2 = await superRequest
+    const responseCreatePostError2 = await superRequest
       .post(PATHS.POSTS)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyErrorV2)
+      .send(bodyError2)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
-    expect(responseCreatePostErrorV2.body).toEqual({
+    expect(responseCreatePostError2.body).toEqual({
       errorsMessages: [
         {
           message: 'title is required',
@@ -521,6 +541,38 @@ describe('/posts', () => {
         {
           message: 'blogId is required',
           field: 'blogId',
+        },
+      ],
+    })
+
+    //////// case3
+    const bodyError3 = {
+      title: ['title'], // error message: title must be a string
+      // shortDescription: 'shortDescription',
+      content: '', // error message: content max length is 1000
+      blogId: new ObjectId(), // no error message
+    }
+
+    const responseCreatePostError3 = await superRequest
+      .post(PATHS.POSTS)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(bodyError3)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
+
+    expect(responseCreatePostError3.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'title must be a string',
+          field: 'title',
+        },
+        {
+          message: 'shortDescription is required',
+          field: 'shortDescription',
+        },
+        {
+          message: 'content is required',
+          field: 'content',
         },
       ],
     })
@@ -548,7 +600,7 @@ describe('/posts', () => {
         blogId: randomBlogs[i].id,
       }
 
-      await superRequest
+      const forDel = await superRequest
         .put(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[i].id}`)
         .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
         .send(body)
@@ -572,27 +624,28 @@ describe('/posts', () => {
     }
   })
 
-  it('send error for non-existing, empty, non-object body in update post', async () => {
+  it('send error for not correct body in update post', async () => {
+    ///////// case1
     const responseGetArrangedPosts = await superRequest
       .get(PATHS.POSTS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
-    const bodyErrorV1 = {
-      title: 'title'.repeat(30), // error message: title max length is 30
-      // shortDescription: 'shortDescription max length 100', // error message: shortDescription is required
+    const bodyError1 = {
+      title: 'title'.repeat(30),
+      // shortDescription: 'shortDescription max length 100',
       content: 'content max length 1000',
-      blogId: 'non existing blogId', // error message: blog with provided id does not exist
-      unexpectedKey: 'unexpectedValue', // no error message
+      blogId: 'formatNotCorrect',
+      unexpectedKey: 'unexpectedValue',
     }
 
-    const responseUpdatePostErrorV1 = await superRequest
+    const responseUpdatePostError1 = await superRequest
       .put(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyErrorV1)
+      .send(bodyError1)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
-    expect(responseUpdatePostErrorV1.body).toEqual({
+    expect(responseUpdatePostError1.body).toEqual({
       errorsMessages: [
         {
           message: 'title max length is 30',
@@ -603,27 +656,28 @@ describe('/posts', () => {
           field: 'shortDescription',
         },
         {
-          message: 'blog with provided id does not exist',
+          message: 'blogId must be in a valid format',
           field: 'blogId',
         },
       ],
     })
 
-    const bodyErrorV2 = {
-      title: '       ', // error message: title is empty
-      shortDescription: 'shortDescription max length 100', // no error message
-      content: 'content'.repeat(1000), // error message: content max length is 1000
-      blogId: responseGetArrangedPosts.body.items[0].blogId, // no error message
+    ///////// case2
+    const bodyError2 = {
+      title: '       ',
+      shortDescription: 'shortDescription max length 100',
+      content: 'content'.repeat(1000),
+      blogId: responseGetArrangedPosts.body.items[0].blogId,
     }
 
-    const responseUpdatePostErrorV2 = await superRequest
+    const responseUpdatePostError2 = await superRequest
       .put(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyErrorV2)
+      .send(bodyError2)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
-    expect(responseUpdatePostErrorV2.body).toEqual({
+    expect(responseUpdatePostError2.body).toEqual({
       errorsMessages: [
         {
           message: 'title is required',
@@ -635,25 +689,50 @@ describe('/posts', () => {
         },
       ],
     })
-  })
 
-  it('send error for non-existing params in update post', async () => {
-    const paramsIdNonExisting = 'paramsNonExisting'
+    ///////// case3: non-existing blogId (but correct MongoDb -id format) and correct other fields
+    const bodyError3 = {
+      title: 'some title',
+      shortDescription: 'some shortDescription',
+      content: 'some content',
+      blogId: new ObjectId(),
+    }
 
-    const bodyUpdateError = {}
-
-    const responseUpdatePostError = await superRequest
-      .put(`${PATHS.POSTS}/${paramsIdNonExisting}`)
+    const responseUpdatePostError3 = await superRequest
+      .put(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[0].id}`)
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyUpdateError)
+      .send(bodyError3)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
-    expect(responseUpdatePostError.body).toEqual({
+    expect(responseUpdatePostError3.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'blog with provided id does not exist',
+          field: 'blogId',
+        },
+      ],
+    })
+  })
+
+  it('send error for not correct format post id params, non-existing post id params in update post', async () => {
+    ////////// case1: post id params not correct MongoDb _id format
+    const paramsUpdateError1 = 'formatNotCorrect'
+
+    const bodyUpdateError1 = {}
+
+    const responseUpdatePostError1 = await superRequest
+      .put(`${PATHS.POSTS}/${paramsUpdateError1}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(bodyUpdateError1)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseUpdatePostError1.body).toEqual({
       errorsMessages: [
         {
           field: 'params',
-          message: 'post with provided id does not exist',
+          message: 'post id must be in a valid format',
         },
         {
           message: 'title is required',
@@ -670,6 +749,37 @@ describe('/posts', () => {
         {
           message: 'blogId is required',
           field: 'blogId',
+        },
+      ],
+    })
+
+    ////////// case2: post id params non-existing (but correct MongoDb _id format) with correct body
+
+    const responseGetArrangedPosts = await superRequest
+      .get(PATHS.POSTS)
+      .expect(HTTP_STATUS_CODES.OK_200)
+
+    const paramsUpdateError2 = new ObjectId()
+
+    const bodyUpdateError2 = {
+      title: 'some title',
+      shortDescription: 'some shortDescription',
+      content: 'some content',
+      blogId: responseGetArrangedPosts.body.items[0].id,
+    }
+
+    const responseUpdatePostError2 = await superRequest
+      .put(`${PATHS.POSTS}/${paramsUpdateError2}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(bodyUpdateError2)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseUpdatePostError2.body).toEqual({
+      errorsMessages: [
+        {
+          field: 'params',
+          message: 'post with provided id does not exist',
         },
       ],
     })
@@ -696,6 +806,42 @@ describe('/posts', () => {
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseFindPostsAfterDelete.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'post with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+  })
+
+  it('send error for post id not correct format, not existing post id in delete post', async () => {
+    ////////// case1: post id params not correct format MongoDb id
+    const paramsDeleteError1 = 'formatNotCorrect'
+
+    const responseDeletePos1 = await superRequest
+      .delete(`${PATHS.POSTS}/${paramsDeleteError1}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseDeletePos1.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'post id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ////////// case1: non-existing post id params (but correct format MongoDb id)
+    const paramsDeleteError2 = new ObjectId()
+
+    const responseDeletePos2 = await superRequest
+      .delete(`${PATHS.POSTS}/${paramsDeleteError2}`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseDeletePos2.body).toEqual({
       errorsMessages: [
         {
           message: 'post with provided id does not exist',

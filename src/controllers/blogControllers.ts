@@ -22,7 +22,7 @@ import {
 } from '../common'
 import { blogService } from '../services'
 import { blogRepository } from '../repositories'
-import { blogQueryRepository } from '../queryRepositories'
+import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
 import { blogQueryService } from '../queryServices'
 import { blogCollection } from '../db'
 
@@ -94,10 +94,15 @@ export const blogControllers = {
     const { body } = req
 
     try {
-      const createdPost = await blogService.createPostOfBlog(id, body)
+      const createdPostId = await blogService.createPostOfBlog(id, body)
 
-      if (createdPost) {
-        res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
+      if (createdPostId) {
+        const createdPost = await postQueryRepository.findPost(createdPostId)
+        if (createdPost) {
+          res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
+        } else {
+          handleResponseError(res, 'BAD_REQUEST_400')
+        }
       } else {
         handleResponseError(res, 'BAD_REQUEST_400')
       }

@@ -40,7 +40,7 @@ export const blogService = {
   createPostOfBlog: async (
     blogId: string,
     body: CreatePostOfBlogBody,
-  ): Promise<PostViewModel | null> => {
+  ): Promise<PostViewModel['id'] | null> => {
     // check if blog exists
     const blog = await blogQueryRepository.findBlog(blogId)
     if (!blog) {

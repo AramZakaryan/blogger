@@ -1,4 +1,4 @@
-import { PostType, PostViewModel } from '../post.type'
+import { PostDbType, PostViewModel } from '../postDbType'
 import { WithId } from 'mongodb'
 import { ArrangementQuery } from '../general'
 
@@ -9,7 +9,7 @@ export type FindPostParams = { id: string }
 export type CreatePostBody = CreatePostOfBlogBody & { blogId: string }
 
 export type CreatePostOfBlogBody = Omit<
-  WithId<PostType>,
+  WithId<PostDbType>,
   '_id' | 'blogName' | 'blogId' | 'createdAt'
 >
 
