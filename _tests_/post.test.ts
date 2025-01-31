@@ -763,7 +763,6 @@ describe('/posts', () => {
       .get(PATHS.POSTS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
-
     const paramsUpdateError2 = new ObjectId()
 
     const bodyUpdateError2 = {
