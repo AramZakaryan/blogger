@@ -574,10 +574,10 @@ describe('/posts', () => {
           message: 'content is required',
           field: 'content',
         },
-        // {
-        //   message: 'blog with provided id does not exist',
-        //   field: 'blogId',
-        // },
+        {
+          message: 'blog with provided id does not exist',
+          field: 'blogId',
+        },
       ],
     })
   })
@@ -707,7 +707,7 @@ describe('/posts', () => {
       .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
       .send(bodyError3)
       .expect('Content-Type', /json/)
-      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
 
     expect(responseUpdatePostError3.body).toEqual({
       errorsMessages: [
@@ -763,13 +763,14 @@ describe('/posts', () => {
       .get(PATHS.POSTS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
+
     const paramsUpdateError2 = new ObjectId()
 
     const bodyUpdateError2 = {
       title: 'some title',
       shortDescription: 'some shortDescription',
       content: 'some content',
-      blogId: responseGetArrangedPosts.body.items[0].id,
+      blogId: responseGetArrangedPosts.body.items[0].blogId,
     }
 
     const responseUpdatePostError2 = await superRequest

@@ -24,16 +24,16 @@ export const postBodyValidator = [
       message: 'blogId must be in a valid format',
       field: 'blogId',
     })
-    // .custom(async (value, { req }) => {
-    //   const blog = await blogQueryRepository.findBlog(req.body.blogId)
-    //   if (!blog) {
-    //     throw new Error(
-    //       JSON.stringify({
-    //         message: `blog with provided id does not exist`,
-    //         field: 'blogId',
-    //       }),
-    //     )
-    //   }
-    //   return true
-    // }),
+    .custom(async (value, { req }) => {
+      const blog = await blogQueryRepository.findBlog(req.body.blogId)
+      if (!blog) {
+        throw new Error(
+          JSON.stringify({
+            message: 'blog with provided id does not exist',
+            field: 'blogId',
+          }),
+        )
+      }
+      return true
+    }),
 ]
