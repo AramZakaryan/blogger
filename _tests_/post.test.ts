@@ -547,10 +547,10 @@ describe('/posts', () => {
 
     //////// case3
     const bodyError3 = {
-      title: ['title'], // error message: title must be a string
+      title: ['title'],
       // shortDescription: 'shortDescription',
-      content: '', // error message: content max length is 1000
-      blogId: new ObjectId(), // no error message
+      content: '',
+      blogId: new ObjectId(),
     }
 
     const responseCreatePostError3 = await superRequest
@@ -574,6 +574,10 @@ describe('/posts', () => {
           message: 'content is required',
           field: 'content',
         },
+        // {
+        //   message: 'blog with provided id does not exist',
+        //   field: 'blogId',
+        // },
       ],
     })
   })

@@ -426,6 +426,7 @@ describe('/blogs', () => {
 
     ////////// case with complex query 5
 
+
     for (let i = 0; i < responseGetArrangedBlogs.body.items.length; i++) {
       const queryGetArrangedPosts: GetArrangedPostsQuery = {
         pageSize: 15,
