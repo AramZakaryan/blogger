@@ -1,6 +1,7 @@
 import { PostViewModel } from './postDbType'
 import { BlogViewModel } from './blogType'
 import { UserViewModel } from './user.type'
+import { HTTP_STATUS_CODES } from '../common'
 
 export type OutputErrorsType = {
   errorsMessages: { message: string; field: string }[]
@@ -19,4 +20,24 @@ export type ArrangedViewModel<T> = {
   pageSize: number
   totalCount: number
   items: T[]
+}
+
+export type Result<T = null> = {
+  status: ResultCode
+  errorMessage?: string
+  extensions?: Extension[]
+  data?: T
+}
+
+type Extension = {
+  field?: string
+  message?: string
+}
+
+export enum ResultCode {
+  Success = 'Success',
+  NotFound = 'NotFound',
+  Forbidden = 'Forbidden',
+  Unauthorized = 'Unauthorized',
+  BadRequest = 'BadRequest',
 }
