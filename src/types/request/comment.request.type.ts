@@ -3,9 +3,12 @@ import {
   CreateCommentBody,
   DeleteCommentParams,
   FindCommentParams,
+  GetArrangedCommentsQuery,
   UpdateCommentBody,
   UpdateCommentParams,
 } from '../dto'
+
+export type GetArrangedCommentsRequest = Request<{}, any, {}, GetArrangedCommentsQuery>
 
 export type UpdateCommentRequest = Request<UpdateCommentParams, any, UpdateCommentBody>
 

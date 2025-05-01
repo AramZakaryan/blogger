@@ -1,14 +1,14 @@
 import { Db } from '../src/db'
 import {
   BlogDbType,
-  BlogViewModel,
+  BlogViewModel, CommentDbType, CommentViewModel,
   PostDbType,
   PostViewModel,
   UserDbType,
   UserViewModel,
 } from '../src/types'
 import { ObjectId, WithId } from 'mongodb'
-import { blogMap, postMap, userMap } from '../src/common'
+import { blogMap, commentMap, postMap, userMap } from '../src/common'
 import bcrypt from 'bcrypt'
 
 const blogNameAppendices = [
@@ -88,6 +88,13 @@ export const postsSet: WithId<PostDbType>[] = Array.from({ length: 15 }, (_, i) 
   createdAt: new Date(Date.now() + i * 1000),
 }))
 
+export const commentsSet: WithId<CommentDbType>[] = Array.from({ length: 15 }, (_, i) => ({
+  _id: new ObjectId(),
+  content: `comment comment comment content ${i}`,
+  postId: postsSet[~~(i / 5)]._id,
+  createdAt: new Date(Date.now() + i * 1000),
+}))
+
 export const usersSet: WithId<UserDbType>[] = Array.from({ length: 15 }, (_, i) => ({
   _id: new ObjectId(),
   login: `login${i}${userLoginAppendices[i]}`,
@@ -99,6 +106,7 @@ export const usersSet: WithId<UserDbType>[] = Array.from({ length: 15 }, (_, i) 
 export const dataSet: Db = {
   blogs: blogsSet,
   posts: postsSet,
+  comments: commentsSet,
   users: usersSet,
 }
 
@@ -108,15 +116,19 @@ export const postsSetMapped = postsSet.map(postMap)
 
 export const usersSetMapped = usersSet.map(userMap)
 
+export const commentsSetMapped = commentsSet.map(commentMap)
+
 export const dataSetMapped: DbMapped = {
   blogs: blogsSetMapped,
   posts: postsSetMapped,
+  comments: commentsSetMapped,
   users: usersSetMapped,
 }
 
 type DbMapped = {
   blogs: BlogViewModel[]
   posts: PostViewModel[]
+  comments: CommentViewModel[]
   users: UserViewModel[]
 }
 

@@ -1,14 +1,27 @@
 import router from 'express'
-import { postControllers } from '../controllers'
+import { blogControllers, postControllers } from '../controllers'
 import {
   authorizationValidator,
+  blogParamsValidator,
+  blogQueryValidator,
+  commentQueryValidator,
   handleValidationErrors,
   postBodyValidator,
+  postBodyValidatorWithoutBlogId,
   postQueryValidator,
 } from '../middlewares'
 import { postParamsValidator } from '../middlewares/validators/postParamsValidator'
+import { blogRouter } from './blogRouter'
 
 export const postRouter = router()
+
+postRouter.get(
+  '/:id/comments',
+  postParamsValidator,
+  commentQueryValidator,
+  handleValidationErrors,
+  postControllers.getArrangedCommentsOfPost,
+)
 
 postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.getArrangedPosts)
 

@@ -5,6 +5,10 @@ import {
   DeletePostResponse,
   FindPostRequest,
   FindPostResponse,
+  GetArrangedCommentOfPostRequest,
+  GetArrangedCommentsOfPostsResponse,
+  GetArrangedPostsByBlogResponse,
+  GetArrangedPostsOfBlogRequest,
   GetArrangedPostsRequest,
   GetArrangedPostsResponse,
   UpdatePostRequest,
@@ -19,8 +23,30 @@ import {
 import { postQueryRepository } from '../queryRepositories'
 import { postService } from '../services'
 import { postQueryService } from '../queryServices/postQueryService'
+import { blogQueryService } from '../queryServices'
 
 export const postControllers = {
+
+  getArrangedCommentsOfPost: async (
+    req: GetArrangedCommentOfPostRequest,
+    res: GetArrangedCommentsOfPostsResponse,
+  ): Promise<void> => {
+    const { query } = req
+    const { id } = req.params
+
+    try {
+      const comments = await postQueryService.getArrangedCommentsOfPost(query, id)
+
+      if (comments) {
+        res.json(comments)
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
+    }
+  },
+
   getArrangedPosts: async (
     req: GetArrangedPostsRequest,
     res: GetArrangedPostsResponse,

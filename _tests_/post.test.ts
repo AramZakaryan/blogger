@@ -34,7 +34,7 @@ describe('/posts', () => {
 
   it('should get object containing posts', async () => {
     const responseGetArrangedPosts = await superRequest
-      .get(PATHS.BLOGS)
+      .get(PATHS.POSTS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
     expect(responseGetArrangedPosts.body).toMatchObject({
@@ -604,7 +604,7 @@ describe('/posts', () => {
         blogId: randomBlogs[i].id,
       }
 
-      const forDel = await superRequest
+      await superRequest
         .put(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[i].id}`)
         .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
         .send(body)

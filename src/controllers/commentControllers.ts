@@ -10,7 +10,7 @@ import {
   FindCommentRequest,
   FindCommentResponse,
   FindPostRequest,
-  FindPostResponse,
+  FindPostResponse, GetArrangedCommentsRequest, GetArrangedCommentsResponse,
   GetArrangedPostsRequest,
   GetArrangedPostsResponse,
   UpdateCommentRequest,
@@ -27,21 +27,22 @@ import {
 import { commentQueryRepository, postQueryRepository } from '../queryRepositories'
 import { commentService, postService } from '../services'
 import { postQueryService } from '../queryServices/postQueryService'
+import { commentQueryService } from '../queryServices'
 
 export const commentControllers = {
-  // getArrangedPosts: async (
-  //   req: GetArrangedPostsRequest,
-  //   res: GetArrangedPostsResponse,
-  // ): Promise<void> => {
-  //   const { query } = req
-  //
-  //   const posts = await postQueryService.getArrangedPosts(query)
-  //   if (posts) {
-  //     res.json(posts)
-  //   } else {
-  //     handleResponseError(res, 'BAD_REQUEST_400')
-  //   }
-  // },
+  getArrangedComments: async (
+    req: GetArrangedCommentsRequest,
+    res: GetArrangedCommentsResponse,
+  ): Promise<void> => {
+    const { query } = req
+
+    const comments = await commentQueryService.getArrangedComments(query)
+    if (comments) {
+      res.json(comments)
+    } else {
+      handleResponseError(res, 'BAD_REQUEST_400')
+    }
+  },
 
   findComment: async (req: FindCommentRequest, res: FindCommentResponse): Promise<void> => {
     const { id } = req.params

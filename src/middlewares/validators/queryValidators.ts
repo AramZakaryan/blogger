@@ -59,6 +59,18 @@ export const postQueryValidator = [
     }),
 ]
 
+export const commentQueryValidator = [
+  ...queryValidator,
+  query('sortBy')
+    .optional()
+    .isString()
+    .isIn(['id', 'content', 'postId', 'createdAt'])
+    .withMessage({
+      message: 'sortBy must be key of comment',
+      field: 'query',
+    }),
+]
+
 export const userQueryValidator = [
   ...queryValidator,
   query('sortBy').optional().isString().isIn(['id', 'login', 'email', 'createdAt']).withMessage({

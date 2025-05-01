@@ -3,14 +3,19 @@ import { commentControllers } from '../controllers'
 import {
   authorizationValidator,
   commentBodyValidator,
-  commentBodyValidatorWithoutPostId,
   commentParamsValidator,
+  commentQueryValidator,
   handleValidationErrors,
 } from '../middlewares'
 
 export const commentRouter = router()
 
-// commentRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.getArrangedPosts)
+commentRouter.get(
+  '/',
+  commentQueryValidator,
+  handleValidationErrors,
+  commentControllers.getArrangedComments,
+)
 
 commentRouter.get(
   '/:id',

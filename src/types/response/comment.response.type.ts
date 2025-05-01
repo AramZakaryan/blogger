@@ -1,7 +1,8 @@
 import { Response } from 'express'
-import { ArrangedPostsViewModel, PostViewModel } from '../post.type'
 import { OutputErrorsType } from '../general'
-import { CommentViewModel } from '../comment.type'
+import { ArrangedCommentsViewModel, CommentViewModel } from '../comment.type'
+
+export type GetArrangedCommentsResponse = Response<ArrangedCommentsViewModel | OutputErrorsType>
 
 export type FindCommentResponse = Response<CommentViewModel | OutputErrorsType>
 

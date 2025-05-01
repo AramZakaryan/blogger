@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { ArrangedViewModel } from './general'
+import { PostViewModel } from './post.type'
 
 export type CommentDbType = {
   content: string // minLength: 20; maxLength: 300
@@ -21,3 +22,5 @@ export type CommentViewModel = {
   postId: string
   createdAt: string
 }
+
+export type ArrangedCommentsViewModel = ArrangedViewModel<CommentViewModel>

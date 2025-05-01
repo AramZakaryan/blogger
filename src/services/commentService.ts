@@ -20,7 +20,6 @@ import { ObjectId } from 'mongodb'
 
 export const commentService = {
   createComment: async (body: CreateCommentBody): Promise<CommentViewModel['id'] | null> => {
-    try {
       // // check if the user exists (body.commentatorInfo.userId)
       // const user = await userQueryRepository.findUserById(body.commentatorInfo.userId)
       // if (!user) {
@@ -53,6 +52,7 @@ export const commentService = {
         )
       }
 
+    try {
       return await commentRepository.createComment(body)
     } catch (err) {
       // console.log(err)
@@ -64,7 +64,7 @@ export const commentService = {
     id: CommentViewModel['id'],
     body: UpdateCommentBody,
   ): Promise<PostViewModel['id'] | null> => {
-    try {
+
       // // check if the user exists (body.commentatorInfo.userId)
       // const user = await userQueryRepository.findUserById(body.commentatorInfo.userId)
       // if (!user) {
@@ -113,6 +113,7 @@ export const commentService = {
         )
       }
 
+    try {
       return await commentRepository.updateComment(id, body)
     } catch (err) {
       return null
