@@ -1,7 +1,7 @@
 import express, { Response } from 'express'
 import cors from 'cors'
 import { HTTP_STATUS_CODES, PATHS } from './common'
-import { authRouter, blogRouter, postRouter, testingRouter, userRouter } from './routers'
+import { authRouter, blogRouter, commentRouter, postRouter, testingRouter, userRouter } from './routers'
 import { incorrectBodyMiddleware } from './middlewares'
 import { config } from 'dotenv'
 
@@ -22,5 +22,6 @@ app.get('/', (_, res: Response) => {
 app.use(PATHS.TESTING, testingRouter)
 app.use(PATHS.BLOGS, blogRouter)
 app.use(PATHS.POSTS, postRouter)
+app.use(PATHS.COMMENTS, commentRouter)
 app.use(PATHS.USERS, userRouter)
 app.use(PATHS.AUTH, authRouter)

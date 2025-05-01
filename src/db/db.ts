@@ -2,13 +2,14 @@
 
 import { Collection, MongoClient } from 'mongodb'
 import { config } from 'dotenv'
-import { BlogDbType, PostDbType, UserDbType } from '../types'
+import { BlogDbType, CommentDbType, PostDbType, UserDbType } from '../types'
 import { Db } from './db.type'
 
 config()
 
 export let blogCollection: Collection<BlogDbType>
 export let postCollection: Collection<PostDbType>
+export let commentCollection: Collection<CommentDbType>
 export let userCollection: Collection<UserDbType>
 
 export const runDB = async (dbUrl: string, dbName: string) => {
@@ -17,6 +18,7 @@ export const runDB = async (dbUrl: string, dbName: string) => {
 
   blogCollection = db.collection<BlogDbType>(process.env.BLOG_COLLECTION_NAME || '')
   postCollection = db.collection<PostDbType>(process.env.POST_COLLECTION_NAME || '')
+  commentCollection = db.collection<CommentDbType>(process.env.COMMENT_COLLECTION_NAME || '')
   userCollection = db.collection<UserDbType>(process.env.USER_COLLECTION_NAME || '')
 
   try {
@@ -35,6 +37,7 @@ export const runDB = async (dbUrl: string, dbName: string) => {
 export const setDB = async (dataset?: Partial<Db>) => {
   await blogCollection.drop()
   await postCollection.drop()
+  await commentCollection.drop()
   await userCollection.drop()
 
   if (dataset?.blogs) {
@@ -43,6 +46,10 @@ export const setDB = async (dataset?: Partial<Db>) => {
 
   if (dataset?.posts) {
     await postCollection.insertMany(dataset.posts)
+  }
+
+  if (dataset?.comments) {
+    await commentCollection.insertMany(dataset.comments)
   }
 
   if (dataset?.users) {

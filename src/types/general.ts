@@ -1,13 +1,16 @@
-import { PostViewModel } from './postDbType'
-import { BlogViewModel } from './blogType'
+import { PostViewModel } from './post.type'
+import { BlogViewModel } from './blog.type'
 import { UserViewModel } from './user.type'
 import { HTTP_STATUS_CODES } from '../common'
+import { CommentViewModel } from './comment.type'
 
 export type OutputErrorsType = {
   errorsMessages: { message: string; field: string }[]
 }
 
-export type ArrangementQuery<T extends PostViewModel | BlogViewModel | UserViewModel> = {
+export type ArrangementQuery<
+  T extends PostViewModel | BlogViewModel | UserViewModel | CommentViewModel,
+> = {
   pageNumber?: number
   pageSize?: number
   sortBy?: keyof T

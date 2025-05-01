@@ -2,7 +2,7 @@ import {
   ArrangedBlogsViewModel,
   ArrangedPostsViewModel,
   GetArrangedBlogsQuery,
-  GetArrangedPostsByBlogQuery,
+  GetArrangedPostsOfBlogQuery,
   PostViewModel,
 } from '../types'
 import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
@@ -46,7 +46,7 @@ export const blogQueryService = {
   },
 
   getArrangedPostsOfBlog: async (
-    query: GetArrangedPostsByBlogQuery,
+    query: GetArrangedPostsOfBlogQuery,
     blogId: PostViewModel['blogId'],
   ): Promise<ArrangedPostsViewModel | null> => {
     // check if blog exists
@@ -65,7 +65,7 @@ export const blogQueryService = {
       )
     }
 
-    const queryNormalized: Required<GetArrangedPostsByBlogQuery> = {
+    const queryNormalized: Required<GetArrangedPostsOfBlogQuery> = {
       pageNumber: Number(query.pageNumber) || 1,
       pageSize: Number(query.pageSize) || 10,
       sortBy: query.sortBy || 'createdAt',

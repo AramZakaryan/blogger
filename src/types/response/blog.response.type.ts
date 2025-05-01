@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { ArrangedBlogsViewModel, BlogViewModel } from '../blogType'
+import { ArrangedBlogsViewModel, BlogViewModel } from '../blog.type'
 import { OutputErrorsType } from '../general'
 import { GetArrangedPostsResponse } from './post.response.type'
 

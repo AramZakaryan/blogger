@@ -1,4 +1,5 @@
 export * from './blogService'
 export * from './postService'
+export * from './commentService'
 export * from './userService'
 export * from './authService'

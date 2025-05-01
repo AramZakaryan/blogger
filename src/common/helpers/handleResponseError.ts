@@ -18,7 +18,7 @@ export const handleResponseError = (
 export const handleResponseNotFoundError = (
   response: Response,
   statusCode: keyof typeof HTTP_STATUS_CODES,
-  item: 'blog' | 'post' | 'user',
+  item: 'blog' | 'post' | 'user' | 'comment',
 ) => {
   return response.status(HTTP_STATUS_CODES[statusCode]).json({
     errorsMessages: [

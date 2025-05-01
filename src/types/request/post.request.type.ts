@@ -1,22 +1,29 @@
 import { Request } from 'express'
 import {
-  CreatePostBody,
-  CreatePostOfBlogBody,
-  CreatePostByBlogParams,
+  CreateCommentOfPostParams, CreateCommentOfPostBody,
+  CreatePostBody, CreatePostOfBlogParams, CreatePostOfBlogBody,
   DeletePostParams,
   FindPostParams,
+  GetArrangedCommentsOfPostQuery,
   GetArrangedPostsQuery,
   UpdatePostBody,
   UpdatePostParams,
 } from '../dto'
 
-export type GetArrangedPostsRequest = Request<{}, any, {}, GetArrangedPostsQuery>
+export type GetArrangedCommentOfPostRequest = Request<
+  FindPostParams,
+  any,
+  {},
+  GetArrangedCommentsOfPostQuery
+>
 
-export type FindPostRequest = Request<FindPostParams>
+export type CreateCommentOfPostRequest = Request<CreateCommentOfPostParams, any, CreateCommentOfPostBody>
+
+export type GetArrangedPostsRequest = Request<{}, any, {}, GetArrangedPostsQuery>
 
 export type CreatePostRequest = Request<{}, any, CreatePostBody>
 
-export type CreatePostByBlogRequest = Request<CreatePostByBlogParams, any, CreatePostOfBlogBody>
+export type FindPostRequest = Request<FindPostParams>
 
 export type UpdatePostRequest = Request<UpdatePostParams, any, UpdatePostBody>
 

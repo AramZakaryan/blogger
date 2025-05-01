@@ -2,7 +2,7 @@ import { handleIsStringIsLengthMax, handleNotEmpty } from './handlers'
 import { body } from 'express-validator'
 import { blogQueryRepository } from '../../queryRepositories'
 
-export const postBodyValidatorWithoutBodyId = [
+export const postBodyValidatorWithoutBlogId = [
   handleNotEmpty('title'),
   handleIsStringIsLengthMax('title', 30),
   handleNotEmpty('shortDescription'),
@@ -12,7 +12,7 @@ export const postBodyValidatorWithoutBodyId = [
 ]
 
 export const postBodyValidator = [
-  ...postBodyValidatorWithoutBodyId,
+  ...postBodyValidatorWithoutBlogId,
   body('blogId')
     .notEmpty()
     .withMessage({

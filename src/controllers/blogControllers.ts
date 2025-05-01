@@ -1,15 +1,15 @@
 import {
   CreateBlogRequest,
   CreateBlogResponse,
-  CreatePostByBlogRequest,
-  CreatePostByBlogResponse,
+  CreatePostOfBlogRequest,
+  CreatePostOfBlogResponse,
   DeleteBlogRequest,
   DeleteBlogResponse,
   FindBlogRequest,
   FindBlogResponse,
   GetArrangedBlogsRequest,
   GetArrangedBlogsResponse,
-  GetArrangedPostsByBlogRequest,
+  GetArrangedPostsOfBlogRequest,
   GetArrangedPostsByBlogResponse,
   UpdateBlogRequest,
   UpdateBlogResponse,
@@ -55,7 +55,7 @@ export const blogControllers = {
   },
 
   getArrangedPostsOfBlog: async (
-    req: GetArrangedPostsByBlogRequest,
+    req: GetArrangedPostsOfBlogRequest,
     res: GetArrangedPostsByBlogResponse,
   ): Promise<void> => {
     const { query } = req
@@ -92,8 +92,8 @@ export const blogControllers = {
   },
 
   createPostOfBlog: async (
-    req: CreatePostByBlogRequest,
-    res: CreatePostByBlogResponse,
+    req: CreatePostOfBlogRequest,
+    res: CreatePostOfBlogResponse,
   ): Promise<void> => {
     const { id } = req.params
     const { body } = req

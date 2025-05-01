@@ -8,7 +8,7 @@ import {
   CreatePostBody,
   CreatePostOfBlogBody,
   GetArrangedBlogsQuery,
-  GetArrangedPostsByBlogQuery,
+  GetArrangedPostsOfBlogQuery,
   PostViewModel,
   UpdateBlogBody,
 } from '../types'
