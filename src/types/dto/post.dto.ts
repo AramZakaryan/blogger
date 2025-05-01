@@ -14,7 +14,6 @@ export type CreateCommentOfPostBody = {
   //   userId: string
   //   userLogin: string
   // }
-  postId: string
 }
 
 export type GetArrangedPostsQuery = ArrangementQuery<PostViewModel>

@@ -1,17 +1,14 @@
 import router from 'express'
-import { blogControllers, postControllers } from '../controllers'
+import { postControllers } from '../controllers'
 import {
   authorizationValidator,
-  blogParamsValidator,
-  blogQueryValidator,
+  commentBodyValidatorWithoutPostId,
   commentQueryValidator,
   handleValidationErrors,
   postBodyValidator,
-  postBodyValidatorWithoutBlogId,
+  postParamsValidator,
   postQueryValidator,
 } from '../middlewares'
-import { postParamsValidator } from '../middlewares/validators/postParamsValidator'
-import { blogRouter } from './blogRouter'
 
 export const postRouter = router()
 
@@ -23,9 +20,16 @@ postRouter.get(
   postControllers.getArrangedCommentsOfPost,
 )
 
-postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.getArrangedPosts)
+postRouter.post(
+  '/:id/comments',
+  authorizationValidator,
+  postParamsValidator,
+  commentBodyValidatorWithoutPostId,
+  handleValidationErrors,
+  postControllers.createCommentOfPost,
+)
 
-postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControllers.findPost)
+postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.getArrangedPosts)
 
 postRouter.post(
   '/',
@@ -34,6 +38,8 @@ postRouter.post(
   handleValidationErrors,
   postControllers.createPost,
 )
+
+postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControllers.findPost)
 
 postRouter.put(
   '/:id',

@@ -640,7 +640,7 @@ describe('/blogs', () => {
   })
 
   it('send error for not correct format blog id, non-existing blog in create a post of blog', async () => {
-    ////////// case1: blog id is not MongoDb _id format
+    ////////// case1: blog id is not MongoDb _id format with correct body
     const paramsIdNonExisting1 = 'paramsNotCorrect'
 
     const body1: CreatePostOfBlogBody = {
@@ -665,7 +665,7 @@ describe('/blogs', () => {
       ],
     })
 
-    ////////// case2: non-existing blog id (blog id is correct format of MongoDb _id)
+    ////////// case2: non-existing blog id (blog id is correct format of MongoDb _id) with correct body
 
     const paramsIdNonExisting2 = new ObjectId()
 

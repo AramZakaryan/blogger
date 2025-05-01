@@ -1,7 +1,11 @@
 import { postRepository } from '../repositories'
 import {
   ArrangedPostsViewModel,
+  CommentViewModel,
+  CreateCommentBody,
+  CreateCommentOfPostBody,
   CreatePostBody,
+  CreatePostOfBlogBody,
   GetArrangedPostsQuery,
   PostViewModel,
   UpdatePostBody,
@@ -9,6 +13,7 @@ import {
 import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
 import { HTTP_STATUS_CODES, toObjectId } from '../common'
 import { ObjectId } from 'mongodb'
+import { commentService } from './commentService'
 
 export const postService = {
   createPost: async (body: CreatePostBody): Promise<PostViewModel['id'] | null> => {
@@ -36,7 +41,35 @@ export const postService = {
     }
   },
 
-  updatePost: async (id: PostViewModel['id'], body: UpdatePostBody): Promise<PostViewModel['id'] | null> => {
+  createCommentOfPost: async (
+    postId: CommentViewModel['postId'],
+    body: CreateCommentOfPostBody,
+  ): Promise<PostViewModel['id'] | null> => {
+    // check if post exists
+    const post = await postQueryRepository.findPost(postId)
+    if (!post) {
+      throw new Error(
+        JSON.stringify({
+          statusCode: HTTP_STATUS_CODES.NOT_FOUND_404,
+          errorsMessages: [
+            {
+              message: 'post with provided id does not exist',
+              field: 'params',
+            },
+          ],
+        }),
+      )
+    }
+
+    const updatedBody: CreateCommentBody = { ...body, postId }
+
+    return await commentService.createComment(updatedBody)
+  },
+
+  updatePost: async (
+    id: PostViewModel['id'],
+    body: UpdatePostBody,
+  ): Promise<PostViewModel['id'] | null> => {
     // check if post exists (params)
     const post = await postQueryRepository.findPost(id)
     if (!post) {

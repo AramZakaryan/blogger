@@ -1,4 +1,6 @@
 import {
+  CreateCommentOfPostRequest, CreateCommentOfPostResponse,
+  CreatePostOfBlogRequest, CreatePostOfBlogResponse,
   CreatePostRequest,
   CreatePostResponse,
   DeletePostRequest,
@@ -20,8 +22,8 @@ import {
   handleResponseNotFoundError,
   HTTP_STATUS_CODES,
 } from '../common'
-import { postQueryRepository } from '../queryRepositories'
-import { postService } from '../services'
+import { commentQueryRepository, postQueryRepository } from '../queryRepositories'
+import { blogService, postService } from '../services'
 import { postQueryService } from '../queryServices/postQueryService'
 import { blogQueryService } from '../queryServices'
 
@@ -83,6 +85,31 @@ export const postControllers = {
         const createdPost = await postQueryRepository.findPost(createdPosId)
         if (createdPost) {
           res.status(HTTP_STATUS_CODES.CREATED_201).json(createdPost)
+        } else {
+          handleResponseError(res, 'BAD_REQUEST_400')
+        }
+      } else {
+        handleResponseError(res, 'BAD_REQUEST_400')
+      }
+    } catch (error) {
+      handleCustomError(res, error)
+    }
+  },
+
+  createCommentOfPost: async (
+    req: CreateCommentOfPostRequest,
+    res: CreateCommentOfPostResponse,
+  ): Promise<void> => {
+    const { id } = req.params
+    const { body } = req
+
+    try {
+      const createdCommentId = await postService.createCommentOfPost(id, body)
+
+      if (createdCommentId) {
+        const createdComment = await commentQueryRepository.findComment(createdCommentId)
+        if (createdComment) {
+          res.status(HTTP_STATUS_CODES.CREATED_201).json(createdComment)
         } else {
           handleResponseError(res, 'BAD_REQUEST_400')
         }

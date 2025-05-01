@@ -10,6 +10,6 @@ export type UpdateCommentBody = CreateCommentBody
 
 export type GetArrangedCommentsQuery = ArrangementQuery<CommentViewModel>
 
-export type CreateCommentBody = CreateCommentOfPostBody
+export type CreateCommentBody = CreateCommentOfPostBody & { postId: string }
 
 export type DeleteCommentParams = FindCommentParams

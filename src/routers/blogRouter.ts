@@ -15,22 +15,20 @@ export const blogRouter = router()
 
 blogRouter.get('/', blogQueryValidator, handleValidationErrors, blogControllers.getArrangedBlogs)
 
-blogRouter.get(
-  '/:id/posts',
-  blogParamsValidator,
-  postQueryValidator,
-  handleValidationErrors,
-  blogControllers.getArrangedPostsOfBlog,
-)
-
-blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControllers.findBlog)
-
 blogRouter.post(
   '/',
   authorizationValidator,
   blogBodyValidator,
   handleValidationErrors,
   blogControllers.createBlog,
+)
+
+blogRouter.get(
+  '/:id/posts',
+  blogParamsValidator,
+  postQueryValidator,
+  handleValidationErrors,
+  blogControllers.getArrangedPostsOfBlog,
 )
 
 blogRouter.post(
@@ -41,6 +39,8 @@ blogRouter.post(
   handleValidationErrors,
   blogControllers.createPostOfBlog,
 )
+
+blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControllers.findBlog)
 
 blogRouter.put(
   '/:id',

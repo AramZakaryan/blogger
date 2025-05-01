@@ -4,7 +4,13 @@ import { runDB, setDB } from '../src/db'
 import { dataSet, postsSetMapped } from './datasets'
 import { MongoClient, ObjectId } from 'mongodb'
 import { config } from 'dotenv'
-import { CreatePostBody, GetArrangedPostsQuery, UpdatePostBody } from '../src/types'
+import {
+  CreateCommentOfPostBody,
+  CreatePostBody,
+  CreatePostOfBlogBody,
+  GetArrangedPostsQuery,
+  UpdatePostBody,
+} from '../src/types'
 
 config()
 
@@ -297,6 +303,8 @@ describe('/posts', () => {
   })
 
   it('send error for non-existing credentials (header) in create, update, delete post', async () => {
+    ////////// case: create post
+
     const bodyCreate = {
       name: 'name max len 15',
       description: 'description max length 500',
@@ -318,6 +326,33 @@ describe('/posts', () => {
         },
       ],
     })
+
+    ////////// case: create comment of post
+
+    const responseGetArrangedPosts = await superRequest
+      .get(PATHS.POSTS)
+      .expect(HTTP_STATUS_CODES.OK_200)
+
+    const bodyCreateCommentOfPost: CreateCommentOfPostBody = {
+      content: 'content length is between 20 and 300',
+    }
+
+    const responseCreateCommentOfPost = await superRequest
+      .post(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[0].id}/comments`)
+      .set('Authorization', '') // setting headers
+      .send(bodyCreateCommentOfPost)
+      .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401)
+
+    expect(responseCreateCommentOfPost.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'headers required',
+          field: 'headers',
+        },
+      ],
+    })
+
+    ////////// case: update post
 
     const responseGetPosts = await superRequest.get(PATHS.POSTS).expect(HTTP_STATUS_CODES.OK_200)
 
@@ -341,6 +376,8 @@ describe('/posts', () => {
         },
       ],
     })
+
+    ////////// case: delete post
 
     const responseDeletePost = await superRequest
       .delete(`${PATHS.POSTS}/${responseGetPosts.body.items[0].id}`)
@@ -577,6 +614,79 @@ describe('/posts', () => {
         {
           message: 'blog with provided id does not exist',
           field: 'blogId',
+        },
+      ],
+    })
+  })
+
+  it('create a comment of post', async () => {
+    const responseGetArrangedPosts = await superRequest
+      .get(PATHS.POSTS)
+      .expect(HTTP_STATUS_CODES.OK_200)
+
+    const body: CreateCommentOfPostBody = {
+      content: 'content length is between 20 and 300',
+    }
+
+    const responseCreateComment = await superRequest
+      .post(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[0].id}/comments`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(body)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.CREATED_201)
+
+    expect(responseCreateComment.body).toMatchObject({
+      id: expect.any(String),
+      content: body.content,
+      postId: responseGetArrangedPosts.body.items[0].id,
+      createdAt: expect.any(String),
+    })
+  })
+
+  it('send error for not correct format blog id, non-existing blog in create a comment of post', async () => {
+    ////////// case1: post id is not MongoDb _id format with correct body
+    const paramsIdNonExisting1 = 'paramsNotCorrect'
+
+    const body1: CreateCommentOfPostBody = {
+      content: 'content length is between 20 and 300',
+    }
+
+    const responseCreateCommentError1 = await superRequest
+      .post(`${PATHS.POSTS}/${paramsIdNonExisting1}/comments`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(body1)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseCreateCommentError1.body).toMatchObject({
+      errorsMessages: [
+        {
+          message: 'post id must be in a valid format',
+          field: 'params',
+        },
+      ],
+    })
+
+    ////////// case2: non-existing blog id (blog id is correct format of MongoDb _id) with correct body
+
+    const paramsIdNonExisting2 = new ObjectId()
+
+    const body2: CreateCommentOfPostBody = {
+      content: 'content length is between 20 and 300',
+    }
+
+    const responseCreatePostError2 = await superRequest
+      .post(`${PATHS.POSTS}/${paramsIdNonExisting2}/comments`)
+      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .send(body2)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
+
+    expect(responseCreatePostError2.body).toMatchObject({
+      errorsMessages: [
+        {
+          message: 'post with provided id does not exist',
+          field: 'params',
         },
       ],
     })
