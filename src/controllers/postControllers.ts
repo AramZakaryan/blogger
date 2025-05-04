@@ -101,10 +101,10 @@ export const postControllers = {
     res: CreateCommentOfPostResponse,
   ): Promise<void> => {
     const { id } = req.params
-    const { body } = req
+    const { body, user } = req
 
     try {
-      const createdCommentId = await postService.createCommentOfPost(id, body)
+      const createdCommentId = await postService.createCommentOfPost(id, body, user)
 
       if (createdCommentId) {
         const createdComment = await commentQueryRepository.findComment(createdCommentId)

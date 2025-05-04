@@ -8,7 +8,7 @@ import {
   CreatePostOfBlogBody,
   GetArrangedPostsQuery,
   PostViewModel,
-  UpdatePostBody,
+  UpdatePostBody, UserViewForMeModel,
 } from '../types'
 import { blogQueryRepository, postQueryRepository } from '../queryRepositories'
 import { HTTP_STATUS_CODES, toObjectId } from '../common'
@@ -44,6 +44,7 @@ export const postService = {
   createCommentOfPost: async (
     postId: CommentViewModel['postId'],
     body: CreateCommentOfPostBody,
+    user: UserViewForMeModel,
   ): Promise<PostViewModel['id'] | null> => {
     // check if post exists
     const post = await postQueryRepository.findPost(postId)
@@ -63,7 +64,7 @@ export const postService = {
 
     const updatedBody: CreateCommentBody = { ...body, postId }
 
-    return await commentService.createComment(updatedBody)
+    return await commentService.createComment(updatedBody, user)
   },
 
   updatePost: async (

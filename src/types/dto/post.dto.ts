@@ -9,7 +9,10 @@ export type GetArrangedCommentsOfPostQuery = GetArrangedCommentsQuery
 
 export type CreateCommentOfPostParams = { id: string }
 
-export type CreateCommentOfPostBody = Omit<CommentDbType, 'commentatorInfo' | 'createdAt'> & {
+export type CreateCommentOfPostBody = Omit<
+  CommentDbType,
+  'commentatorInfo' | 'postId' | 'createdAt'
+> & {
   commentatorInfo: {
     userId: string
     userLogin: string
