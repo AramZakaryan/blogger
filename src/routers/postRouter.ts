@@ -33,7 +33,7 @@ postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.
 
 postRouter.post(
   '/',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   postBodyValidator,
   handleValidationErrors,
   postControllers.createPost,
@@ -43,7 +43,7 @@ postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControll
 
 postRouter.put(
   '/:id',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   postParamsValidator,
   postBodyValidator,
   handleValidationErrors,
@@ -52,7 +52,7 @@ postRouter.put(
 
 postRouter.delete(
   '/:id',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   postParamsValidator,
   handleValidationErrors,
   postControllers.deletePost,

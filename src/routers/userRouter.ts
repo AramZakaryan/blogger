@@ -12,7 +12,7 @@ export const userRouter = router()
 
 userRouter.get(
   '/',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   userQueryValidator,
   handleValidationErrors,
   userControllers.getArrangedUsers,
@@ -20,7 +20,7 @@ userRouter.get(
 
 userRouter.get(
   '/:id',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   userParamsValidator,
   handleValidationErrors,
   userControllers.findUser,
@@ -28,7 +28,7 @@ userRouter.get(
 
 userRouter.post(
   '/',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   userBodyValidator,
   handleValidationErrors,
   userControllers.createUser,
@@ -36,7 +36,7 @@ userRouter.post(
 
 userRouter.delete(
   '/:id',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   userParamsValidator,
   handleValidationErrors,
   userControllers.deleteUser,

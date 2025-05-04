@@ -17,7 +17,7 @@ blogRouter.get('/', blogQueryValidator, handleValidationErrors, blogControllers.
 
 blogRouter.post(
   '/',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   blogBodyValidator,
   handleValidationErrors,
   blogControllers.createBlog,
@@ -33,7 +33,7 @@ blogRouter.get(
 
 blogRouter.post(
   '/:id/posts',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   blogParamsValidator,
   postBodyValidatorWithoutBlogId,
   handleValidationErrors,
@@ -44,7 +44,7 @@ blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControll
 
 blogRouter.put(
   '/:id',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   blogParamsValidator,
   blogBodyValidator,
   handleValidationErrors,
@@ -53,7 +53,7 @@ blogRouter.put(
 
 blogRouter.delete(
   '/:id',
-  authorizationBearerValidator,
+  // authorizationBearerValidator,
   blogParamsValidator,
   handleValidationErrors,
   blogControllers.deleteBlog,
