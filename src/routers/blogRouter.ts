@@ -1,7 +1,7 @@
 import router from 'express'
 import { blogControllers } from '../controllers'
 import {
-  authorizationValidator,
+  authorizationBearerValidator,
   blogBodyValidator,
   blogParamsValidator,
   blogQueryValidator,
@@ -17,7 +17,7 @@ blogRouter.get('/', blogQueryValidator, handleValidationErrors, blogControllers.
 
 blogRouter.post(
   '/',
-  authorizationValidator,
+  authorizationBearerValidator,
   blogBodyValidator,
   handleValidationErrors,
   blogControllers.createBlog,
@@ -33,7 +33,7 @@ blogRouter.get(
 
 blogRouter.post(
   '/:id/posts',
-  authorizationValidator,
+  authorizationBearerValidator,
   blogParamsValidator,
   postBodyValidatorWithoutBlogId,
   handleValidationErrors,
@@ -44,7 +44,7 @@ blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControll
 
 blogRouter.put(
   '/:id',
-  authorizationValidator,
+  authorizationBearerValidator,
   blogParamsValidator,
   blogBodyValidator,
   handleValidationErrors,
@@ -53,7 +53,7 @@ blogRouter.put(
 
 blogRouter.delete(
   '/:id',
-  authorizationValidator,
+  authorizationBearerValidator,
   blogParamsValidator,
   handleValidationErrors,
   blogControllers.deleteBlog,

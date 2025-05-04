@@ -1,7 +1,7 @@
 import router from 'express'
 import { postControllers } from '../controllers'
 import {
-  authorizationValidator,
+  authorizationBearerValidator,
   commentBodyValidatorWithoutPostId,
   commentQueryValidator,
   handleValidationErrors,
@@ -22,7 +22,7 @@ postRouter.get(
 
 postRouter.post(
   '/:id/comments',
-  authorizationValidator,
+  authorizationBearerValidator,
   postParamsValidator,
   commentBodyValidatorWithoutPostId,
   handleValidationErrors,
@@ -33,7 +33,7 @@ postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.
 
 postRouter.post(
   '/',
-  authorizationValidator,
+  authorizationBearerValidator,
   postBodyValidator,
   handleValidationErrors,
   postControllers.createPost,
@@ -43,7 +43,7 @@ postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControll
 
 postRouter.put(
   '/:id',
-  authorizationValidator,
+  authorizationBearerValidator,
   postParamsValidator,
   postBodyValidator,
   handleValidationErrors,
@@ -52,7 +52,7 @@ postRouter.put(
 
 postRouter.delete(
   '/:id',
-  authorizationValidator,
+  authorizationBearerValidator,
   postParamsValidator,
   handleValidationErrors,
   postControllers.deletePost,

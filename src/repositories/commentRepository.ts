@@ -9,12 +9,14 @@ export const commentRepository = {
 
       const postId = new ObjectId(body.postId)
 
+      const userId = new ObjectId(body.commentatorInfo.userId)
+
       const comment = {
         content: body.content,
-        // commentatorInfo: {
-        //   userId,
-        //   userLogin: body.commentatorInfo.userLogin,
-        // },
+        commentatorInfo: {
+          userId,
+          userLogin: body.commentatorInfo.userLogin,
+        },
         postId,
         createdAt: new Date(),
       }

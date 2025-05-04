@@ -1,18 +1,42 @@
-import { LoginUserRequest } from '../types'
-import { Response } from 'express'
+import { LoginRequest, LoginResponse, MeRequest, MeResponse, ResultStatus } from '../types'
 import { authService } from '../services'
-import { handleResponseError, HTTP_STATUS_CODES } from '../common'
+import {
+  handleResponseError,
+  handleResponseCredentialsError,
+  HTTP_STATUS_CODES,
+  handleResponseNotAuthorizedError,
+} from '../common'
 
 export const authControllers = {
-  loginUser: async (req: LoginUserRequest, res: Response): Promise<void> => {
+  login: async (req: LoginRequest, res: LoginResponse): Promise<void> => {
     const { body } = req
 
-    const result = await authService.loginUser(body)
+    const result = await authService.login(body)
 
-    if (result === true) {
-      res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
-    } else if (result === false) {
-      res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED_401)
+    const status = result?.status
+    const data = result?.data
+
+    if (status === ResultStatus.Success && data) {
+      res.status(HTTP_STATUS_CODES.OK_200).json(data)
+    } else if (status === ResultStatus.Unauthorized) {
+      handleResponseCredentialsError(res)
+    } else {
+      handleResponseError(res, 'BAD_REQUEST_400')
+    }
+  },
+  me: async (req: MeRequest, res: MeResponse): Promise<void> => {
+    const authHeader = req.headers['authorization']
+
+    const result = await authService.me(authHeader)
+
+    const status = result?.status
+    const data = result?.data
+    const extensions = result?.extensions
+
+    if (status === ResultStatus.Success && data) {
+      res.status(HTTP_STATUS_CODES.OK_200).json(data)
+    } else if (status === ResultStatus.Unauthorized) {
+      handleResponseNotAuthorizedError(res, extensions)
     } else {
       handleResponseError(res, 'BAD_REQUEST_400')
     }

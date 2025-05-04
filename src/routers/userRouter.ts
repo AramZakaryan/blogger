@@ -1,7 +1,7 @@
 import router from 'express'
 import { userControllers } from '../controllers'
 import {
-  authorizationValidator,
+  authorizationBearerValidator,
   handleValidationErrors,
   userBodyValidator,
   userQueryValidator,
@@ -12,7 +12,7 @@ export const userRouter = router()
 
 userRouter.get(
   '/',
-  authorizationValidator,
+  authorizationBearerValidator,
   userQueryValidator,
   handleValidationErrors,
   userControllers.getArrangedUsers,
@@ -20,7 +20,7 @@ userRouter.get(
 
 userRouter.get(
   '/:id',
-  authorizationValidator,
+  authorizationBearerValidator,
   userParamsValidator,
   handleValidationErrors,
   userControllers.findUser,
@@ -28,7 +28,7 @@ userRouter.get(
 
 userRouter.post(
   '/',
-  authorizationValidator,
+  authorizationBearerValidator,
   userBodyValidator,
   handleValidationErrors,
   userControllers.createUser,
@@ -36,7 +36,7 @@ userRouter.post(
 
 userRouter.delete(
   '/:id',
-  authorizationValidator,
+  authorizationBearerValidator,
   userParamsValidator,
   handleValidationErrors,
   userControllers.deleteUser,

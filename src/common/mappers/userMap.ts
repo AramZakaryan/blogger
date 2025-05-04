@@ -1,4 +1,4 @@
-import { BlogDbType, BlogViewModel, UserDbType, UserViewModel } from '../../types'
+import { BlogDbType, BlogViewModel, UserDbType, UserViewForMeModel, UserViewModel } from '../../types'
 import { WithId } from 'mongodb'
 
 export const userMap = (user: WithId<UserDbType>): UserViewModel => ({
@@ -6,4 +6,10 @@ export const userMap = (user: WithId<UserDbType>): UserViewModel => ({
   login: user.login,
   email: user.email,
   createdAt: user.createdAt.toISOString(),
+})
+
+export const userForMeMap = (user: UserViewModel): UserViewForMeModel => ({
+  userId: user.id,
+  login: user.login,
+  email: user.email,
 })

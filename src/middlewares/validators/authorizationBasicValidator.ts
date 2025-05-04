@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { config } from 'dotenv'
-import { HTTP_STATUS_CODES } from '../../common/httpStatusCodes'
+import { HTTP_STATUS_CODES } from '../../common'
 
 config()
 
@@ -15,7 +15,9 @@ const username = process.env.USERNAME
 const password = process.env.PASSWORD
 const encodeBasicCredentials = encodeBasicAuth(username, password)
 
-export const authorizationValidator = (req: Request, res: Response, next: NextFunction) => {
+// Basic Authorization was used before s2n2
+
+export const authorizationBasicValidator = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization']
   if (!authHeader || !authHeader.startsWith(`Basic ${encodeBasicCredentials}`)) {
     res.status(HTTP_STATUS_CODES.UNAUTHORIZED_401).json({

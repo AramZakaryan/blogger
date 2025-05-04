@@ -1,5 +1,6 @@
 export * from './handlers'
-export * from './authorizationValidator'
+// export * from './authorizationBasicValidator' // Basic Authorization was used before s2n2
+export * from './authorizationBearerValidator'
 export * from './authBodyValidator'
 export * from './blogBodyValidator'
 export * from './blogParamsValidator'

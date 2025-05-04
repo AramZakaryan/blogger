@@ -12,10 +12,3 @@ export type FindUserParams = { id: string }
 export type CreateUserBody = Omit<WithId<UserDbType>, '_id' | 'createdAt'>
 
 export type DeleteUserParams = FindUserParams
-
-////////// in auth path
-
-export type LoginUserBody = {
-  loginOrEmail: string
-  password: string
-}

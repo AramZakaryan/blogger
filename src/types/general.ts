@@ -26,10 +26,10 @@ export type ArrangedViewModel<T> = {
 }
 
 export type Result<T = null> = {
-  status: ResultCode
+  status: ResultStatus
   errorMessage?: string
   extensions?: Extension[]
-  data?: T
+  data?: T | null
 }
 
 type Extension = {
@@ -37,7 +37,7 @@ type Extension = {
   message?: string
 }
 
-export enum ResultCode {
+export enum ResultStatus {
   Success = 'Success',
   NotFound = 'NotFound',
   Forbidden = 'Forbidden',

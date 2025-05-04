@@ -1,3 +1,4 @@
+export * from './auth.response.type'
 export * from './blog.response.type'
 export * from './post.response.type'
 export * from './comment.response.type'

@@ -1,22 +1,14 @@
 import {
   CreateCommentRequest,
   CreateCommentResponse,
-  CreatePostRequest,
-  CreatePostResponse,
   DeleteCommentRequest,
   DeleteCommentResponse,
-  DeletePostRequest,
-  DeletePostResponse,
   FindCommentRequest,
   FindCommentResponse,
-  FindPostRequest,
-  FindPostResponse, GetArrangedCommentsRequest, GetArrangedCommentsResponse,
-  GetArrangedPostsRequest,
-  GetArrangedPostsResponse,
+  GetArrangedCommentsRequest,
+  GetArrangedCommentsResponse,
   UpdateCommentRequest,
   UpdateCommentResponse,
-  UpdatePostRequest,
-  UpdatePostResponse,
 } from '../types'
 import {
   handleCustomError,
@@ -24,9 +16,8 @@ import {
   handleResponseNotFoundError,
   HTTP_STATUS_CODES,
 } from '../common'
-import { commentQueryRepository, postQueryRepository } from '../queryRepositories'
-import { commentService, postService } from '../services'
-import { postQueryService } from '../queryServices/postQueryService'
+import { commentQueryRepository } from '../queryRepositories'
+import { commentService } from '../services'
 import { commentQueryService } from '../queryServices'
 
 export const commentControllers = {
@@ -57,9 +48,9 @@ export const commentControllers = {
   },
 
   createComment: async (req: CreateCommentRequest, res: CreateCommentResponse): Promise<void> => {
-    const { body } = req
+    const { body, user } = req
 
-    const createdCommentId = await commentService.createComment(body)
+    const createdCommentId = await commentService.createComment(body, user)
 
     try {
       if (createdCommentId) {

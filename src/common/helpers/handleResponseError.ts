@@ -1,5 +1,6 @@
 import { HTTP_STATUS_CODES } from '../httpStatusCodes'
 import { Response } from 'express'
+import { Result } from '../../types'
 
 export const handleResponseError = (
   response: Response,
@@ -27,6 +28,26 @@ export const handleResponseNotFoundError = (
         field: 'params',
       },
     ],
+  })
+}
+
+export const handleResponseCredentialsError = (response: Response) => {
+  return response.status(HTTP_STATUS_CODES.UNAUTHORIZED_401).json({
+    errorsMessages: [
+      {
+        message: `login, email or password is incorrect`,
+        field: 'loginOrEmail or password',
+      },
+    ],
+  })
+}
+
+export const handleResponseNotAuthorizedError = (
+  response: Response,
+  extensions: Result['extensions'],
+) => {
+  return response.status(HTTP_STATUS_CODES.UNAUTHORIZED_401).json({
+    errorsMessages: extensions,
   })
 }
 
