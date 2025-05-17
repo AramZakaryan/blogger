@@ -51,9 +51,7 @@ export const authService = {
       if (!authHeader) {
         return {
           status: ResultStatus.Unauthorized,
-          extensions: [
-            { field: `headers['authorization']`, message: 'Authorization header is missing' },
-          ],
+          extensions: [{ field: `headers`, message: 'headers required' }],
           data: null,
         }
       }
@@ -65,9 +63,7 @@ export const authService = {
       if (!userId) {
         return {
           status: ResultStatus.Unauthorized,
-          extensions: [
-            { field: `headers['authorization']`, message: 'Authorization token is invalid' },
-          ],
+          extensions: [{ field: `headers`, message: 'headers required' }],
           data: null,
         }
       }
@@ -77,9 +73,7 @@ export const authService = {
       if (!user) {
         return {
           status: ResultStatus.Unauthorized,
-          extensions: [
-            { field: `headers['authorization']`, message: 'User with provided id does not exist' },
-          ],
+          extensions: [{ field: `headers`, message: 'headers required' }],
           data: null,
         }
       }

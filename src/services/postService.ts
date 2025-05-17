@@ -42,7 +42,7 @@ export const postService = {
   },
 
   createCommentOfPost: async (
-    postId: CommentViewModel['postId'],
+    postId: string,
     body: CreateCommentOfPostBody,
     user: UserViewForMeModel,
   ): Promise<PostViewModel['id'] | null> => {
@@ -62,9 +62,9 @@ export const postService = {
       )
     }
 
-    const updatedBody: CreateCommentBody = { ...body, postId }
+    const extendedBody: CreateCommentBody = { ...body, postId }
 
-    return await commentService.createComment(updatedBody, user)
+    return await commentService.createComment(extendedBody, user)
   },
 
   updatePost: async (

@@ -9,6 +9,7 @@ import {
   postParamsValidator,
   postQueryValidator,
 } from '../middlewares'
+import { authorizationBasicValidator } from '../middlewares/validators/authorizationBasicValidator'
 
 export const postRouter = router()
 
@@ -34,6 +35,7 @@ postRouter.get('/', postQueryValidator, handleValidationErrors, postControllers.
 postRouter.post(
   '/',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   postBodyValidator,
   handleValidationErrors,
   postControllers.createPost,
@@ -44,6 +46,7 @@ postRouter.get('/:id', postParamsValidator, handleValidationErrors, postControll
 postRouter.put(
   '/:id',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   postParamsValidator,
   postBodyValidator,
   handleValidationErrors,
@@ -53,6 +56,7 @@ postRouter.put(
 postRouter.delete(
   '/:id',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   postParamsValidator,
   handleValidationErrors,
   postControllers.deletePost,

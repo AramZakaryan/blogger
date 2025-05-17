@@ -13,6 +13,7 @@ import {
   PostViewModel,
   UpdateBlogBody,
 } from '../src/types'
+import { JwtService } from '../src/services'
 
 config()
 
@@ -49,10 +50,16 @@ describe('/auth', () => {
         password: `user password ${i}`,
       }
 
-      await superRequest
+      const response = await superRequest
         .post(`${PATHS.AUTH}/login`)
         .send(body)
-        .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      const accessToken = response.body.accessToken
+
+      const decoded = JwtService.parseToken(accessToken)
+
+      expect(decoded).toBe(usersSet[i]._id.toString())
     }
 
     ////////// case 2: with email as loginOrEmail
@@ -63,11 +70,19 @@ describe('/auth', () => {
         password: `user password ${i}`,
       }
 
-      await superRequest
+      const response = await superRequest
         .post(`${PATHS.AUTH}/login`)
         .send(body)
-        .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
+        .expect(HTTP_STATUS_CODES.OK_200)
+
+      const accessToken = response.body.accessToken
+
+      const decoded = JwtService.parseToken(accessToken)
+
+      expect(decoded).toBe(usersSet[i]._id.toString())
     }
+
+
   })
 
   it('send error for wrong credentials in login user', async () => {

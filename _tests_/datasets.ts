@@ -1,7 +1,9 @@
 import { Db } from '../src/db'
 import {
   BlogDbType,
-  BlogViewModel, CommentDbType, CommentViewModel,
+  BlogViewModel,
+  CommentDbType,
+  CommentViewModel,
   PostDbType,
   PostViewModel,
   UserDbType,
@@ -88,18 +90,22 @@ export const postsSet: WithId<PostDbType>[] = Array.from({ length: 15 }, (_, i) 
   createdAt: new Date(Date.now() + i * 1000),
 }))
 
-export const commentsSet: WithId<CommentDbType>[] = Array.from({ length: 15 }, (_, i) => ({
-  _id: new ObjectId(),
-  content: `comment comment comment content ${i}`,
-  postId: postsSet[~~(i / 5)]._id,
-  createdAt: new Date(Date.now() + i * 1000),
-}))
-
 export const usersSet: WithId<UserDbType>[] = Array.from({ length: 15 }, (_, i) => ({
   _id: new ObjectId(),
   login: `login${i}${userLoginAppendices[i]}`,
   email: `user@email${i}${userEmailAppendices[i]}.com`,
   password: bcrypt.hashSync(`user password ${i}`, 1),
+  createdAt: new Date(Date.now() + i * 1000),
+}))
+
+export const commentsSet: WithId<CommentDbType>[] = Array.from({ length: 15 }, (_, i) => ({
+  _id: new ObjectId(),
+  content: `comment content content content ${i}`,
+  postId: postsSet[~~(i / 5)]._id,
+  commentatorInfo: {
+    userId: usersSet[~~(i / 5)]._id,
+    userLogin: usersSet[~~(i / 5)].login,
+  },
   createdAt: new Date(Date.now() + i * 1000),
 }))
 

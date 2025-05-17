@@ -1,7 +1,7 @@
-import { superRequest } from './testHelpers'
+import { loginAndGetAccessToken, superRequest } from './testHelpers'
 import { customSort, HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
-import { commentsSetMapped, dataSet } from './datasets'
+import { commentsSetMapped, dataSet, usersSetMapped } from './datasets'
 import { MongoClient, ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import { CreateCommentBody, GetArrangedCommentsQuery, UpdateCommentBody } from '../src/types'
@@ -364,6 +364,8 @@ describe('/comments', () => {
   })
 
   it('create a comment', async () => {
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
     const responseGetArrangedPosts = await superRequest
       .get(PATHS.POSTS)
       .expect(HTTP_STATUS_CODES.OK_200)
@@ -375,7 +377,7 @@ describe('/comments', () => {
 
     const responseCreateComment = await superRequest
       .post(PATHS.COMMENTS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(body)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.CREATED_201)
@@ -383,19 +385,24 @@ describe('/comments', () => {
     expect(responseCreateComment.body).toMatchObject({
       id: expect.any(String),
       content: body.content,
-      postId: body.postId,
+      commentatorInfo: {
+        userId: usersSetMapped[0].id,
+        userLogin: usersSetMapped[0].login,
+      },
       createdAt: expect.any(String),
     })
   })
 
   it('send error for non-existing, empty, non-object body in create comment', async () => {
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
     ////////// case1: non-existing body in create comment
 
     const bodyNonExisting = undefined
 
     const responseCreateCommentToBodyNonExisting = await superRequest
       .post(PATHS.COMMENTS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyNonExisting)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -419,7 +426,7 @@ describe('/comments', () => {
 
     const responseCreateCommentToBodyEmpty = await superRequest
       .post(PATHS.COMMENTS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyEmpty)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -443,7 +450,7 @@ describe('/comments', () => {
 
     const responseCreateCommentToyBodyArray = await superRequest
       .post(PATHS.COMMENTS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyArray)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -463,6 +470,8 @@ describe('/comments', () => {
   })
 
   it('send error for error body in create comment', async () => {
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
     ////////// case1
     const bodyError1 = {
       // content: 'content max length 1000', // error message: content is required
@@ -472,7 +481,7 @@ describe('/comments', () => {
 
     const responseCreateCommentError1 = await superRequest
       .post(PATHS.COMMENTS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyError1)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -498,7 +507,7 @@ describe('/comments', () => {
 
     const responseCreateCommentError2 = await superRequest
       .post(PATHS.COMMENTS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyError2)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -524,7 +533,7 @@ describe('/comments', () => {
 
     const responseCreateCommentError3 = await superRequest
       .post(PATHS.COMMENTS)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyError3)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -544,28 +553,22 @@ describe('/comments', () => {
   })
 
   it('update comment', async () => {
-    const responseGetArrangedPosts = await superRequest
-      .get(PATHS.POSTS)
-      .expect(HTTP_STATUS_CODES.OK_200)
-
-    const randomPosts = Array.from(
-      { length: 10 },
-      () => responseGetArrangedPosts.body.items[~~(Math.random() * 10)],
-    )
-
     const responseGetArrangedComments = await superRequest
       .get(PATHS.COMMENTS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
     for (let i = 0; i < responseGetArrangedComments.body.items.length; i++) {
+      const accessToken = await loginAndGetAccessToken(
+        responseGetArrangedComments.body.items[i].commentatorInfo.userLogin,
+      )
+
       const body: UpdateCommentBody = {
         content: `new content min length 20 name max length 300${i}`,
-        postId: randomPosts[i].id,
       }
 
       await superRequest
         .put(`${PATHS.COMMENTS}/${responseGetArrangedComments.body.items[i].id}`)
-        .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send(body)
         .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
     }
@@ -578,27 +581,31 @@ describe('/comments', () => {
       expect(responseGetArrangedCommentsAfterUpdate.body.items[i]).toEqual({
         id: responseGetArrangedComments.body.items[i].id,
         content: `new content min length 20 name max length 300${i}`,
-        postId: randomPosts[i].id,
+        commentatorInfo: {
+          userId: responseGetArrangedComments.body.items[i].commentatorInfo.userId,
+          userLogin: responseGetArrangedComments.body.items[i].commentatorInfo.userLogin,
+        },
         createdAt: responseGetArrangedComments.body.items[i].createdAt,
       })
     }
   })
 
   it('send error for not correct body in update comment', async () => {
-    ///////// case1
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
+    ///////// case1: too long content
     const responseGetArrangedComments = await superRequest
       .get(PATHS.COMMENTS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
     const bodyError1 = {
       content: 'new content min length 20 name max length 300${i}'.repeat(10),
-      postId: 'formatNotCorrect',
       unexpectedKey: 'unexpectedValue',
     }
 
     const responseUpdateCommentError1 = await superRequest
       .put(`${PATHS.COMMENTS}/${responseGetArrangedComments.body.items[0].id}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyError1)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -609,22 +616,17 @@ describe('/comments', () => {
           message: 'content length is between 20 and 300',
           field: 'content',
         },
-        {
-          message: 'postId must be in a valid format',
-          field: 'postId',
-        },
       ],
     })
 
-    ///////// case2
+    ///////// case2: too short content
     const bodyError2 = {
       content: 'short content',
-      postId: responseGetArrangedComments.body.items[0].postId,
     }
 
     const responseUpdateCommentError2 = await superRequest
       .put(`${PATHS.COMMENTS}/${responseGetArrangedComments.body.items[0].id}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyError2)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
@@ -637,31 +639,11 @@ describe('/comments', () => {
         },
       ],
     })
-
-    ///////// case3: non-existing postId (but correct MongoDb -id format) and correct other fields
-    const bodyError3 = {
-      content: 'content min length 20 name max length 300',
-      postId: new ObjectId(),
-    }
-
-    const responseUpdateCommentError3 = await superRequest
-      .put(`${PATHS.COMMENTS}/${responseGetArrangedComments.body.items[0].id}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(bodyError3)
-      .expect('Content-Type', /json/)
-      .expect(HTTP_STATUS_CODES.BAD_REQUEST_400)
-
-    expect(responseUpdateCommentError3.body).toEqual({
-      errorsMessages: [
-        {
-          message: 'post with provided id does not exist',
-          field: 'postId',
-        },
-      ],
-    })
   })
 
-  it('send error for not correct format comment id params, non-existing comment id params in update comment', async () => {
+  it('send error for not correct format comment id params, non-existing comment id params, comment of another user in update comment', async () => {
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
     ////////// case1: comment id params not correct MongoDb _id format
     const paramsUpdateError1 = 'formatNotCorrect'
 
@@ -669,7 +651,7 @@ describe('/comments', () => {
 
     const responseUpdateCommentError1 = await superRequest
       .put(`${PATHS.COMMENTS}/${paramsUpdateError1}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyUpdateError1)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
@@ -677,16 +659,12 @@ describe('/comments', () => {
     expect(responseUpdateCommentError1.body).toEqual({
       errorsMessages: [
         {
-          field: 'params',
           message: 'comment id must be in a valid format',
+          field: 'params',
         },
         {
           message: 'content is required',
           field: 'content',
-        },
-        {
-          message: 'postId is required',
-          field: 'postId',
         },
       ],
     })
@@ -700,13 +678,13 @@ describe('/comments', () => {
     const paramsUpdateError2 = new ObjectId()
 
     const bodyUpdateError2 = {
-      content: 'content length is between 20 and 300' ,
+      content: 'content length is between 20 and 300',
       postId: responseGetArrangedComments.body.items[0].postId,
     }
 
     const responseUpdateCommentError2 = await superRequest
       .put(`${PATHS.COMMENTS}/${paramsUpdateError2}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(bodyUpdateError2)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
@@ -719,12 +697,35 @@ describe('/comments', () => {
         },
       ],
     })
+
+    ///////// case3: attempt to update the comment of another user
+    const bodyError3 = {
+      content: 'content min length 20 name max length 300',
+    }
+
+    const responseUpdateCommentError3 = await superRequest
+      .put(`${PATHS.COMMENTS}/${responseGetArrangedComments.body.items[1].id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(bodyError3)
+      .expect('Content-Type', /json/)
+      .expect(HTTP_STATUS_CODES.FORBIDDEN_403)
+
+    expect(responseUpdateCommentError3.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'comment does not belong to the user',
+          field: 'params',
+        },
+      ],
+    })
   })
 
   it('delete comment', async () => {
     const responseGetArrangedComments = await superRequest
       .get(PATHS.COMMENTS)
       .expect(HTTP_STATUS_CODES.OK_200)
+
+    const accessToken = await loginAndGetAccessToken(responseGetArrangedComments.body.items[0].commentatorInfo.userLogin)
 
     const responseFindComment = await superRequest
       .get(`${PATHS.COMMENTS}/${responseGetArrangedComments.body.items[0].id}`)
@@ -734,7 +735,7 @@ describe('/comments', () => {
 
     await superRequest
       .delete(`${PATHS.COMMENTS}/${responseFindComment.body.id}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(HTTP_STATUS_CODES.NO_CONTENT_204)
 
     const responseFindCommentsAfterDelete = await superRequest
@@ -751,13 +752,15 @@ describe('/comments', () => {
     })
   })
 
-  it('send error for comment id not correct format, not existing comment id in delete comment', async () => {
+  it('send error for comment id not correct format, not existing comment id, comment of another user in delete comment', async () => {
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
     ////////// case1: comment id params not correct format MongoDb id
     const paramsDeleteError1 = 'formatNotCorrect'
 
     const responseDeletePos1 = await superRequest
       .delete(`${PATHS.COMMENTS}/${paramsDeleteError1}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseDeletePos1.body).toEqual({
@@ -769,18 +772,37 @@ describe('/comments', () => {
       ],
     })
 
-    ////////// case1: non-existing comment id params (but correct format MongoDb id)
+    ////////// case2: non-existing comment id params (but correct format MongoDb id)
     const paramsDeleteError2 = new ObjectId()
 
     const responseDeletePos2 = await superRequest
       .delete(`${PATHS.COMMENTS}/${paramsDeleteError2}`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
 
     expect(responseDeletePos2.body).toEqual({
       errorsMessages: [
         {
           message: 'comment with provided id does not exist',
+          field: 'params',
+        },
+      ],
+    })
+
+    ///////// case3: attempt to delete the comment of another user
+    const responseGetArrangedComments = await superRequest
+      .get(PATHS.COMMENTS)
+      .expect(HTTP_STATUS_CODES.OK_200)
+
+    const responseUpdateCommentError3 = await superRequest
+      .delete(`${PATHS.COMMENTS}/${responseGetArrangedComments.body.items[1].id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(HTTP_STATUS_CODES.FORBIDDEN_403)
+
+    expect(responseUpdateCommentError3.body).toEqual({
+      errorsMessages: [
+        {
+          message: 'comment does not belong to the user',
           field: 'params',
         },
       ],

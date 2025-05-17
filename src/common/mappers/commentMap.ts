@@ -8,6 +8,6 @@ export const commentMap = (comment: WithId<CommentDbType>): CommentViewModel => 
     userId: comment.commentatorInfo.userId.toString(),
     userLogin: comment.commentatorInfo.userLogin,
   },
-  postId: comment.postId.toString(),
+  // postId: comment.postId.toString(),
   createdAt: comment.createdAt.toISOString(),
 })

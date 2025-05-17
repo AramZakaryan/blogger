@@ -15,8 +15,6 @@ const username = process.env.USERNAME
 const password = process.env.PASSWORD
 const encodeBasicCredentials = encodeBasicAuth(username, password)
 
-// Basic Authorization was used before s2n2
-
 export const authorizationBasicValidator = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization']
   if (!authHeader || !authHeader.startsWith(`Basic ${encodeBasicCredentials}`)) {

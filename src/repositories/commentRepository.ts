@@ -1,21 +1,27 @@
-import { CommentViewModel, CreateCommentBody, UpdateCommentBody } from '../types'
+import {
+  CommentatorInfoViewModel,
+  CommentViewModel,
+  CreateCommentBody, CreateCommentExtendedBody,
+  UpdateCommentBody,
+} from '../types'
 import { commentCollection, postCollection } from '../db'
 import { ObjectId } from 'mongodb'
 
 export const commentRepository = {
-  createComment: async (body: CreateCommentBody): Promise<CommentViewModel['id'] | null> => {
+  createComment: async (
+    extendedBody: CreateCommentExtendedBody,
+  ): Promise<CommentViewModel['id'] | null> => {
     try {
-      // const userId = new ObjectId(body.commentatorInfo.userId)
 
-      const postId = new ObjectId(body.postId)
+      const postId = new ObjectId(extendedBody.postId)
 
-      const userId = new ObjectId(body.commentatorInfo.userId)
+      const userId = new ObjectId(extendedBody.commentatorInfo.userId)
 
       const comment = {
-        content: body.content,
+        content: extendedBody.content,
         commentatorInfo: {
           userId,
-          userLogin: body.commentatorInfo.userLogin,
+          userLogin: extendedBody.commentatorInfo.userLogin,
         },
         postId,
         createdAt: new Date(),
@@ -38,20 +44,11 @@ export const commentRepository = {
     try {
       const _id = new ObjectId(id)
 
-      // const userId = new ObjectId(body.commentatorInfo.userId)
-
-      const postId = new ObjectId(body.postId)
-
       const updateOneInfo = await commentCollection.updateOne(
         { _id },
         {
           $set: {
             content: body.content,
-            // commentatorInfo: {
-            //   userId,
-            //   userLogin: body.commentatorInfo.userLogin,
-            // },
-            postId,
           },
         },
       )

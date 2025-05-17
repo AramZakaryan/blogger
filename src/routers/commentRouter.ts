@@ -2,7 +2,7 @@ import router from 'express'
 import { commentControllers } from '../controllers'
 import {
   authorizationBearerValidator,
-  commentBodyValidator,
+  commentBodyValidator, commentBodyValidatorWithoutPostId,
   commentParamsValidator,
   commentQueryValidator,
   handleValidationErrors,
@@ -36,7 +36,7 @@ commentRouter.put(
   '/:id',
   authorizationBearerValidator,
   commentParamsValidator,
-  commentBodyValidator,
+  commentBodyValidatorWithoutPostId,
   handleValidationErrors,
   commentControllers.updateComment,
 )

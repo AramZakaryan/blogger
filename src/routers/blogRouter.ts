@@ -10,6 +10,7 @@ import {
   postQueryValidator,
   postBodyValidatorWithoutBlogId,
 } from '../middlewares'
+import { authorizationBasicValidator } from '../middlewares/validators/authorizationBasicValidator'
 
 export const blogRouter = router()
 
@@ -18,6 +19,7 @@ blogRouter.get('/', blogQueryValidator, handleValidationErrors, blogControllers.
 blogRouter.post(
   '/',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   blogBodyValidator,
   handleValidationErrors,
   blogControllers.createBlog,
@@ -34,6 +36,7 @@ blogRouter.get(
 blogRouter.post(
   '/:id/posts',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   blogParamsValidator,
   postBodyValidatorWithoutBlogId,
   handleValidationErrors,
@@ -45,6 +48,7 @@ blogRouter.get('/:id', blogParamsValidator, handleValidationErrors, blogControll
 blogRouter.put(
   '/:id',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   blogParamsValidator,
   blogBodyValidator,
   handleValidationErrors,
@@ -54,6 +58,7 @@ blogRouter.put(
 blogRouter.delete(
   '/:id',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   blogParamsValidator,
   handleValidationErrors,
   blogControllers.deleteBlog,

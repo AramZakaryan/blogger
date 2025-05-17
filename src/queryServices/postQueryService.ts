@@ -13,7 +13,7 @@ export const postQueryService = {
 
   getArrangedCommentsOfPost: async (
     query: GetArrangedCommentsOfPostQuery,
-    postId: CommentViewModel['postId'],
+    postId: string,
   ): Promise<ArrangedCommentsViewModel | null> => {
     // check if post exists
     const post = await postQueryRepository.findPost(postId)

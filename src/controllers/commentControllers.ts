@@ -70,10 +70,10 @@ export const commentControllers = {
 
   updateComment: async (req: UpdateCommentRequest, res: UpdateCommentResponse): Promise<void> => {
     const { id } = req.params
-    const { body } = req
+    const { body, user } = req
 
     try {
-      const updatedCommentId = await commentService.updateComment(id, body)
+      const updatedCommentId = await commentService.updateComment(id, body, user)
 
       if (updatedCommentId) {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)
@@ -87,9 +87,10 @@ export const commentControllers = {
 
   deleteComment: async (req: DeleteCommentRequest, res: DeleteCommentResponse): Promise<void> => {
     const { id } = req.params
+    const { user } = req
 
     try {
-      const deletedCommentId = await commentService.deleteComment(id)
+      const deletedCommentId = await commentService.deleteComment(id, user)
 
       if (deletedCommentId) {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_204)

@@ -1,7 +1,7 @@
-import { superRequest } from './testHelpers'
+import { loginAndGetAccessToken, superRequest } from './testHelpers'
 import { customSort, HTTP_STATUS_CODES, PATHS } from '../src/common'
 import { runDB, setDB } from '../src/db'
-import { dataSet, postsSetMapped } from './datasets'
+import { dataSet, postsSetMapped, usersSet, usersSetMapped } from './datasets'
 import { MongoClient, ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import {
@@ -9,6 +9,7 @@ import {
   CreatePostBody,
   CreatePostOfBlogBody,
   GetArrangedPostsQuery,
+  LoginUserBody,
   UpdatePostBody,
 } from '../src/types'
 
@@ -620,30 +621,38 @@ describe('/posts', () => {
   })
 
   it('create a comment of post', async () => {
+
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
     const responseGetArrangedPosts = await superRequest
       .get(PATHS.POSTS)
       .expect(HTTP_STATUS_CODES.OK_200)
 
-    const body: CreateCommentOfPostBody = {
+    const bodyCreateCommentOfPost: CreateCommentOfPostBody = {
       content: 'content length is between 20 and 300',
     }
 
     const responseCreateComment = await superRequest
       .post(`${PATHS.POSTS}/${responseGetArrangedPosts.body.items[0].id}/comments`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-      .send(body)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(bodyCreateCommentOfPost)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.CREATED_201)
 
     expect(responseCreateComment.body).toMatchObject({
       id: expect.any(String),
-      content: body.content,
-      postId: responseGetArrangedPosts.body.items[0].id,
+      content: bodyCreateCommentOfPost.content,
+      commentatorInfo: {
+        userId: usersSetMapped[0].id,
+        userLogin: usersSetMapped[0].login
+      },
       createdAt: expect.any(String),
     })
   })
 
-  it('send error for not correct format blog id, non-existing blog in create a comment of post', async () => {
+  it('send error for not correct format post id, non-existing post in create a comment of post', async () => {
+    const accessToken = await loginAndGetAccessToken(usersSetMapped[0].login)
+
     ////////// case1: post id is not MongoDb _id format with correct body
     const paramsIdNonExisting1 = 'paramsNotCorrect'
 
@@ -653,7 +662,7 @@ describe('/posts', () => {
 
     const responseCreateCommentError1 = await superRequest
       .post(`${PATHS.POSTS}/${paramsIdNonExisting1}/comments`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(body1)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)
@@ -677,7 +686,7 @@ describe('/posts', () => {
 
     const responseCreatePostError2 = await superRequest
       .post(`${PATHS.POSTS}/${paramsIdNonExisting2}/comments`)
-      .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(body2)
       .expect('Content-Type', /json/)
       .expect(HTTP_STATUS_CODES.NOT_FOUND_404)

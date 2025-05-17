@@ -7,12 +7,14 @@ import {
   userQueryValidator,
 } from '../middlewares'
 import { userParamsValidator } from '../middlewares/validators/userParamsValidator'
+import { authorizationBasicValidator } from '../middlewares/validators/authorizationBasicValidator'
 
 export const userRouter = router()
 
 userRouter.get(
   '/',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   userQueryValidator,
   handleValidationErrors,
   userControllers.getArrangedUsers,
@@ -21,6 +23,7 @@ userRouter.get(
 userRouter.get(
   '/:id',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   userParamsValidator,
   handleValidationErrors,
   userControllers.findUser,
@@ -29,6 +32,7 @@ userRouter.get(
 userRouter.post(
   '/',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   userBodyValidator,
   handleValidationErrors,
   userControllers.createUser,
@@ -37,6 +41,7 @@ userRouter.post(
 userRouter.delete(
   '/:id',
   // authorizationBearerValidator,
+  authorizationBasicValidator,
   userParamsValidator,
   handleValidationErrors,
   userControllers.deleteUser,

@@ -51,9 +51,9 @@ export const blogService = {
       )
     }
 
-    const updatedBody: CreatePostBody = { ...body, blogId }
+    const extendedBody: CreatePostBody = { ...body, blogId }
 
-    return await postService.createPost(updatedBody)
+    return await postService.createPost(extendedBody)
   },
 
   updateBlog: async (
