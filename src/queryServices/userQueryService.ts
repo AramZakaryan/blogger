@@ -2,7 +2,7 @@ import { userRepository } from '../repositories'
 import {
   ArrangedUsersViewModel,
   CreateUserBody,
-  CreateUserResult,
+  RegisterUserResult,
   GetArrangedUsersQuery,
   UserDbType,
 } from '../types'

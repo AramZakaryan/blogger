@@ -3,9 +3,12 @@ import { CreateUserBody, UserDbType, UserViewModel } from '../types'
 import { userQueryRepository } from '../queryRepositories'
 import bcrypt from 'bcrypt'
 import { HTTP_STATUS_CODES } from '../common'
+import { randomUUID } from 'node:crypto'
+import { add } from 'date-fns'
+import { nodemailerService } from './nodemailerService'
 
 export const userService = {
-  createUser: async (body: CreateUserBody): Promise<UserViewModel['id'] | null> => {
+  registerUser: async (body: CreateUserBody): Promise<UserViewModel['id'] | null> => {
     const { login, email, password } = body
 
     // check if user with given email is unique
@@ -47,14 +50,35 @@ export const userService = {
         login,
         email,
         password: passwordHash,
+        emailConfirmation: {
+          confirmationCode: randomUUID(),
+          expirationDate: add(new Date(), { hours: 24 }),
+          isConfirmed: false,
+        },
         createdAt: new Date(),
       }
 
-      const createdUserId = await userRepository.createUser(userNormalized)
+      const registeredUserId = await userRepository.registerUser(userNormalized)
 
-      if (!createdUserId) return null
+      if (!registeredUserId) return null
 
-      return createdUserId
+      // try {
+      //   await nodemailerService.sendEmail()
+      // }catch(err) {
+      //   logger.error(err)
+      // }
+
+      // try {
+      //   await nodemailerService.sendEmail(
+      //     // newUser.email,
+      //     // newUser.emailConfirmation.confirmationCode,
+      //     // emailExamples.registrationEmail);
+      //   )
+      // } catch (error) {
+      //
+      // }
+
+      return registeredUserId
     } catch (err) {
       // console.log(err)
       return null

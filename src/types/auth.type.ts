@@ -4,6 +4,6 @@ export type AccessTokenViewModel = {
   accessToken: string
 }
 
-export type UserViewForMeModel = Omit<UserDbType, 'password' | 'createdAt'> & {
+export type UserViewForMeModel = Omit<UserDbType, 'password' | 'createdAt' | 'emailConfirmation'> & {
   userId: string
 }

@@ -35,7 +35,7 @@ userRouter.post(
   authorizationBasicValidator,
   userBodyValidator,
   handleValidationErrors,
-  userControllers.createUser,
+  userControllers.registerUser,
 )
 
 userRouter.delete(

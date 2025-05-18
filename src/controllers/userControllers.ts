@@ -46,14 +46,14 @@ export const userControllers = {
     }
   },
 
-  createUser: async (req: CreateUserRequest, res: CreateUserResponse): Promise<void> => {
+  registerUser: async (req: CreateUserRequest, res: CreateUserResponse): Promise<void> => {
     const { body } = req
     try {
-      const createdUserId = await userService.createUser(body)
-      if (createdUserId) {
-        const createdUser = await userQueryRepository.findUserById(createdUserId)
-        if (createdUser) {
-          res.status(HTTP_STATUS_CODES.CREATED_201).json(createdUser)
+      const registeredUserId = await userService.registerUser(body)
+      if (registeredUserId) {
+        const registeredUser = await userQueryRepository.findUserById(registeredUserId)
+        if (registeredUser) {
+          res.status(HTTP_STATUS_CODES.CREATED_201).json(registeredUser)
         } else {
           handleResponseError(res, 'BAD_REQUEST_400')
         }

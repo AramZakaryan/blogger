@@ -9,13 +9,16 @@
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.8",
+    "@types/nodemailer": "^6.4.17",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.12.0"
+    "mongodb": "^6.12.0",
+    "nodemailer": "^7.0.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -25,6 +28,8 @@
     "@types/mongodb": "^4.0.7",
     "@types/node": "^22.10.2",
     "@types/supertest": "^6.0.2",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.1.2",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.1.2",
     "nodemon": "^3.1.7",
@@ -36,9 +41,11 @@
   },
   "scripts": {
     "tsc:w": "tsc -w",
+    "copy:views": "cp -R src/views dist/views",
     "nodemon:w": "nodemon --inspect dist/index.js",
-    "nodemon:inspect": "nodemon --inspect dist/index.js",
     "jest": "jest -i",
-    "jest:coverage": "jest -i --coverage"
+    "jest:coverage": "jest -i --coverage",
+    "build": "tsc && cp -R src/views dist/views",
+    "start": "node dist/index.js"
   }
 }

@@ -5,7 +5,7 @@ import { userQueryRepository } from '../queryRepositories'
 import { userMap } from '../common'
 
 export const userRepository = {
-  createUser: async (user: UserDbType): Promise<string | null> => {
+  registerUser: async (user: UserDbType): Promise<string | null> => {
     try {
       const insertOneResult = await userCollection.insertOne(user)
 
