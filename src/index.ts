@@ -15,7 +15,7 @@ const startApp = async () => {
   const res = await runDB(dbUrl, dbName)
   if (!res) process.exit(1) // exit is a method in Node.js that immediately terminates the program's execution with the specified exit code (0 for success, 1 for error).
   app.listen(port,  () => {
-    console.log(`listening on API port ${port}`)
+    console.log(`listening on port ${port}`)
   })
 }
 

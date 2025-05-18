@@ -21,7 +21,7 @@ config()
 const version = process.env.VERSION
 
 app.get('/', (_, res: Response) => {
-  res.status(HTTP_STATUS_CODES.OK_200).json({ version })
+  res.status(HTTP_STATUS_CODES.OK_200).json({ server_version : version })
 })
 
 app.use(PATHS.TESTING, testingRouter)
