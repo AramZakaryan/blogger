@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "yarn build",
   "name": "blogger",
   "builds": [
     {
@@ -10,7 +11,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/index.ts"
+      "dest": "dist/index.ts"
     }
   ]
 }
